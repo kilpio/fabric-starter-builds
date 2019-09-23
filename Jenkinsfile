@@ -43,14 +43,29 @@ pipeline {
                     steps{
                              
                              echo sh(script: './clean.sh', returnStdout: true)
-                             echo env.ORG
-                             echo sh(script: 'unset ORG')
-                             echo env.ORG
-                             echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
+                             //echo env.ORG
+                             //echo sh(script: 'ORG')
+                             //echo env.ORG
+                             //echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
                          }
                     }
 
-
+                stage('Create ordrer') {
+                    environment {
+                    DOMAIN = 'example.com'
+                    CHANNEL = 'common'
+                    CHAINCODE_INSTALL_ARGS = 'reference'
+                    CHAINCODE_INSTANTIATE_ARGS = 'common reference'
+                    DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
+                        }        
+                    steps{
+                             
+                             echo env.ORG
+                             //echo sh(script: 'ORG')
+                             //echo env.ORG
+                             echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
+                         }
+                    }    
 
 
 
