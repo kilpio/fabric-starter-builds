@@ -132,7 +132,7 @@ pipeline {
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference || true', returnStdout: true)}
 
                                 def params1 = '''["put","account","1","{\"name\":\"one\"}"]''' 
-                                def params1 = '''["put","account","2","{\"name\":\"two\"}"]'''  
+                                def params2 = '''["put","account","2","{\"name\":\"two\"}"]'''  
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-invoke.sh common reference ${params1}', returnStdout: true)}
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-invoke.sh common reference ${params2}', returnStdout: true)}
                                 
