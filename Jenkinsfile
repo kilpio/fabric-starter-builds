@@ -44,7 +44,7 @@ pipeline {
                              
                              echo sh(script: './clean.sh', returnStdout: true)
                              echo env.ORG
-                             sh('unset ORG')
+                             echo sh(script: 'unset ORG')
                              echo env.ORG
                              echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
                          }
