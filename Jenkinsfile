@@ -128,8 +128,8 @@ pipeline {
 
                         steps{
                                 //echo sh(script: 'echo "Install and instantiate nodejs chaincode reference on channel common.""', returnStdout: true) 
-                                ansiColor('xterm') {echo sh(script: './chaincode-install.sh reference', returnStdout: true)}
-                                //ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference', returnStdout: true)}
+                                echo ansiColor('xterm') {echo sh(script: './chaincode-install.sh reference || true', returnStdout: true)}
+                                echo ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference || true', returnStdout: true)}
                                 
                             }
                     }
