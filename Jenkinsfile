@@ -35,10 +35,20 @@ pipeline {
                     environment {
                     ORG = 'org1'
                     DOMAIN = 'example.com'
+                    CHANNEL = 'common'
+                    CHAINCODE_INSTALL_ARGS = 'reference'
+                    CHAINCODE_INSTANTIATE_ARGS = 'common reference'}
+                    DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml'
+
+
+
+
+                    
                         }        
                     steps{
-                            runShell('/usr/bin/env env | sort')
-                            echo sh(script: './network-create-local.sh org1', returnStdout: true)
+                            // runShell('/usr/bin/env env | sort')
+                            echo sh(script: './clean.sh', returnStdout: true)
+                            // echo sh(script: './network-create-local.sh org1', returnStdout: true)
                         }
                     }
             }//end stages
