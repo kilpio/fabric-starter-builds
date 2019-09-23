@@ -41,8 +41,9 @@ pipeline {
                     DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
                         }        
                     steps{
-                             echo environment.DOMAIN
+                             
                              echo sh(script: './clean.sh', returnStdout: true)
+                             env.ORG = '' 
                              echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
                          }
                     }
