@@ -33,7 +33,7 @@ pipeline {
 
                 stage('Tests') {
                     steps{
-                            runShell("pwd && ls -la")
+                            runShell("./network-create-local.sh org1")
                         }
                     }
             }//end stages
