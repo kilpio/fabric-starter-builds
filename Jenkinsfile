@@ -76,7 +76,7 @@ pipeline {
 
                         steps{
                                 echo sh(script: 'echo "Creating member organization $ORG with api $API_PORT"', returnStdout: true)
-                                echo sh(script: "docker-compose ${DOCKER_COMPOSE_ARGS} up -d", returnStdout: true)
+                                ansiColor('xterm') {echo sh(script: "docker-compose ${DOCKER_COMPOSE_ARGS} up -d", returnStdout: true)}
                             }
                     }
 
@@ -90,7 +90,7 @@ pipeline {
 
                         steps{
                                 echo sh(script: 'echo "Adding $ORG to the consortium"', returnStdout: true)
-                                echo sh(script: "./consortium-add-org.sh ${ORG}", returnStdout: true)
+                                ansiColor('xterm') {echo sh(script: "./consortium-add-org.sh ${ORG}", returnStdout: true)}
                             }
                     }   
 
