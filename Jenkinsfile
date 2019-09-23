@@ -78,6 +78,20 @@ pipeline {
                                 echo sh(script: 'echo "Creating member organization $ORG with api $API_PORT"', returnStdout: true)
                                 echo sh(script: "docker-compose ${DOCKER_COMPOSE_ARGS} up -d", returnStdout: true)
                             }
+                    }
+
+
+                    stage('Adding org1 to consortium') {
+                        environment {
+                            ORG = 'org1'
+                            DOMAIN = 'example.com'
+                            CHANNEL = 'common'
+                        }
+
+                        steps{
+                                echo sh(script: 'echo "Adding $ORG to the consortium"', returnStdout: true)
+                                echo sh(script: "./consortium-add-org.sh ${ORG}", returnStdout: true)
+                            }
                     }   
 
             }//end stages
