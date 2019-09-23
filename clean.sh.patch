@@ -1,6 +1,6 @@
---- ./clean.sh	2019-09-23 10:44:02.971002396 +0300
-+++ /home/ubuntu/jenkins_home/workspace/fabric-starter/clean.sh	2019-09-23 10:42:35.000000000 +0300
-@@ -6,7 +6,7 @@
+--- fabric-starter/clean.sh     2019-09-23 16:53:12.748086779 +0300
++++ ./clean.sh  2019-09-23 16:50:16.451237301 +0300
+@@ -6,25 +6,29 @@
  localRegistryStarted=`runningDockerContainer docker-registry`
  
  if [ -z "$localRegistryStarted" ] ; then
@@ -9,7 +9,12 @@
  else
      echo "localRegistryStarted=$localRegistryStarted"
      killContainers=`docker ps -aq | sed -e "s/${localRegistryStarted}/ /"`
-@@ -17,7 +17,7 @@
+     echo "killContainers=$killContainers"
+-    docker rm -f ${killContainers}
++    docker rm -f ${killContainers}; 
++    
+ fi
+ 
  #TODO [ "${DOCKER_MACHINE_NAME}" == "orderer" ]  && EXECUTE_BY_ORDERER=1 runCLIWithComposerOverrides down || runCLIWithComposerOverrides down
  
  docker volume prune -f
@@ -18,3 +23,14 @@
  
  if [ -z "$DOCKER_HOST" ] ; then
      docker-compose -f docker-compose-clean.yaml run --rm cli.clean rm -rf crypto-config/*
+     [ "$all" == "all" ] && docker-compose -f docker-compose-clean.yaml run --rm cli.clean rm -rf data/*
+ else
+     docker-machine ssh ${DOCKER_MACHINE_NAME} sudo rm -rf crypto-config
+-    [ "$all" == "all" ] && docker-machine ssh ${DOCKER_MACHINE_NAME} sudo rm -rf data/
++
++    if [ "$all" == "all" ] ; then
++       docker-machine ssh ${DOCKER_MACHINE_NAME} sudo rm -rf data/
++    fi
+ fi
+ 
+  #docker rmi -f $(docker images -q -f "reference=olegabu/fabric-starter-client")
