@@ -37,13 +37,9 @@ pipeline {
                     DOMAIN = 'example.com'
                     CHANNEL = 'common'
                     CHAINCODE_INSTALL_ARGS = 'reference'
-                    CHAINCODE_INSTANTIATE_ARGS = 'common reference'}
+                    CHAINCODE_INSTANTIATE_ARGS = 'common reference'
                     DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml'
 
-
-
-
-                    
                         }        
                     steps{
                             // runShell('/usr/bin/env env | sort')
