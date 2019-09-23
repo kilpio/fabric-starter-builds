@@ -83,9 +83,9 @@ pipeline {
 
                     stage('Adding org1 to consortium') {
 
-                        when {
-                                expression { params.ADD_TO_COSORTIUM == 'enabled' }
-                              }
+                        //when {
+                          //      expression { params.ADD_TO_COSORTIUM == 'enabled' }
+                            //  }
 
                         environment {
                             ORG = 'org1'
@@ -97,8 +97,25 @@ pipeline {
                                 echo sh(script: 'echo "Adding $ORG organization to the consortium"', returnStdout: true)
                                 ansiColor('xterm'){echo sh(script: "./consortium-add-org.sh \${ORG} || true", returnStdout: true)}
                             }
-                    }   
+                    }
+
+                    stage('Creating and joining the channel with org1') {
+
+                        
+                        environment {
+                            ORG = 'org1'
+                            DOMAIN = 'example.com'
+                            CHANNEL = 'common'
+                            COMPOSE_PROJECT_NAME = "${ORG}"
+                        }
+
+                        steps{
+                                echo sh(script: 'echo "Creating channel $CHANNEL by $ORG"', returnStdout: true)
+                                ansiColor('xterm'){echo sh(script: "./channel-create.sh $CHANNEL", returnStdout: true)}
+                                ansiColor('xterm'){echo sh(script: "./channel-join.sh $CHANNEL", returnStdout: true)}
+                            }
+                    }
+
 
             }//end stages
 }//end pipeline
-
