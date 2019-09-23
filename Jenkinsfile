@@ -34,7 +34,7 @@ pipeline {
                 stage('Tests -- clean.sh') {
                     environment {
                     ORG = 'org1'
-                    DOMAIN = 'example1.com'
+                    DOMAIN = 'example.com'
                     CHANNEL = 'common'
                     CHAINCODE_INSTALL_ARGS = 'reference'
                     CHAINCODE_INSTANTIATE_ARGS = 'common reference'
