@@ -1,0 +1,20 @@
+--- ./clean.sh	2019-09-23 10:44:02.971002396 +0300
++++ /home/ubuntu/jenkins_home/workspace/fabric-starter/clean.sh	2019-09-23 10:42:35.000000000 +0300
+@@ -6,7 +6,7 @@
+ localRegistryStarted=`runningDockerContainer docker-registry`
+ 
+ if [ -z "$localRegistryStarted" ] ; then
+-    docker rm -f $(docker ps -aq)
++     docker ps -a | grep -v jenkins | tail -n+2 | cut -d ' ' -f 1 | xargs --no-run-if-empty docker rm -f
+ else
+     echo "localRegistryStarted=$localRegistryStarted"
+     killContainers=`docker ps -aq | sed -e "s/${localRegistryStarted}/ /"`
+@@ -17,7 +17,7 @@
+ #TODO [ "${DOCKER_MACHINE_NAME}" == "orderer" ]  && EXECUTE_BY_ORDERER=1 runCLIWithComposerOverrides down || runCLIWithComposerOverrides down
+ 
+ docker volume prune -f
+-docker rmi -f $(docker images -q -f "reference=dev-*")
++docker images -q -f "reference=dev-*" | xargs --no-run-if-empty docker rmi -f 
+ 
+ if [ -z "$DOCKER_HOST" ] ; then
+     docker-compose -f docker-compose-clean.yaml run --rm cli.clean rm -rf crypto-config/*
