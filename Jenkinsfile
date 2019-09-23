@@ -56,7 +56,7 @@ pipeline {
                         DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
                             }        
                         steps{
-                                echo sh(script: 'echo $DOMAIN; echo $ORG; echo $COMPOSE_PROJECT_NAME; echo $CHANNEL', returnStdout: true)
+                                //echo sh(script: 'echo $DOMAIN; echo $ORG; echo $COMPOSE_PROJECT_NAME; echo $CHANNEL', returnStdout: true)
                                 echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
                             }
                     }        
@@ -116,7 +116,7 @@ pipeline {
                             }
                     }
 
-                    stage('Intagration test') {
+                    stage('Integration test') {
 
                         
                         environment {
@@ -127,9 +127,9 @@ pipeline {
                         }
 
                         steps{
-                                echo sh(script: 'echo "Install and instantiate nodejs chaincode reference on channel common.""', returnStdout: true) 
+                                //echo sh(script: 'echo "Install and instantiate nodejs chaincode reference on channel common.""', returnStdout: true) 
                                 ansiColor('xterm') {echo sh(script: './chaincode-install.sh reference', returnStdout: true)}
-                                ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference', returnStdout: true)}
+                                //ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference', returnStdout: true)}
                                 
                             }
                     }
