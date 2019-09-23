@@ -45,20 +45,7 @@ pipeline {
                           }
                     }
 
-                stage('Create ordrer') {
-                    environment {
-                    DOMAIN = 'example.com'
-                    CHANNEL = 'common'
-                    CHAINCODE_INSTALL_ARGS = 'reference'
-                    CHAINCODE_INSTANTIATE_ARGS = 'common reference'
-                    DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
-                        }        
-                    steps{
-                            echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
-                         }
-                    }    
-
-                stage('Create ordrer') {
+                    stage('Create ordrer') {
                     environment {
                     ORG = ''
                     COMPOSE_PROJECT_NAME = ''    
