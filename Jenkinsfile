@@ -56,7 +56,7 @@ pipeline {
                     DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
                         }        
                     steps{
-                            echo sh(script: '$ORG', returnStdout: true)
+                            echo sh(script: '$DOMAIN', returnStdout: true)
                             echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
                          }
                     }        
