@@ -32,8 +32,12 @@ pipeline {
                 }
 
                 stage('Tests') {
+                    environment {
+                    ORG = 'org1'
+                    DOMAIN = 'example.com'
+                        }        
                     steps{
-                            runShell('/usr/bin/env pwd')
+                            runShell('/usr/bin/env env | sort')
                             echo sh(script: './network-create-local.sh org1', returnStdout: true)
                         }
                     }
