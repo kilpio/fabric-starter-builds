@@ -11,7 +11,7 @@ def runShell(String command){
     }
 }
 
-def params1 = './chaincode-invoke.sh common reference ' + "\\'" + '[\\\\\\"put\\\\\\",\\\\\\"account\\\\\\",\\\\\\"1\\\\\\",\\\\\\"{\\\\\\\\\"name\\\\\\\\\":\\\\\\\\\"one\\\\\\\\ \"}\\\\\\"]' + "\\'"
+def params1 = './chaincode-invoke.sh common reference ' + "\\'" + '[\\\\\\"put\\\\\\",\\\\\\"account\\\\\\",\\\\\\"1\\\\\\",\\\\\\"{\\\\\\\\"name\\\\\\\\":\\\\\\\\"one\\\\\\\\"}\\\\\\"]' + "\\'"
 def params2 = './chaincode-invoke.sh common reference ' + "\\'" + '["put","account","2","{\"name\":\"two\"}"]' + "\\'"
 
 pipeline {
