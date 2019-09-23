@@ -84,7 +84,7 @@ pipeline {
                     stage('Adding org1 to consortium') {
 
                         when {
-                               expression { params.ADD_TO_COSORTIUM == 'enabled' }
+                                expression { params.ADD_TO_COSORTIUM == 'enabled' }
                               }
 
                         environment {
