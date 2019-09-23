@@ -118,7 +118,7 @@ pipeline {
 
                     stage('Integration test') {
 
-                        when {false}
+                        when {expression {5 == 6}}
                         environment {
                             ORG = 'org1'
                             DOMAIN = 'example.com'
