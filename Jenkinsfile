@@ -70,7 +70,7 @@ pipeline {
                             PEER0_PORT = '7051'
                             LDAP_PORT_HTTP = '6080'
                             LDAP_PORT_HTTPS = '6443'
-                            COMPOSE_PROJECT_NAME = env.ORG
+                            COMPOSE_PROJECT_NAME = ${ORG}
                             DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml'
                         }
 
