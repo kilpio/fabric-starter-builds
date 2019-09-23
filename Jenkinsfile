@@ -26,7 +26,7 @@ pipeline {
                     }    
                 stage('Apply patches') {
                     steps {
-                        runShell('/usr/bin/env patch < ./fabric-starter-builds/clean.sh.patch')
+                        runShell('/usr/bin/env  patch < ./fabric-starter-builds/clean.sh.patch')
                     }
                 }
 
