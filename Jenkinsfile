@@ -116,6 +116,25 @@ pipeline {
                             }
                     }
 
+                    stage('Intagration test') {
+
+                        
+                        environment {
+                            ORG = 'org1'
+                            DOMAIN = 'example.com'
+                            CHANNEL = 'common'
+                            COMPOSE_PROJECT_NAME = "${ORG}"
+                        }
+
+                        steps{
+                                echo sh(script: 'Install and instantiate nodejs chaincode reference on channel common.', returnStdout: true) 
+                                ansiColor('xterm') {echo sh(script: './chaincode-install.sh reference', returnStdout: true)}
+                                ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference', returnStdout: true)}
+                                
+                            }
+                    }
+                    
+
 
             }//end stages
 }//end pipeline
