@@ -31,74 +31,54 @@ pipeline {
                     }
                 }
 
-                stage('Clean') {
-                    environment {
-                    ORG = 'org1'
-                    DOMAIN = 'example.com'
-                    CHANNEL = 'common'
-                    CHAINCODE_INSTALL_ARGS = 'reference'
-                    CHAINCODE_INSTANTIATE_ARGS = 'common reference'
-                    DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
-                        }        
-                    steps{
-                            echo sh(script: './clean.sh', returnStdout: true)
-                          }
-                    }
-
-                    stage('Create ordrer') {
-                    environment {
-                    ORG = ''
-                    COMPOSE_PROJECT_NAME = ''    
-                    DOMAIN = 'example.com'
-                    CHANNEL = 'common'
-                    CHAINCODE_INSTALL_ARGS = 'reference'
-                    CHAINCODE_INSTANTIATE_ARGS = 'common reference'
-                    DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
-                        }        
-                    steps{
-                            echo sh(script: 'echo $DOMAIN; echo $ORG; echo $COMPOSE_PROJECT_NAME; echo $CHANNEL', returnStdout: true)
-                            echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
-                         }
-                    }        
-
-
-                    stage('Create ordrer') {
-                    environment {
-                    ORG = ''
-                    COMPOSE_PROJECT_NAME = ''    
-                    DOMAIN = 'example.com'
-                    CHANNEL = 'common'
-                    CHAINCODE_INSTALL_ARGS = 'reference'
-                    CHAINCODE_INSTANTIATE_ARGS = 'common reference'
-                    DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml'
-                        }        
-                    steps{
-                            echo sh(script: 'echo $DOMAIN; echo $ORG; echo $COMPOSE_PROJECT_NAME; echo $CHANNEL', returnStdout: true)
-                            echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
-                         }
-                    }   
-
-                    
-                    stage('Create organization org1') {
-                    environment {
+                    stage('Clean') {
+                        environment {
                         ORG = 'org1'
-                        API_PORT = '4000'
-                        WWW_PORT = '81'
-                        CA_PORT = '7054'
-                        PEER0_PORT = '7051'
-                        LDAP_PORT_HTTP = '6080'
-                        LDAP_PORT_HTTPS = '6443'
-                        COMPOSE_PROJECT_NAME = env.ORG
-                        DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml'
+                        DOMAIN = 'example.com'
+                        CHANNEL = 'common'
+                        CHAINCODE_INSTALL_ARGS = 'reference'
+                        CHAINCODE_INSTANTIATE_ARGS = 'common reference'
+                        DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
+                            }        
+                        steps{
+                                echo sh(script: './clean.sh', returnStdout: true)
+                            }
                     }
 
-                    steps{
-                            echo sh(script: 'echo "Creating member organization $ORG with api $API_PORT"', returnStdout: true)
-                            echo sh(script: "docker-compose ${DOCKER_COMPOSE_ARGS} up -d", returnStdout: true)
-                         }
+                    stage('Create ordrer') {
+                        environment {
+                        ORG = ''
+                        COMPOSE_PROJECT_NAME = ''    
+                        DOMAIN = 'example.com'
+                        CHANNEL = 'common'
+                        CHAINCODE_INSTALL_ARGS = 'reference'
+                        CHAINCODE_INSTANTIATE_ARGS = 'common reference'
+                        DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
+                            }        
+                        steps{
+                                echo sh(script: 'echo $DOMAIN; echo $ORG; echo $COMPOSE_PROJECT_NAME; echo $CHANNEL', returnStdout: true)
+                                echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
+                            }
+                    }        
+                                       
+                    stage('Create organization org1') {
+                        environment {
+                            ORG = 'org1'
+                            API_PORT = '4000'
+                            WWW_PORT = '81'
+                            CA_PORT = '7054'
+                            PEER0_PORT = '7051'
+                            LDAP_PORT_HTTP = '6080'
+                            LDAP_PORT_HTTPS = '6443'
+                            COMPOSE_PROJECT_NAME = env.ORG
+                            DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml'
+                        }
+
+                        steps{
+                                echo sh(script: 'echo "Creating member organization $ORG with api $API_PORT"', returnStdout: true)
+                                echo sh(script: "docker-compose ${DOCKER_COMPOSE_ARGS} up -d", returnStdout: true)
+                            }
                     }   
-
-
 
             }//end stages
 }//end pipeline
