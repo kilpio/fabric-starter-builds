@@ -112,7 +112,7 @@ pipeline {
                         steps{
                                 echo sh(script: 'echo "Creating channel $CHANNEL by $ORG"', returnStdout: true)
                                 ansiColor('xterm'){echo sh(script: "./channel-create.sh $CHANNEL || true", returnStdout: true)}
-                                ansiColor('xterm'){echo sh(script: "./channel-join.sh $CHANNEL || true", returnStdout: true)}
+                                ansiColor('xterm'){echo sh(script: "./channel-join.sh   $CHANNEL || true", returnStdout: true)}
                             }
                     }
 
