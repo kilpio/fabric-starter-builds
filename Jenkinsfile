@@ -117,8 +117,10 @@ pipeline {
                     }
 
                     stage('Integration test') {
+                        def params1 = '''["put","account","1","{\"name\":\"one\"}"]''' 
+                        def params2 = '''["put","account","2","{\"name\":\"two\"}"]'''  
 
-                        when {expression {5 == 5}}
+                        //when {expression {5 == 5}}
                         environment {
                             ORG = 'org1'
                             DOMAIN = 'example.com'
@@ -130,9 +132,7 @@ pipeline {
                                 //echo sh(script: 'echo "Install and instantiate nodejs chaincode reference on channel common.""', returnStdout: true) 
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-install.sh reference || true', returnStdout: true)}
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference || true', returnStdout: true)}
-
-                                def params1 = '''["put","account","1","{\"name\":\"one\"}"]''' 
-                                def params2 = '''["put","account","2","{\"name\":\"two\"}"]'''  
+                               
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-invoke.sh common reference ${params1}', returnStdout: true)}
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-invoke.sh common reference ${params2}', returnStdout: true)}
                                 
