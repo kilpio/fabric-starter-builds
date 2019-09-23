@@ -33,7 +33,7 @@ pipeline {
 
                 stage('Tests') {
                     steps{
-                            echo sh(script: '/usr/bin/env pwd', returnStdout: true).result
+                            runShell('/usr/bin/env pwd')
                             echo sh(script: './network-create-local.sh org1', returnStdout: true).result
                         }
                     }
