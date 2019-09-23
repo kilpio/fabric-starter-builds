@@ -95,7 +95,7 @@ pipeline {
 
                         steps{
                                 echo sh(script: 'echo "Adding $ORG organization to the consortium"', returnStdout: true)
-                                ansiColor('xterm'){echo sh(script: "./consortium-add-org.sh \${ORG}", returnStdout: true)}
+                                ansiColor('xterm'){echo sh(script: "./consortium-add-org.sh \${ORG} || true", returnStdout: true)}
                             }
                     }   
 
