@@ -42,7 +42,6 @@ pipeline {
                         }        
                     steps{
                              echo sh(script: './clean.sh', returnStdout: true)
-                             environment {ORG = ''}
                              echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
                          }
                     }
