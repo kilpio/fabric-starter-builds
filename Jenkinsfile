@@ -11,6 +11,9 @@ def runShell(String command){
     }
 }
 
+def params1 = './chaincode-invoke.sh common reference ' + "'" + '["put","account","1","{\"name\":\"one\"}"]' + "'"
+def params2 = './chaincode-invoke.sh common reference ' + "'" + '["put","account","2","{\"name\":\"two\"}"]' + "'"
+
 pipeline {
     agent any
     stages {
@@ -131,11 +134,11 @@ pipeline {
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-install.sh reference || true', returnStdout: true)}
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference || true', returnStdout: true)}
                                
-                                script {def params1 = './chaincode-invoke.sh common reference ' +"'"+'["put","account","1","{\"name\":\"one\"}"]' + "''"}
-                                script {def params2 = '''["put","account","2","{\"name\":\"two\"}"]'''}
+                                //script {def params1 = './chaincode-invoke.sh common reference ' +"'"+'["put","account","1","{\"name\":\"one\"}"]' + "''"}
+                                //script {def params2 = '''["put","account","2","{\"name\":\"two\"}"]'''}
 
-                                echo ansiColor('xterm') {echo sh(script: "${params1}" , returnStdout: true)}
-                                //echo ansiColor('xterm') {echo sh(script: './chaincode-invoke.sh common reference ${params2}', returnStdout: true)}
+                                echo ansiColor('xterm') {echo sh(script: "${params1}", returnStdout: true)}
+                                echo ansiColor('xterm') {echo sh(script: "${params2}", returnStdout: true)}
                                 
                             }
                     }
