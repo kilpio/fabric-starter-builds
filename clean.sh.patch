@@ -24,7 +24,7 @@
  if [ -z "$DOCKER_HOST" ] ; then
      docker-compose -f docker-compose-clean.yaml run --rm cli.clean rm -rf crypto-config/*
 -    [ "$all" == "all" ] && docker-compose -f docker-compose-clean.yaml run --rm cli.clean rm -rf data/*
-+        if [ "$all" == "all" ] ; then
++       if [ "$all" == "all" ] ; then
 +	    docker-compose -f docker-compose-clean.yaml run --rm cli.clean rm -rf data/*
 +	fi
  else
