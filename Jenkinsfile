@@ -31,7 +31,7 @@ pipeline {
                     }
                 }
 
-                stage('Tests') {
+                stage('Tests -- clean.sh') {
                     environment {
                     ORG = 'org1'
                     DOMAIN = 'example.com'
@@ -39,14 +39,19 @@ pipeline {
                     CHAINCODE_INSTALL_ARGS = 'reference'
                     CHAINCODE_INSTANTIATE_ARGS = 'common reference'
                     DOCKER_COMPOSE_ARGS = '-f docker-compose.yaml -f docker-compose-couchdb.yaml -f docker-compose-dev.yaml '
-
                         }        
                     steps{
-                            // runShell('/usr/bin/env env | sort')
-                            echo sh(script: './clean.sh', returnStdout: true)
-                            // echo sh(script: './network-create-local.sh org1', returnStdout: true)
-                        }
+                             echo sh(script: './clean.sh', returnStdout: true)
+                             environment {ORG = ''}
+                             echo sh(script: 'docker-compose -f docker-compose-orderer.yaml -f docker-compose-orderer-ports.yaml up -d', returnStdout: true)
+                         }
                     }
+
+
+
+
+
+
             }//end stages
 }//end pipeline
 
