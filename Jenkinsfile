@@ -24,6 +24,7 @@ pipeline {
                       dir('fabric-starter-builds') {git credentialsId: '3fd7c1f8-c6bd-46d2-b1e0-014750954bfe', url: 'https://github.com/kilpio/fabric-starter-builds.git'}
                     }
                     }    
+                
                 stage('Apply patches') {
                     steps {
                         runShell('/usr/bin/env  patch < ./fabric-starter-builds/clean.sh.patch')
