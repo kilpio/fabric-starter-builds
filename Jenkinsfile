@@ -82,6 +82,11 @@ pipeline {
 
 
                     stage('Adding org1 to consortium') {
+
+                        when {
+                               expression { params.ADD_TO_COSORTIUM == 'enabled' }
+                              }
+
                         environment {
                             ORG = 'org1'
                             DOMAIN = 'example.com'
@@ -90,7 +95,7 @@ pipeline {
 
                         steps{
                                 echo sh(script: 'echo "Adding $ORG to the consortium"', returnStdout: true)
-                                ansiColor('xterm') {echo sh(script: "./consortium-add-org.sh ${ORG}", returnStdout: true)}
+                                ansiColor('xterm') {echo sh(script: "./consortium-add-org.sh ${ORG}; echo $?", returnStdout: true)}
                             }
                     }   
 
