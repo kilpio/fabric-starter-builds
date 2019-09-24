@@ -136,18 +136,27 @@ pipeline {
 
                         steps{
                                 //echo sh(script: 'echo "Install and instantiate nodejs chaincode reference on channel common.""', returnStdout: true) 
+
+                                echo "Install and instantiate nodejs chaincode reference on channel common."
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-install.sh reference || true', returnStdout: true)}
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference || true', returnStdout: true)}
                                
-                                
+                                echo "Invoke chaincode to save entities of type account."
                                 echo ansiColor('xterm') {echo sh(script: "${params1} || true", returnStdout: true)}
                                 echo ansiColor('xterm') {echo sh(script: "${params2} || true", returnStdout: true)}
                                 
-
+                                echo "Query chaincode functions list and get."
                                 echo ansiColor('xterm') {echo sh(script: "${params3} || true", returnStdout: true)}
                                 echo ansiColor('xterm') {echo sh(script: "${params4} || true", returnStdout: true)}
 
+                                echo "Make changes to the chaincode, install a new version 1.1 and upgrade to it."
+                                echo ansiColor('xterm') {echo sh(script: './chaincode-install.sh reference 1.1 || true', returnStdout: true)}
+                                echo ansiColor('xterm') {echo sh(script: './chaincode-upgrade.sh common reference [] 1.1 || true', returnStdout: true)}
                                 
+                                echo "Install and instantiate witchaincode with a new random version"
+                                echo ansiColor('xterm') {echo sh(script: './chaincode-reload.sh common reference || true', returnStdout: true)}
+
+                                    
 
 
 
