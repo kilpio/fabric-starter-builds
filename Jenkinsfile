@@ -14,6 +14,11 @@ def runShell(String command){
 def params1 = './chaincode-invoke.sh common reference ' + "\\'" + '[\\\\\\"put\\\\\\",\\\\\\"account\\\\\\",\\\\\\"1\\\\\\",\\\\\\"{\\\\\\\\\\\\\\"name\\\\\\\\\\\\\\":\\\\\\\\\\\\\\"one\\\\\\\\\\\\\\"}\\\\\\"]' + "\\'"
 def params2 = './chaincode-invoke.sh common reference ' + "\\'" + '[\\\\\\"put\\\\\\",\\\\\\"account\\\\\\",\\\\\\"2\\\\\\",\\\\\\"{\\\\\\\\\\\\\\"name\\\\\\\\\\\\\\":\\\\\\\\\\\\\\"two\\\\\\\\\\\\\\"}\\\\\\"]' + "\\'"
 
+def params3 = './chaincode-query.sh common reference ' + "\\'" + '[\\\\\\"list\\\\\\",\\\\\\"account\\\\\\"]' + "\\'" 
+def params4 = './chaincode-query.sh common reference ' + "\\'" + '[\\\\\\"get\\\\\\",\\\\\\"account\\\\\\",\\\\\\"1\\\\\\"]' + "\\'" 
+                                
+
+
 pipeline {
     agent any
     stages {
@@ -134,12 +139,18 @@ pipeline {
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-install.sh reference || true', returnStdout: true)}
                                 echo ansiColor('xterm') {echo sh(script: './chaincode-instantiate.sh common reference || true', returnStdout: true)}
                                
-                                //script {def params1 = './chaincode-invoke.sh common reference ' +"'"+'["put","account","1","{\"name\":\"one\"}"]' + "''"}
-                                //script {def params2 = '''["put","account","2","{\"name\":\"two\"}"]'''}
-
+                                
                                 echo ansiColor('xterm') {echo sh(script: "${params1} || true", returnStdout: true)}
                                 echo ansiColor('xterm') {echo sh(script: "${params2} || true", returnStdout: true)}
                                 
+
+                                echo ansiColor('xterm') {echo sh(script: "${params3} || true", returnStdout: true)}
+                                echo ansiColor('xterm') {echo sh(script: "${params4} || true", returnStdout: true)}
+
+                                
+
+
+
                             }
                     }
                     
