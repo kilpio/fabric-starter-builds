@@ -10,7 +10,7 @@ def C_FRAMED="\033[51m"
 def C_NOTFRAMED="\033[54m"
 def C_UNDERLINED="\033[4m"
 def C_NOTUNDERLINED="\033[24m"
-//https://en.wikipedia.org/wiki/ANSI_escape_code
+// https://en.wikipedia.org/wiki/ANSI_escape_code
 
 node {
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
