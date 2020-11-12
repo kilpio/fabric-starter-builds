@@ -26,7 +26,7 @@ parameters(
         credentials(name: 'GITHUB_SSH_CREDENTIALS_ID', description: 'GitHub username with private key', defaultValue: '', credentialType: "SSH Username with private key", required: true ),
         string(defaultValue: "https://registry-1.docker.io/v2", description: 'Docker registry we use', name: 'DOCKER_REGISTRY'),
         string(defaultValue: "kilpio", description: 'Owner of the docker repo to push the built images', name: 'DOCKER_REPO'),
-        credentials(name: 'DOCKER_CREDENTIALS_ID', description: 'Docker Hub username and password', defaultValue: '', credentialType: "Username with password", required: true ),
+        credentials(name: 'DOCKER_CREDENTIALS_ID_', description: 'Docker Hub username and password', defaultValue: '', credentialType: "Username with password", required: true ),
         string(defaultValue: "kilpio", description: 'Owner of the docker repo to get images to buils FS', name: 'FABRIC_STARTER_REPOSITORY'),
         string(defaultValue: "master", description: 'Branch to merge into ${BUILD_BRANCH}', name: 'MASTER_BRANCH'),
         string(defaultValue: "1.4.4", description: 'Fabric version', name: 'FABRIC_VERSION')]
@@ -283,7 +283,8 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 
 private void pushDockerImage(imageName, tag) {
     
-    DOCKER_CREDENTIALS_ID = credentials("${params.DOCKER_CREDENTIALS_ID}")
+    DOCKER_CREDENTIALS_ID = credentials("${params.DOCKER_CREDENTIALS_ID_}")
+    echo DOCKER_CREDENTIALS_ID
     docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
 
         fabricRestImage = docker.image("${DOCKER_REPO}/${imageName}:${tag}")
