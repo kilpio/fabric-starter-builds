@@ -1,3 +1,4 @@
+pipline {
     parameters {
         booleanParam(defaultValue: true, description: 'True if merge current ${MASTER_BRANCH} into stable', name: 'MERGE_FROM_MASTER')
         string(defaultValue: "stable", description: 'What brunch we are building', name: 'BUILD_BRANCH')
@@ -431,4 +432,5 @@ def printMagenta(message) {
     ansiColor('xterm') {
         echo "\033[1;32m${message}\033[0m"
     }
+}
 }
