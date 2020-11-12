@@ -1,5 +1,3 @@
-    
-
 def C_NORMAL="\033[0m"
 def C_RED="\033[1;31m"
 def C_GREEN="\033[1;32m"
@@ -14,31 +12,7 @@ def C_UNDERLINED="\033[4m"
 def C_NOTUNDERLINED="\033[24m"
 // https://en.wikipedia.org/wiki/ANSI_escape_code
 
-
 node {
-  properties(
-    
-       [ 
-parameters(
-        [booleanParam(defaultValue: true, description: 'True if merge current ${MASTER_BRANCH} into stable', name: 'MERGE_FROM_MASTER'),
-        string(defaultValue: "stable", description: 'What brunch we are building', name: 'BUILD_BRANCH'),
-        string(defaultValue: "kilpio", description: 'take cources from https://github.com/${GIT_REPO_OWNER}/fabric-starter [fabric-starter-rest]', name: 'GIT_REPO_OWNER'),
-        credentials(name: 'GITHUB_SSH_CREDENTIALS_ID', description: 'GitHub username with private key', defaultValue: '', credentialType: "SSH Username with private key", required: true ),
-        string(defaultValue: "https://registry-1.docker.io/v2", description: 'Docker registry we use', name: 'DOCKER_REGISTRY'),
-        string(defaultValue: "kilpio", description: 'Owner of the docker repo to push the built images', name: 'DOCKER_REPO'),
-//credentials(name: 'DOCKER_CREDENTIALS_ID_', description: 'Docker Hub username and password', defaultValue: '', credentialType: "Username with password", required: true ),
-        string(defaultValue: "kilpio", description: 'Owner of the docker repo to get images to buils FS', name: 'FABRIC_STARTER_REPOSITORY'),
-        string(defaultValue: "master", description: 'Branch to merge into ${BUILD_BRANCH}', name: 'MASTER_BRANCH'),
-        string(defaultValue: "1.4.4", description: 'Fabric version', name: 'FABRIC_VERSION')]
-        )
-       ]
-  )
-
-// environment(
-//         [GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GitHubCredentials}"),
-//         DOCKER_CREDENTIALS_ID = credentials("${params.DockerCredentials}")]
-//     )  
-
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
     stage('Fabric-Starter-snapshot') {
         ansiColor('xterm') {
@@ -137,8 +111,8 @@ parameters(
                 dir('fabric-starter-rest') {
                   
                     buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                   // buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                   // buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                    buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                    buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                    
                 }
                 echo C_NORMAL
@@ -152,8 +126,8 @@ parameters(
                 echo C_BLUE
                 
                 pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-               // pushDockerImage('fabric-starter-rest', 'stable')
-               // pushDockerImage('fabric-starter-rest', 'latest')
+                pushDockerImage('fabric-starter-rest', 'stable')
+                pushDockerImage('fabric-starter-rest', 'latest')
                 echo C_NORMAL
             }
 
@@ -220,8 +194,6 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master', def cle
     if (clean) {
         extensions.push([$class: 'WipeWorkspace']) //CleanBeforeCheckout
     }
-    GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GITHUB_SSH_CREDENTIALS_ID}")
-
     checkout([$class                           : 'GitSCM', branches: [ [name: "*/${MASTER_BRANCH}"], [name: "*/${branch}"]],
             doGenerateSubmoduleConfigurations: false, submoduleCfg: [],
             userRemoteConfigs                : [[credentialsId: "${GITHUB_SSH_CREDENTIALS_ID}", url: "git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"]],
@@ -282,9 +254,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 
 
 private void pushDockerImage(imageName, tag) {
-    
-    //DOCKER_CREDENTIALS_ID = credentials("${params.DOCKER_CREDENTIALS_ID_}")
-    //echo "${params.DOCKER_CREDENTIALS_ID_}"
+
     docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
 
         fabricRestImage = docker.image("${DOCKER_REPO}/${imageName}:${tag}")
@@ -301,7 +271,6 @@ void commitBranch(branchName) {
 }
 
 private void gitPushToBranch(branchName) {
-        GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GITHUB_SSH_CREDENTIALS_ID}")
         sshagent(credentials: ["${GITHUB_SSH_CREDENTIALS_ID}"]) {
         sh "git config user.name ${GIT_REPO_OWNER}"
         sh "git checkout ${branchName}"
