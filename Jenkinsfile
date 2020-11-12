@@ -1,6 +1,3 @@
-pipeline {
-    agent any
-
     parameters {
         booleanParam(defaultValue: true, description: 'True if merge current ${MASTER_BRANCH} into stable', name: 'MERGE_FROM_MASTER')
         string(defaultValue: "stable", description: 'What brunch we are building', name: 'BUILD_BRANCH')
@@ -20,8 +17,21 @@ pipeline {
     }  
 
 
+def C_NORMAL="\033[0m"
+def C_RED="\033[1;31m"
+def C_GREEN="\033[1;32m"
+def C_YELLOW="\033[1;33m"
+def C_BLUE="\033[1;34m"
+def C_MAGENTA="\033[1;35m"
+def C_CYAN="\033[1;36m"
+def C_WHITE="\033[1;37m"
+def C_FRAMED="\033[51m"
+def C_NOTFRAMED="\033[54m"
+def C_UNDERLINED="\033[4m"
+def C_NOTUNDERLINED="\033[24m"
+// https://en.wikipedia.org/wiki/ANSI_escape_code
 
-stages {
+node {
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
     stage('Fabric-Starter-snapshot') {
         ansiColor('xterm') {
@@ -193,23 +203,7 @@ stages {
     } //Fabric-Starter-Packages-snapshot
 }//node
 
-} //pipeline
 //! ===================================================================================
-
-def C_NORMAL="\033[0m"
-def C_RED="\033[1;31m"
-def C_GREEN="\033[1;32m"
-def C_YELLOW="\033[1;33m"
-def C_BLUE="\033[1;34m"
-def C_MAGENTA="\033[1;35m"
-def C_CYAN="\033[1;36m"
-def C_WHITE="\033[1;37m"
-def C_FRAMED="\033[51m"
-def C_NOTFRAMED="\033[54m"
-def C_UNDERLINED="\033[4m"
-def C_NOTUNDERLINED="\033[24m"
-// https://en.wikipedia.org/wiki/ANSI_escape_code
-
 
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master', def clean = true) {
     def extensions = [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${repositoryName}"],
