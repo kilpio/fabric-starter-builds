@@ -33,8 +33,8 @@ parameters(
         )
   )
 
-environment (
-        GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GitHubCredentials}")
+environment(
+        [GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GitHubCredentials}"),
         DOCKER_CREDENTIALS_ID = credentials("${params.DockerCredentials}")]
     )  
 
