@@ -1,4 +1,6 @@
 pipeline {
+    agent any
+
     parameters {
         booleanParam(defaultValue: true, description: 'True if merge current ${MASTER_BRANCH} into stable', name: 'MERGE_FROM_MASTER')
         string(defaultValue: "stable", description: 'What brunch we are building', name: 'BUILD_BRANCH')
@@ -19,7 +21,7 @@ pipeline {
 
 
 
-node {
+stages {
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
     stage('Fabric-Starter-snapshot') {
         ansiColor('xterm') {
