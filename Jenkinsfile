@@ -18,19 +18,6 @@ pipeline {
     }  
 
 
-def C_NORMAL="\033[0m"
-def C_RED="\033[1;31m"
-def C_GREEN="\033[1;32m"
-def C_YELLOW="\033[1;33m"
-def C_BLUE="\033[1;34m"
-def C_MAGENTA="\033[1;35m"
-def C_CYAN="\033[1;36m"
-def C_WHITE="\033[1;37m"
-def C_FRAMED="\033[51m"
-def C_NOTFRAMED="\033[54m"
-def C_UNDERLINED="\033[4m"
-def C_NOTUNDERLINED="\033[24m"
-// https://en.wikipedia.org/wiki/ANSI_escape_code
 
 node {
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
@@ -206,6 +193,21 @@ node {
 
 } //pipeline
 //! ===================================================================================
+
+def C_NORMAL="\033[0m"
+def C_RED="\033[1;31m"
+def C_GREEN="\033[1;32m"
+def C_YELLOW="\033[1;33m"
+def C_BLUE="\033[1;34m"
+def C_MAGENTA="\033[1;35m"
+def C_CYAN="\033[1;36m"
+def C_WHITE="\033[1;37m"
+def C_FRAMED="\033[51m"
+def C_NOTFRAMED="\033[54m"
+def C_UNDERLINED="\033[4m"
+def C_NOTUNDERLINED="\033[24m"
+// https://en.wikipedia.org/wiki/ANSI_escape_code
+
 
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master', def clean = true) {
     def extensions = [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${repositoryName}"],
