@@ -284,7 +284,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 private void pushDockerImage(imageName, tag) {
     
     DOCKER_CREDENTIALS_ID = credentials("${params.DOCKER_CREDENTIALS_ID_}")
-    echo DOCKER_CREDENTIALS_ID
+    echo "${params.DOCKER_CREDENTIALS_ID_}"
     docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
 
         fabricRestImage = docker.image("${DOCKER_REPO}/${imageName}:${tag}")
