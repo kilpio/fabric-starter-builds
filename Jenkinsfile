@@ -137,8 +137,8 @@ parameters(
                 dir('fabric-starter-rest') {
                   
                     buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                    buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                    buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                   // buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                   // buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                    
                 }
                 echo C_NORMAL
@@ -152,8 +152,8 @@ parameters(
                 echo C_BLUE
                 
                 pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-                pushDockerImage('fabric-starter-rest', 'stable')
-                pushDockerImage('fabric-starter-rest', 'latest')
+               // pushDockerImage('fabric-starter-rest', 'stable')
+               // pushDockerImage('fabric-starter-rest', 'latest')
                 echo C_NORMAL
             }
 
