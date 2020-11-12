@@ -221,6 +221,7 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master', def cle
         extensions.push([$class: 'WipeWorkspace']) //CleanBeforeCheckout
     }
     GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GITHUB_SSH_CREDENTIALS_ID}")
+
     checkout([$class                           : 'GitSCM', branches: [ [name: "*/${MASTER_BRANCH}"], [name: "*/${branch}"]],
             doGenerateSubmoduleConfigurations: false, submoduleCfg: [],
             userRemoteConfigs                : [[credentialsId: "${GITHUB_SSH_CREDENTIALS_ID}", url: "git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"]],
@@ -281,7 +282,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 
 
 private void pushDockerImage(imageName, tag) {
-
+    DOCKER_CREDENTIALS_ID = credentials("${params.DockerCredentials}")
     docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
 
         fabricRestImage = docker.image("${DOCKER_REPO}/${imageName}:${tag}")
@@ -298,6 +299,7 @@ void commitBranch(branchName) {
 }
 
 private void gitPushToBranch(branchName) {
+        GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GITHUB_SSH_CREDENTIALS_ID}")
         sshagent(credentials: ["${GITHUB_SSH_CREDENTIALS_ID}"]) {
         sh "git config user.name ${GIT_REPO_OWNER}"
         sh "git checkout ${branchName}"
