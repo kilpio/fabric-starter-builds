@@ -1,4 +1,4 @@
-pipline {
+pipeline {
     parameters {
         booleanParam(defaultValue: true, description: 'True if merge current ${MASTER_BRANCH} into stable', name: 'MERGE_FROM_MASTER')
         string(defaultValue: "stable", description: 'What brunch we are building', name: 'BUILD_BRANCH')
