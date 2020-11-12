@@ -18,12 +18,8 @@ def C_NOTUNDERLINED="\033[24m"
 node {
   properties(
     [
-        parameters(
-            [string(defaultValue: '/data', name: 'Directory'),
-             string(defaultValue: 'Dev', name: 'DEPLOY_ENV')]
-            )
-
-parameters (
+        
+parameters(
         [booleanParam(defaultValue: true, description: 'True if merge current ${MASTER_BRANCH} into stable', name: 'MERGE_FROM_MASTER'),
         string(defaultValue: "stable", description: 'What brunch we are building', name: 'BUILD_BRANCH'),
         string(defaultValue: "kilpio", description: 'take cources from https://github.com/${GIT_REPO_OWNER}/fabric-starter [fabric-starter-rest]', name: 'GIT_REPO_OWNER'),
@@ -36,10 +32,10 @@ parameters (
         string(defaultValue: "1.4.4", description: 'Fabric version', name: 'FABRIC_VERSION')]
   )
 
-    environment (
-        [GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GitHubCredentials}"),
-        DOCKER_CREDENTIALS_ID = credentials("${params.DockerCredentials}")]
-    )  
+//    environment (
+//        [GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GitHubCredentials}"),
+//        DOCKER_CREDENTIALS_ID = credentials("${params.DockerCredentials}")]
+//    )  
 
     ]
     )    
