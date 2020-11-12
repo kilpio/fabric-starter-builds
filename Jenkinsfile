@@ -30,17 +30,13 @@ parameters(
         string(defaultValue: "kilpio", description: 'Owner of the docker repo to get images to buils FS', name: 'FABRIC_STARTER_REPOSITORY'),
         string(defaultValue: "master", description: 'Branch to merge into ${BUILD_BRANCH}', name: 'MASTER_BRANCH'),
         string(defaultValue: "1.4.4", description: 'Fabric version', name: 'FABRIC_VERSION')]
+        )
   )
-
-
-    
-    
 
 environment (
         GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GitHubCredentials}")
         DOCKER_CREDENTIALS_ID = credentials("${params.DockerCredentials}")]
     )  
-  )
 
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
     stage('Fabric-Starter-snapshot') {
