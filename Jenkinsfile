@@ -18,7 +18,7 @@ def C_NOTUNDERLINED="\033[24m"
 node {
   properties(
     
-        
+       [ 
 parameters(
         [booleanParam(defaultValue: true, description: 'True if merge current ${MASTER_BRANCH} into stable', name: 'MERGE_FROM_MASTER'),
         string(defaultValue: "stable", description: 'What brunch we are building', name: 'BUILD_BRANCH'),
@@ -31,6 +31,7 @@ parameters(
         string(defaultValue: "master", description: 'Branch to merge into ${BUILD_BRANCH}', name: 'MASTER_BRANCH'),
         string(defaultValue: "1.4.4", description: 'Fabric version', name: 'FABRIC_VERSION')]
         )
+       ]
   )
 
 // environment(
