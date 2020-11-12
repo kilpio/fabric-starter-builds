@@ -204,6 +204,7 @@ node {
     } //Fabric-Starter-Packages-snapshot
 }//node
 
+} //pipeline
 //! ===================================================================================
 
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master', def clean = true) {
@@ -432,5 +433,4 @@ def printMagenta(message) {
     ansiColor('xterm') {
         echo "\033[1;32m${message}\033[0m"
     }
-}
 }
