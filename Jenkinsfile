@@ -220,6 +220,7 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master', def cle
     if (clean) {
         extensions.push([$class: 'WipeWorkspace']) //CleanBeforeCheckout
     }
+    GITHUB_SSH_CREDENTIALS_ID = credentials("${params.GITHUB_SSH_CREDENTIALS_ID}")
     checkout([$class                           : 'GitSCM', branches: [ [name: "*/${MASTER_BRANCH}"], [name: "*/${branch}"]],
             doGenerateSubmoduleConfigurations: false, submoduleCfg: [],
             userRemoteConfigs                : [[credentialsId: "${GITHUB_SSH_CREDENTIALS_ID}", url: "git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"]],
