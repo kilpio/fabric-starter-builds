@@ -51,7 +51,8 @@ node {
                 echo "Merge current branch and update tags from latest to stable"
                 echo "Modify .env files according to new tag, modify current yamls -> current snapshot"
                 echo "Commit modifications"
-                sh "git config --global --list"
+                //sh "git config --global --list"
+                sh "git config --list"
                 echo "______________________________________________________"
                 echo C_CYAN                                                                                                                                                                                         
                 dir('fabric-starter') {
