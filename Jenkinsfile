@@ -39,6 +39,8 @@ node {
                 echo C_MAGENTA
                 echo "Master Branch is: ${MASTER_BRANCH}"
                 dir('fabric-starter') {
+                   sh "git config user.email ${GIT_REPO_OWNER}@jenkins" 
+                   sh "git config user.name  ${GIT_REPO_OWNER}"
                    updateAndCommitBranch(MASTER_BRANCH,'latest','stable')
                 }
                 echo C_NORMAL
