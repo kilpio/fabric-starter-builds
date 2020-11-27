@@ -1,0 +1,72 @@
+ openssl && cd openssl
+   37  openssl genrsa -out ca.key 2048
+   38  openssl req -x509 -new -nodes      -key ca.key -sha256      -days 1825 -out ca.crt
+   39  openssl genrsa -out server.key 2048
+   40  cd ..
+   41  rf -rf ./openssl/
+   42  rm -rf ./openssl/
+   43  mkdir openssl
+   44  openssl req -new > new.ssl.csr
+   45  openssl rsa -in privkey.pem -out new.cert.key
+   46  openssl x509 -in new.ssl.csr -out new.cert.cert -req -signkey new.cert.key -days 3650
+   47  openssl pkcs12 -export -out jenkins_keystore.p12 -passout 'pass:password'      -inkey new.cert.key -in new.cert.cert -name jenkinsci.com
+   48  keytool -importkeystore -srckeystore jenkins_keystore.p12      -srcstorepass 'password' -srcstoretype PKCS12      -srcalias jenkinsci.com -deststoretype JKS      -destkeystore jenkins_keystore.jks -deststorepass 'password'      -destalias jenkinsci.com
+   49  cd /var/lib/jenkins
+   50  sl
+   51  ls
+   52  ls -la
+   53  cd /
+   54  ls -la
+   55  cd/var
+   56  cd /var
+   57  cd /lib
+   58  ls -al
+   59  env
+   60  cd $JENKINS_HOME
+   61  ls -al
+   62  cd ~
+   63  mmkdir keystore
+   64  mkdir keystore
+   65  cp ~/jenkins_keystore.jks ~/keystore/
+   66   chown -R jenkins.jenkins keystore/
+   67  chmod 700 keystore/
+   68  chmod 600 keystore/jenkins_keystore.jks 
+
+
+
+не надо docker exec -u 0 -it jgit_jenkins_1 bash
+
+
+
+
+cd tmp
+mkdir openssl && cd openssl
+export MYPASS=$(openssl rand -base64 16)
+openssl genrsa -out ca.key 2048
+
+
+cat >> openssl.cnf <<EOF
+
+ [ req ]
+ prompt = no
+ distinguished_name = req_distinguished_name
+ 
+ [ req_distinguished_name ]
+ C = RU
+ ST = State
+ L = Locality
+ O = Org
+ OU = Org Unit
+ CN = Common Name
+ emailAddress = test@email.com
+EOF
+
+openssl req -config /var/jenkins_home/openssl.cnf -new -passout env:MYPASS -newkey rsa:2048 > new.ssl.csr
+openssl rsa -passin env:MYPASS -in new.ssl.csr -out new.cert.key
+openssl x509 -in new.ssl.csr -out new.cert.cert -req -signkey new.cert.key -days 3650
+openssl pkcs12 -export -out jenkins_keystore.p12 -passout 'pass:MYPASS' -inkey new.cert.key -in new.cert.cert -name jenkinsci.com
+keytool -importkeystore -srckeystore jenkins_keystore.p12  -srcstorepass MYPASS -srcstoretype PKCS12 -srcalias jenkinsci.com -deststoretype JKS -destkeystore jenkins_keystore.jks -deststorepass $MYPASS
+
+cd /var/jenkins_home
+chown jenkins:jenkins keystore
+chown jenkins:jenkins keystore/jenkins_keystore.jks         

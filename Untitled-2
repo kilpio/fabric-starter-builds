@@ -1,0 +1,24 @@
+  {
+      "id": "thermostat_kitchen/Active",
+      "name": "Столовая",
+      "extra": {},
+      "type": "switch"
+    },
+    {
+      "id": "thermostat_kitchen/setPointDay",
+      "name": "_Днем",
+      "extra": {},
+      "type": "range"
+    },
+    {
+      "id": "thermostat_kitchen/setPointNight",
+      "name": "_Ночью",
+      "extra": {},
+      "type": "range"
+    },
+    {
+      "id": "thermostat_kitchen/currentTemperature",
+      "name": "_Сейчас",
+      "extra": {},
+      "type": "value"
+    }
