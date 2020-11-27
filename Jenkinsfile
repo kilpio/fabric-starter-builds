@@ -231,7 +231,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     echo imageName
     echo tag
     echo branchToBuildImageFrom
-
+    sh "id"
     sh "docker image ls"
     echo C_NOTUNDERLINED
 
