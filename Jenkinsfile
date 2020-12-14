@@ -275,7 +275,7 @@ void commitBranch(branchName) {
 }
 
 private void gitPushToBranch(branchName) {
-        sshagent(credentials: ["${GITHUB_SSH_CREDENTIALS_ID}"]) {
+        sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         sh "git config user.name ${GIT_REPO_OWNER}"
         sh "git checkout ${branchName}"
         sh("git push -u origin ${branchName}")
