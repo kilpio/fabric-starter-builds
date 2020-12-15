@@ -151,7 +151,7 @@ node {
             stage('Fabic-Starter-REST-git-push-snapshot') {
                 echo C_BLUE
                 dir('fabric-starter-rest') {
-                        gitPushToBranch(newFabricStarterTag)
+                        gitPushToBranch(newFabricStarterTag,'fabric-starter-rest')
                 }
                 echo C_NORMAL
             }
@@ -160,7 +160,7 @@ node {
             stage('Fabic-Starter-REST-git-push-stable') {
                 echo C_GREEN
                 dir('fabric-starter-rest') {
-                    gitPushToBranch('stable')
+                    gitPushToBranch('stable','fabric-starter-rest')
                 }   
                 echo C_NORMAL
             }
@@ -169,7 +169,7 @@ node {
             stage ('Fabic-Starter-git-push-snapshot') {
                 echo C_MAGENTA
                 dir('fabric-starter') {
-                    gitPushToBranch(newFabricStarterTag)
+                    gitPushToBranch(newFabricStarterTag,'fabric-starter')
                 }
                 echo C_NORMAL
             }
@@ -178,7 +178,7 @@ node {
             stage ('Fabic-Starter-git-push-stable') {
                 echo C_BLUE
                 dir('fabric-starter') {
-                gitPushToBranch('stable')
+                gitPushToBranch('stable','fabric-starter')
                 }
                 echo C_NORMAL
             }    
@@ -278,6 +278,7 @@ private void gitPushToBranch(branchName) {
         echo GITHUB_SSH_CREDENTIALS_ID
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         sh "git config user.name ${GIT_REPO_OWNER}"
+        sh "git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git"
         sh "git checkout ${branchName}"
         sh("git push -u origin ${branchName}")
     }
