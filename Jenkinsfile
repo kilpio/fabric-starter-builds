@@ -257,7 +257,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 }
 
 
-private void pushDockerImage(imageName, tag) {
+void pushDockerImage(imageName, tag) {
 
     docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
 
@@ -274,7 +274,7 @@ void commitBranch(branchName) {
                 sh "git commit -m '${branchName}' || true"
 }
 
-private void gitPushToBranch(branchName) {
+void gitPushToBranch(branchName) {
         echo GITHUB_SSH_CREDENTIALS_ID
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         sh "git config user.name ${GIT_REPO_OWNER}"
