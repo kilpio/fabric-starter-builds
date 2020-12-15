@@ -274,7 +274,7 @@ void commitBranch(branchName) {
                 sh "git commit -m '${branchName}' || true"
 }
 
-void gitPushToBranch(branchName) {
+void gitPushToBranch(branchName,repoName) {
         echo GITHUB_SSH_CREDENTIALS_ID
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         sh "git config user.name ${GIT_REPO_OWNER}"
