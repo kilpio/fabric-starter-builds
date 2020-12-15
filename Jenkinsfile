@@ -67,9 +67,9 @@ node {
                 echo C_YELLOW
                 dir('fabric-starter') {
                    
-                    //buildDockerImage("fabric-tools-extended", newFabricStarterTag, newFabricStarterTag, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
-                    //buildDockerImage("fabric-tools-extended", 'stable', 'stable', "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
-                    //buildDockerImage("fabric-tools-extended", 'latest', MASTER_BRANCH, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
+                    buildDockerImage("fabric-tools-extended", newFabricStarterTag, newFabricStarterTag, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
+                    buildDockerImage("fabric-tools-extended", 'stable', 'stable', "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
+                    buildDockerImage("fabric-tools-extended", 'latest', MASTER_BRANCH, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
                    
                 }
                 echo C_NORMAL
@@ -113,9 +113,9 @@ node {
                 echo C_GREEN
                 dir('fabric-starter-rest') {
                   
-                    //buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                    //buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                    //buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                    buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                    buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                    buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                    
                 }
                 echo C_NORMAL
@@ -128,9 +128,9 @@ node {
             stage('Fabic-Starter-REST-push-docker-images') {
                 echo C_BLUE
                 
-                //pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-                //pushDockerImage('fabric-starter-rest', 'stable')
-                //pushDockerImage('fabric-starter-rest', 'latest')
+                pushDockerImage('fabric-starter-rest', newFabricStarterTag)
+                pushDockerImage('fabric-starter-rest', 'stable')
+                pushDockerImage('fabric-starter-rest', 'latest')
                 echo C_NORMAL
             }
 
@@ -138,9 +138,9 @@ node {
             echo C_RED
             stage('Fabic-Starter-push-docker-images') {
                 echo C_CYAN
-                //pushDockerImage("fabric-tools-extended", newFabricStarterTag)
-                //pushDockerImage("fabric-tools-extended", 'stable')
-                //pushDockerImage("fabric-tools-extended", 'latest')
+                pushDockerImage("fabric-tools-extended", newFabricStarterTag)
+                pushDockerImage("fabric-tools-extended", 'stable')
+                pushDockerImage("fabric-tools-extended", 'latest')
 
                 
                 echo C_NORMAL
