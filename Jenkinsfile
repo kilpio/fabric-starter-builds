@@ -13,6 +13,21 @@ def C_NOTUNDERLINED="\033[24m"
 // https://en.wikipedia.org/wiki/ANSI_escape_code
 
 node {
+
+    //? Cleaning workspace
+    def isWorkspaceNotOK = !(WORKSPACE?.trim())
+        if (isWorkspaceNotOK) {
+            echo "Failure: WORKSPACE variable is undefined!"
+            currentBuild.result = 'FAILURE'
+            return
+        } else {
+            echo "Cleaning workspace: ${WORKSPACE}"
+            dir(WORKSPACE) {
+            deleteDir()
+            }
+        }
+
+
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
     stage('Fabric-Starter-snapshot') {
         ansiColor('xterm') {
@@ -189,20 +204,40 @@ node {
 
 //! ===================================================================================
 
-def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master', def clean = true) {
-    def extensions = [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${repositoryName}"],
-                    [$class: 'UserIdentity', name: "${GIT_REPO_OWNER}"],
-                    [$class: 'ScmName', name: "${GIT_REPO_OWNER}"]
-    ]
-    if (clean) {
-        extensions.push([$class: 'WipeWorkspace']) //CleanBeforeCheckout
-    }
-    checkout([$class                           : 'GitSCM', branches: [ [name: "*/${MASTER_BRANCH}"], [name: "*/${branch}"]],
-            doGenerateSubmoduleConfigurations: false, submoduleCfg: [],
-//            userRemoteConfigs                : [[credentialsId: "${GITHUB_SSH_CREDENTIALS_ID}", url: "git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"]],
-            userRemoteConfigs                : [[credentialsId: "${GITHUB_SSH_CREDENTIALS_ID}", url: "https://github.com/${GIT_REPO_OWNER}/${repositoryName}"]],
-            extensions                       : extensions
-    ])
+// def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master', def clean = true) {
+//     def extensions = [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${repositoryName}"],
+//                     [$class: 'UserIdentity', name: "${GIT_REPO_OWNER}"],
+//                     [$class: 'ScmName', name: "${GIT_REPO_OWNER}"]
+//     ]
+//     if (clean) {
+//         extensions.push([$class: 'WipeWorkspace']) //CleanBeforeCheckout
+//     }
+//     checkout([$class                           : 'GitSCM', branches: [ [name: "*/${MASTER_BRANCH}"], [name: "*/${branch}"]],
+//             doGenerateSubmoduleConfigurations: false, submoduleCfg: [],
+// //            userRemoteConfigs                : [[credentialsId: "${GITHUB_SSH_CREDENTIALS_ID}", url: "git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"]],
+//             userRemoteConfigs                : [[credentialsId: "${GITHUB_SSH_CREDENTIALS_ID}", url: "https://github.com/${GIT_REPO_OWNER}/${repositoryName}"]],
+//             extensions                       : extensions
+//     ])
+// }
+
+def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master'){
+    sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
+            sh "pwd"
+            sh "ls -la"
+            sh "git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
+            // dir(repositoryName) {
+            // sh "pwd"
+            // sh "ls -la"
+            // sh "git fetch --tags --progress -- git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git +refs/heads/*:refs/remotes/origin/*"
+            // sh "pwd"
+            // sh "git status"
+            // sh "git remote"
+            // sh "git checkout ${branch}"
+            // sh "git status"
+            // sh "git pull"
+            // }
+    }       
+
 }
 
 
