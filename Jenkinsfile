@@ -356,8 +356,10 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
 
 void checkoutAndThenPullIfRemoteExists(toBranchName) {
     if (remoteBranchExists(toBranchName)) {
-        sh "git checkout ${toBranchName}"
-        sh "git pull"
+        sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
+            sh "git checkout ${toBranchName}"
+            sh "git pull"
+        }
     } else {
         sh "git checkout -B ${toBranchName}"    
     }
