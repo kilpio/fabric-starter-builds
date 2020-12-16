@@ -38,8 +38,8 @@ node {
                 echo C_BLUE
                 checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                 dir('fabric-starter') {
-                    sh "git checkout ${MASTER_BRANCH}"
-                    sh "git pull"
+                    // sh "git checkout ${MASTER_BRANCH}"
+                    // sh "git pull"
                     newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
                 }
                 echo C_NORMAL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
@@ -95,10 +95,10 @@ node {
                 echo "Pull fabric-starter-rest and checkout to the master branch"
                 echo C_CYAN
                 checkoutFromGithubToSubfolder('fabric-starter-rest')
-                dir('fabric-starter-rest') {
-                    sh "git checkout ${MASTER_BRANCH}"
-                    sh "git pull"
-                }    
+                // dir('fabric-starter-rest') {
+                //     sh "git checkout ${MASTER_BRANCH}"
+                //     sh "git pull"
+                // }    
                 echo C_NORMAL
             }
 
@@ -225,6 +225,10 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master'){
             sh "pwd"
             sh "ls -la"
             sh "git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
+            dir(repositoryName) {
+                    sh "git checkout ${MASTER_BRANCH}"
+                    sh "git pull"
+                }
             // dir(repositoryName) {
             // sh "pwd"
             // sh "ls -la"
