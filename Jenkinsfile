@@ -274,8 +274,8 @@ void gitPushToBranch(branchName, repoName) {
         sh("git push -u origin ${branchName}")
     }
 }
-// master:      latest   ->   stable
-// stable:      stable   ->   snapshot
+                            // master:      latest   ->   stable
+                            // stable:      stable   ->   snapshot
 void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
     echo "Now merging from ${fromBranchName}"
     checkoutAndThenPullIfRemoteExists(toBranchName)
@@ -284,7 +284,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
         sh "git checkout ${fromBranchName} -- ."
 
         sh "git checkout ${MASTER_BRANCH} -- .env"
-        envAppendVersionVars(toBranchName, FABRIC_VERSION)
+        envAppendVersionVars(toBranchName,FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
     }
 
@@ -365,11 +365,9 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     sh "git add ${fileToProcess}"
 }
 
-
 def remoteBranchExists(branchName) {
     def checkRemoteBranch = sh(script: "git branch --list -r origin/${branchName} | wc -l", returnStdout: true).toString().trim()
     def whetherExists = checkRemoteBranch.isInteger() ? checkRemoteBranch.toInteger() : 0
-    //if (whetherExists > 0) {return true} else {return false}
     return (whetherExists > 0)
 }
 
