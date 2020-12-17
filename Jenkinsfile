@@ -25,7 +25,6 @@ node {
             deleteDir()
             sh 'ls -ld $(find .)'
         }
-            
         }
 
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
@@ -130,7 +129,7 @@ node {
                     buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                     buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                     buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                      }
+                }
                 echo CNORMAL
             }
 
@@ -199,7 +198,7 @@ node {
 //! ===================================================================================
 
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
-    echo "If login fails here with right credentials, please add github.com to known hosts for jenkins user"
+    echo 'If login fails here with right credentials, please add github.com to known hosts for jenkins user'
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
             sh 'pwd'
             sh 'ls -la'
@@ -258,11 +257,19 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     echo CNOTUNDERLINED
 }
 
+// void pushDockerImage(imageName, tag) {
+//     docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
+//         fabricRestImage = docker.image("${DOCKER_REPO}/${imageName}:${tag}")
+//         fabricRestImage.push()
+//     }
+// }
+
 void pushDockerImage(imageName, tag) {
-    docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
-        fabricRestImage = docker.image("${DOCKER_REPO}/${imageName}:${tag}")
-        fabricRestImage.push()
-    }
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '${DOCKER_CREDENTIALS_ID}',
+usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+        sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
+        sh "docker push ${DOCKER_REPO}/${imageName}:${tag}"
+}
 }
 
 void commitBranch(branchName) {
@@ -279,8 +286,8 @@ void gitPushToBranch(branchName, repoName) {
         sh("git push -u origin ${branchName}")
     }
 }
-                            // master:      latest   ->   stable
-                            // stable:      stable   ->   snapshot
+// master:      latest   ->   stable
+// stable:      stable   ->   snapshot
 void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
     echo "Now merging from ${fromBranchName}"
     checkoutAndThenPullIfRemoteExists(toBranchName)
@@ -289,7 +296,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
         sh "git checkout ${fromBranchName} -- ."
 
         sh "git checkout ${MASTER_BRANCH} -- .env"
-        envAppendVersionVars(toBranchName,FABRIC_VERSION)
+        envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
     }
 
