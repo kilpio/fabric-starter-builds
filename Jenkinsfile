@@ -23,8 +23,9 @@ node {
         echo "Cleaning workspace: ${WORKSPACE}"
         dir(WORKSPACE) {
             deleteDir()
+            sh "ls -ld $(find .)"
         }
-            sh "tree ${WORKSPACE}"
+            
         }
 
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
