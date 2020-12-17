@@ -24,6 +24,7 @@ node {
         dir(WORKSPACE) {
             deleteDir()
         }
+            sh "tree ${WORKSPACE}
         }
 
     //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
