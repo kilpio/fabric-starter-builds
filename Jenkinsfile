@@ -195,6 +195,7 @@ node {
 //! ===================================================================================
 
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
+    echo "If login fails here with right credentials, please add github.com to known hosts for jenkins user"
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
             sh 'pwd'
             sh 'ls -la'
