@@ -23,7 +23,7 @@ node {
         echo "Cleaning workspace: ${WORKSPACE}"
         dir(WORKSPACE) {
             deleteDir()
-            sh "ls -ld $(find .)"
+            sh 'ls -ld $(find .)'
         }
             
         }
