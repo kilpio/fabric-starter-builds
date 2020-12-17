@@ -105,6 +105,8 @@ node {
             stage('Farbric-starter-REST-merge-master-to-stable') {
                 echo CBLUE
                     dir('fabric-starter-rest') {
+                        sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
+                        sh "git config user.name  ${GIT_REPO_OWNER}"
                         updateAndCommitRESTBranch(MASTER_BRANCH, 'latest', 'stable')
                     }
                 echo CNORMAL
