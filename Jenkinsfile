@@ -269,7 +269,7 @@ void pushDockerImage(imageName, tag) {
 usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
         sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
         }
-        sh "docker push ${DOCKER_REPO}/${imageName}:${tag}"
+        sh "docker push ${$USERNAME}/${imageName}:${tag}"
 }
 
 void commitBranch(branchName) {
