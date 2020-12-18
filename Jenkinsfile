@@ -125,6 +125,7 @@ node {
             stage('Fabic-Starter-REST-build-docker-images') {
                 echo 'Build snapshot, stable and latest fabric-starter-rest images'
                 echo CGREEN
+
                 dir('fabric-starter-rest') {
                     buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                     buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
@@ -257,13 +258,6 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     echo CNOTUNDERLINED
 }
 
-// void pushDockerImage(imageName, tag) {
-//     docker.withRegistry("${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
-//         fabricRestImage = docker.image("${DOCKER_REPO}/${imageName}:${tag}")
-//         fabricRestImage.push()
-//     }
-// }
-
 void pushDockerImage(imageName, tag) {
     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '${DOCKER_CREDENTIALS_ID}',
 usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
@@ -286,15 +280,14 @@ void gitPushToBranch(branchName, repoName) {
         sh("git push -u origin ${branchName}")
     }
 }
-// master:      latest   ->   stable
-// stable:      stable   ->   snapshot
+                        // master:      latest   ->   stable
+                        // stable:      stable   ->   snapshot
 void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
     echo "Now merging from ${fromBranchName}"
     checkoutAndThenPullIfRemoteExists(toBranchName)
     if (MERGE_FROM_MASTER == 'true') {
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
-
         sh "git checkout ${MASTER_BRANCH} -- .env"
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
@@ -381,30 +374,4 @@ def remoteBranchExists(branchName) {
     def checkRemoteBranch = sh(script: "git branch --list -r origin/${branchName} | wc -l", returnStdout: true).toString().trim()
     def whetherExists = checkRemoteBranch.isInteger() ? checkRemoteBranch.toInteger() : 0
     return (whetherExists > 0)
-}
-
-//! ===================================================================================================================
-
-def printRed(message) {
-    ansiColor('xterm') {
-        echo "\033[1;31m${message}\033[0m"
-    }
-}
-
-def printGreen(message) {
-    ansiColor('xterm') {
-        echo "\033[1;32m${message}\033[0m"
-    }
-}
-
-def printBlue(message) {
-    ansiColor('xterm') {
-        echo "\033[1;34m${message}\033[0m"
-    }
-}
-
-def printMagenta(message) {
-    ansiColor('xterm') {
-        echo "\033[1;32m${message}\033[0m"
-    }
 }
