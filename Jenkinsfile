@@ -199,7 +199,7 @@ node {
 //! ===================================================================================
 
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
-    echo 'If login fails here with right credentials, please add github.com to known hosts for jenkins user'
+    echo 'If login fails here with right credentials, please add github.com to known hosts for jenkins user (ssh-keyscan -H github.com >> .ssh/known_hosts)'
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
             sh 'pwd'
             sh 'ls -la'
@@ -360,7 +360,7 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
 
     fileContent = fileContent.replace('FABRIC_VERSION=' + "${replaceTag}", 'FABRIC_VERSION=' + "${fabricVersion}")
     fileContent = fileContent.replace('FABRIC_STARTER_VERSION=' + "${replaceTag}", 'FABRIC_STARTER_VERSION=' + "${currentBranch}")
-
+    
     fileContent = fileContent.replaceAll("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}", "{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
 
     writeFile file: fileToProcess, text: fileContent
