@@ -261,8 +261,10 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 void pushDockerImage(imageName, tag) {
     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '${DOCKER_CREDENTIALS_ID}',
 usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+        sh "docker logout"
         sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
         sh "docker push ${USERNAME}/${imageName}:${tag}"
+        sh "docker logout"
     }
 }
 
