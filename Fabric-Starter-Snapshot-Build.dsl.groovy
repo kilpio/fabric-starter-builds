@@ -1,4 +1,4 @@
-pipelineJob("Fabric-Starter-Snapshot-Build") {
+pipelineJob("Fabric-Starter-Snapshot-Build-Test") {
     description()
     keepDependencies(false)
     parameters {
