@@ -266,7 +266,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 }
 
 void tagDockerImage(imageName, tag, newTag) {
-    sh docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}
+    sh "docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}"
 }
 
 void pushDockerImage(imageName, tag) {
