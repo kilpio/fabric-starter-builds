@@ -80,9 +80,12 @@ node {
                 echo 'Build fabric-tools-extended images for latest, stable and snapshot'
                 echo CYELLOW
                 dir('fabric-starter') {
-                    buildDockerImage('fabric-tools-extended', newFabricStarterTag, newFabricStarterTag, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
-                    buildDockerImage('fabric-tools-extended', 'stable', 'stable', "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
+                    //buildDockerImage('fabric-tools-extended', newFabricStarterTag, newFabricStarterTag, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
+                    //buildDockerImage('fabric-tools-extended', 'stable', 'stable', "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
                     buildDockerImage('fabric-tools-extended', 'latest', MASTER_BRANCH, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
+
+                    tagDockerImage('fabric-tools-extended','latest','stable')
+                    tagDockerImage('fabric-tools-extended','latest','newFabricStarterTag')
                 }
                 echo CNORMAL
             }
@@ -128,10 +131,14 @@ node {
 
                 dir('fabric-starter-rest') {
                     buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                    buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                    buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+
+                    tagDockerImage('fabric-starter-rest','latest','stable')
+                    tagDockerImage('fabric-starter-rest','latest','newFabricStarterTag')
+                    //buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                    //buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+
                 }
-                echo CNORMAL
+                echo CNORMAL 
             }
 
 //? ==================================================== DOCKER ================================================
@@ -256,6 +263,10 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     echo branchToBuildImageFrom
 
     echo CNOTUNDERLINED
+}
+
+void tagDockerImage(imageName, tag, newTag) {
+    sh docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}
 }
 
 void pushDockerImage(imageName, tag) {
