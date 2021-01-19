@@ -85,7 +85,7 @@ node {
                     buildDockerImage('fabric-tools-extended', 'latest', MASTER_BRANCH, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
 
                     tagDockerImage('fabric-tools-extended','latest','stable')
-                    tagDockerImage('fabric-tools-extended','latest','newFabricStarterTag')
+                    tagDockerImage('fabric-tools-extended','latest',newFabricStarterTag)
                 }
                 echo CNORMAL
             }
@@ -133,7 +133,7 @@ node {
                     buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
 
                     tagDockerImage('fabric-starter-rest','latest','stable')
-                    tagDockerImage('fabric-starter-rest','latest','newFabricStarterTag')
+                    tagDockerImage('fabric-starter-rest','latest',newFabricStarterTag)
                     //buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                     //buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
 
