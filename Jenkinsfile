@@ -15,9 +15,9 @@ CNORMAL = '\033[0m'
 node {
 
     echo "Runnning build ${BUILD_NUMBER} of ${JOB_NAME}"
-    def previousJobNo=(BUILD_NUMBER - 1)
+    def previousJobNo=toInteger(BUILD_NUMBER) - 1
     echo "Previous Job No:"
-    echo previousJobNo
+    echo "{previousJobNo}"
     //? Cleaning workspace
     def isWorkspaceNotOK = !(WORKSPACE?.trim())
         if (isWorkspaceNotOK) {
@@ -50,7 +50,7 @@ node {
             }
 
             echo CRED
-            stage ('Fabric-Starter-Merge-master-to-stable') {
+            stage ('Fabric-Starter-Merge-master-to-stable') {BUILD_NUMBER
                 echo 'Merge current branch and update tags from latest to stable'
                 echo 'Modify .env files according to new tag, modify current yamls -> stable'
                 echo 'Commit modifications'
