@@ -17,8 +17,8 @@ node {
     echo "Runnning build ${BUILD_NUMBER} of ${JOB_NAME}"
     int previousJobNo=BUILD_NUMBER as Integer
     previousJobNo-=1
-        echo previousJobNo
-        
+        echo previousJobNo.toString()
+
     //? Cleaning workspace
     def isWorkspaceNotOK = !(WORKSPACE?.trim())
         if (isWorkspaceNotOK) {
