@@ -18,7 +18,10 @@ node {
     int previousJobNo=BUILD_NUMBER as Integer
     previousJobNo-=1
     previousBuildNumber=previousJobNo.toString()
+    echo CRED
     echo "Purging results of build ${previousBuildNumber} of ${JOB_NAME}"
+    sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${previousBuildNumber}\""
+    echo CNORMAL
 
     //? Cleaning workspace
     def isWorkspaceNotOK = !(WORKSPACE?.trim())
