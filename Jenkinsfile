@@ -14,7 +14,7 @@ CNORMAL = '\033[0m'
 
 node {
 
-    echo "Runnning build ${BUILD_NUMBER}"
+    echo "Runnning build ${BUILD_NUMBER} of ${JOB_NAME}"
     //? Cleaning workspace
     def isWorkspaceNotOK = !(WORKSPACE?.trim())
         if (isWorkspaceNotOK) {
