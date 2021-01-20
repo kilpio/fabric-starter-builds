@@ -13,6 +13,8 @@ CNORMAL = '\033[0m'
 // https://en.wikipedia.org/wiki/ANSI_escape_code
 
 node {
+
+    echo "Runnning build ${BUILD_NUMBER}"
     //? Cleaning workspace
     def isWorkspaceNotOK = !(WORKSPACE?.trim())
         if (isWorkspaceNotOK) {
