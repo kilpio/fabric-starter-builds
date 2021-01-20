@@ -252,7 +252,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
         args = '-f Dockerfile .'
     }
 
-    args = "-t ${DOCKER_REPO}/${imageName}:${tag} ${args}"
+    args = "-t ${DOCKER_REPO}/${imageName}:${tag} --label \"jenkins_job_build=${BUILD_NUMBER}\" ${args}"
     echo "docker build args: $args"
 
     sh "docker image build ${args}"
