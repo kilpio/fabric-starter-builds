@@ -15,7 +15,7 @@ CNORMAL = '\033[0m'
 node {
 
     echo "Runnning build ${BUILD_NUMBER} of ${JOB_NAME}"
-    def previousJobNo=toInteger(BUILD_NUMBER) - 1
+    def previousJobNo=BUILD_NUMBER.toInteger() - 1
     echo "Previous Job No:"
     echo "{previousJobNo}"
     //? Cleaning workspace
