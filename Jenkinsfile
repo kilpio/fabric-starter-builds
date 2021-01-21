@@ -168,13 +168,13 @@ node {
             echo CNORMAL
             echo CFRAMED
 
-            echo "Start stable branch test in workspace ${WORKSPACE}"
-
-            sh "git status"
-            sh "pwd"
-
+            echo "Start stable branch test in workspace ${WORKSPACE}/fabric-starter"
+            dir("$WORKSPACE/fabric-starter"){
+                sh "git status"
+                sh "pwd"
+            }
             echo CNOTFRAMED
-                echo CNORMAL
+            echo CNORMAL
             }
 
 //? ========================================== DOCKER PUSH==============================================
