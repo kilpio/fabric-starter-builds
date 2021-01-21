@@ -168,7 +168,7 @@ node {
             echo CNORMAL
             echo CFRAMED
 
-            echo "Start stable branch test"
+            echo "Start stable branch test in workspace ${WORKSPACE}"
 
             sh "git status"
             sh "pwd"
