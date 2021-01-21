@@ -94,7 +94,12 @@ node {
                 dir('fabric-starter') {
                     //buildDockerImage('fabric-tools-extended', newFabricStarterTag, newFabricStarterTag, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
                     //buildDockerImage('fabric-tools-extended', 'stable', 'stable', "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
-                    buildDockerImage('fabric-tools-extended', 'latest', MASTER_BRANCH, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
+                    buildDockerImage(
+                                        'fabric-tools-extended', 
+                                        'latest',
+                                        MASTER_BRANCH,
+                                        "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile ."
+                                    )
 
                     tagDockerImage('fabric-tools-extended','latest','stable')
                     tagDockerImage('fabric-tools-extended','latest',newFabricStarterTag)
