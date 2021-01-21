@@ -163,9 +163,19 @@ node {
                 echo CNORMAL
                 }
 //? ==========================================RUN TESTS BEFORE PUSHING IMAGES ==========================
+            echo CRED
+            stage('Test-Stable-Branch') {
+            echo CNORMAL
+            echo CFRAMED
 
+            echo "Start stable branch test"
 
+            sh "git status"
+            sh "pwd"
 
+            echo CNOTFRAMED
+                echo CNORMAL
+            }
 
 //? ========================================== DOCKER PUSH==============================================
 
