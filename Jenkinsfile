@@ -171,6 +171,7 @@ node {
             echo "Start stable branch test in workspace ${WORKSPACE}/fabric-starter"
             dir("$WORKSPACE/fabric-starter/test"){
                 sh "git status"
+                sh "git checkout stable"
                 sh "pwd"
                 sh "source ./local-test-env.sh example.com; ./scenarios/01-fabric-starter-acceptance-test/create-test-network.sh org1 org2; ./scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2; DEBUG=true ./scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2"
 
