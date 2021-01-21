@@ -1,3 +1,4 @@
+/* groovylint-disable LineLength */
 CRED = '\033[1;31m'
 CGREEN = '\033[1;32m'
 CYELLOW = '\033[1;33m'
@@ -14,12 +15,13 @@ CNORMAL = '\033[0m'
 
 node {
 
+    //? Delete images from previous build
     echo "Runnning build ${BUILD_NUMBER} of ${JOB_NAME}"
     int previousJobNo=BUILD_NUMBER as Integer
     previousJobNo-=1
     previousBuildNumber=previousJobNo.toString()
     echo CRED
-    echo "Purging results of build ${previousBuildNumber} of ${JOB_NAME}"
+    echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
     sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${previousBuildNumber}\""
     echo CNORMAL
 
@@ -37,7 +39,7 @@ node {
         }
         }
 
-    //? ========================================= FABRIC-STARTER FABRIC-TOOLS-EXTENDED ==========================
+    //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
     stage('Fabric-Starter-snapshot') {
         ansiColor('xterm') {
             def newFabricStarterTag
@@ -99,7 +101,7 @@ node {
                 }
                 echo CNORMAL
             }
-            //? ================================================ FABRIC-STARTER-REST ============================================
+            //? ======================================== BUILDING FABRIC-STARTER-REST IMAGES =========================
             echo CRED
             stage('Farbric-starter-REST-checkout') {
                 echo 'Pull fabric-starter-rest and checkout to the master branch'
@@ -140,7 +142,12 @@ node {
                 echo CGREEN
 
                 dir('fabric-starter-rest') {
-                    buildDockerImage('fabric-starter-rest', 'latest', MASTER_BRANCH, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                    buildDockerImage(
+                                        'fabric-starter-rest',
+                                        'latest',
+                                        MASTER_BRANCH,
+                                        "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile ."
+                                     )
 
                     tagDockerImage('fabric-starter-rest','latest','stable')
                     tagDockerImage('fabric-starter-rest','latest',newFabricStarterTag)
@@ -148,10 +155,10 @@ node {
                     //buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
 
                 }
-                echo CNORMAL 
-            }
+                echo CNORMAL
+                }
 
-//? ==================================================== DOCKER ================================================
+//? ========================================== DOCKER PUSH==============================================
 
             echo CRED
             stage('Fabic-Starter-REST-push-docker-images') {
@@ -173,7 +180,7 @@ node {
                 echo CNORMAL
             }
 
-            //? ========================================================= GIT =================================================
+            //? ==================================== GIT PUSH==========================================
             echo CRED
             stage('Fabic-Starter-REST-git-push-snapshot') {
                 echo CBLUE
@@ -213,7 +220,7 @@ node {
     } //Fabric-Starter-Packages-snapshot
 }//node
 
-//! ===================================================================================
+//! ======================================== FUNCTIONS ===========================================
 
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
     echo 'If login fails here with right credentials, please add github.com to known hosts for jenkins user (ssh-keyscan -H github.com >> .ssh/known_hosts)'
