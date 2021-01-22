@@ -176,14 +176,17 @@ node {
                 sh "docker run -v test_volume:/root alpine ls /root/fabric-starter/"
                 sh "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
 
-            //    sh "docker run kilpio/ubuntu_dockerized ls"
+                sh "docker run -rm --name ubuntu_dockerized -v test_volume:/root -v /var/run/docker.sock:/var/run/docker.sock kilpio/ubuntu_dockerized tail -f /dev/null"
                 
 
+                sh "docker run ubuntu_dockerized ps"
+                sh "docker run ubuntu_dockerized ls"
+                sh "docker run ubuntu_dockerized pwd"
+                sh "docker run ubuntu_dockerized id"
 
 
 
-
-                sh "pwd; source \$(pwd)/local-test-env.sh example.com; ./scenarios/01-fabric-starter-acceptance-test/create-test-network.sh org1 org2; ./scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2; DEBUG=true ./scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2"
+                //sh "pwd; source \$(pwd)/local-test-env.sh example.com; ./scenarios/01-fabric-starter-acceptance-test/create-test-network.sh org1 org2; ./scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2; DEBUG=true ./scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2"
 
             }
             echo CNOTFRAMED
