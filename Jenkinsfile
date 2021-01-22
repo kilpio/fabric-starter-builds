@@ -187,7 +187,7 @@ node {
                 sh "docker container exec ubuntu_dockerized pwd"
                 sh "docker container exec ubuntu_dockerized id"
                 sh "docker container exec ubuntu_dockerized export TEST='test'"
-                sh "docker container exec ubuntu_dockerized echo "TEST: /${TEST}"
+                sh "docker container exec ubuntu_dockerized echo 'TEST: ' \${TEST}"
 
                 sh    "docker container stop ubuntu_dockerized || true"
                 sh    "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
