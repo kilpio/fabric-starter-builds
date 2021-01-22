@@ -170,10 +170,20 @@ node {
 
             echo "Start stable branch test in workspace ${WORKSPACE}/fabric-starter"
             dir("$WORKSPACE/fabric-starter/test"){
-                sh "docker run kilpio/ubuntu_dockerized ls"
-                sh "git status"
-                sh "git checkout stable"
-                sh "pwd"
+                sh "docker container create --name dummy -v test_volume:/root hello-world"
+                sh "docker cp $WORKSPACE/fabric-starter/ dummy:/root"
+                sh "docker rm dummy"
+                sh "docker run -v test_volume:/root alpine ls /root/fabric-starter/"
+                sh "docker rm dummy"
+                sh "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
+
+            //    sh "docker run kilpio/ubuntu_dockerized ls"
+                
+
+
+
+
+
                 sh "pwd; source \$(pwd)/local-test-env.sh example.com; ./scenarios/01-fabric-starter-acceptance-test/create-test-network.sh org1 org2; ./scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2; DEBUG=true ./scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2"
 
             }
