@@ -174,7 +174,6 @@ node {
                 sh "docker cp $WORKSPACE/fabric-starter/ dummy:/root"
                 sh "docker rm dummy"
                 sh "docker run -v test_volume:/root alpine ls /root/fabric-starter/"
-                sh "docker rm dummy"
                 sh "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
 
             //    sh "docker run kilpio/ubuntu_dockerized ls"
