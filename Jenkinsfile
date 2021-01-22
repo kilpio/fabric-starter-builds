@@ -171,26 +171,26 @@ node {
             echo "Start stable branch test in workspace ${WORKSPACE}/fabric-starter"
             dir("$WORKSPACE/fabric-starter/test"){
 
+                sh    "docker container stop ubuntu_dockerized || true"
                 sh    "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
-
                 sh '''              docker container create --name dummy -v test_volume:/root hello-world
                         docker cp $WORKSPACE/fabric-starter/ dummy:/root
                         docker rm dummy
                         docker run -v test_volume:/root alpine ls /root/fabric-starter/
                         docker image ls
-                        docker container stop ubuntu_dockerized || true
                         docker pull kilpio/ubuntu_dockerized:latest
-                        docker container ls
                         docker run -d --rm --name ubuntu_dockerized -v test_volume:/root/tests -v /var/run/docker.sock:/var/run/docker.sock kilpio/ubuntu_dockerized:latest tail -f /dev/null
-                        docker container ls
                 '''
 
                 sh "docker container exec ubuntu_dockerized ps" 
                 sh "docker container exec ubuntu_dockerized ls"
                 sh "docker container exec ubuntu_dockerized pwd"
                 sh "docker container exec ubuntu_dockerized id"
+                sh "docker container exec ubuntu_dockerized export TEST='test'"
+                sh "docker container exec ubuntu_dockerized echo "TEST: /${TEST}"
 
-                    sh    "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
+                sh    "docker container stop ubuntu_dockerized || true"
+                sh    "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
 
 
                 //sh "pwd; source \$(pwd)/local-test-env.sh example.com; ./scenarios/01-fabric-starter-acceptance-test/create-test-network.sh org1 org2; ./scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2; DEBUG=true ./scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2"
