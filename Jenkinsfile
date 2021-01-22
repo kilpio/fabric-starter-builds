@@ -178,6 +178,7 @@ node {
                         docker rm dummy
                         docker run -v test_volume:/root alpine ls /root/fabric-starter/
                         docker image ls
+                        docker container stop ubuntu_dockerized
                         docker pull kilpio/ubuntu_dockerized:latest
                         docker container ls
                         docker run -d --rm --name ubuntu_dockerized -v test_volume:/root/tests -v /var/run/docker.sock:/var/run/docker.sock kilpio/ubuntu_dockerized:latest tail -f /dev/null
