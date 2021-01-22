@@ -170,6 +170,7 @@ node {
 
             echo "Start stable branch test in workspace ${WORKSPACE}/fabric-starter"
             dir("$WORKSPACE/fabric-starter/test"){
+                sh "docker run kilpio/ubuntu_dockerized ls"
                 sh "git status"
                 sh "git checkout stable"
                 sh "pwd"
