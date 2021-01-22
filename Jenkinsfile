@@ -171,11 +171,14 @@ node {
             echo "Start stable branch test in workspace ${WORKSPACE}/fabric-starter"
             dir("$WORKSPACE/fabric-starter/test"){
 
+                sh    "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
+
                 sh '''              docker container create --name dummy -v test_volume:/root hello-world
                         docker cp $WORKSPACE/fabric-starter/ dummy:/root
                         docker rm dummy
                         docker run -v test_volume:/root alpine ls /root/fabric-starter/
-                        docker run -d --rm --name kilpio/ubuntu_dockerized -v test_volume:/root/tests -v /var/run/docker.sock:/var/run/docker.sock kilpio/ubuntu_dockerized tail -f /dev/null
+                        docker image ls
+                        docker run -d --rm --name ubuntu_dockerized -v test_volume:/root/tests -v /var/run/docker.sock:/var/run/docker.sock ubuntu_dockerized tail -f /dev/null
                 '''
 
                 sh "docker run ubuntu_dockerized ps"
