@@ -184,7 +184,7 @@ node {
                 '''
 
                 sh "docker container exec ubuntu_dockerized ps" 
-                sh "docker container exec ubuntu_dockerized ls"
+                sh "docker container exec ubuntu_dockerized ls /root"
                 sh "docker container exec ubuntu_dockerized pwd"
                 sh "docker container exec ubuntu_dockerized bash -c 'export TEST=123; echo \$TEST; ps -ef'"
                 //sh '''  docker container exec ubuntu_dockerized export TEST='test'
