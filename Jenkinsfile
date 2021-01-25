@@ -180,6 +180,7 @@ node {
                         docker image ls
                         docker pull kilpio/ubuntu_dockerized:latest
                         docker run -d --rm --name ubuntu_dockerized -v test_volume:/root/tests -v /var/run/docker.sock:/var/run/docker.sock kilpio/ubuntu_dockerized:latest tail -f /dev/null
+                        docker container exec ubuntu_dockerized ps -p \$\$
                 '''
 
                 sh "docker container exec ubuntu_dockerized ps" 
