@@ -192,7 +192,7 @@ node {
                 //'''
 
                 sh ''' echo "Running tests"
-                bash -c "cd /root/tests/; pwd; env; ls;"
+                docker container exec ubuntu_dockerized bash -c "cd /root/tests/fabric-starter; pwd; env; ls"
                 '''
 
                 sh    "docker container stop ubuntu_dockerized || true"
