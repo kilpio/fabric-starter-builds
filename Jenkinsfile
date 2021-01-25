@@ -191,6 +191,15 @@ node {
                 //        docker container exec ubuntu_dockerized echo 'TEST: ' \${TEST}
                 //'''
 
+                sh ''' echo Running tests"
+                bash -c " <<EOF
+                cd /root/tests/
+                pwd
+                env 
+                ls
+                EOF"
+                '''    
+
                 sh    "docker container stop ubuntu_dockerized || true"
                 sh    "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
 
