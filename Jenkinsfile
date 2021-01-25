@@ -152,7 +152,7 @@ node {
                                         'latest',
                                         MASTER_BRANCH,
                                         "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile ."
-                                     )
+                                    )
 
                     tagDockerImage('fabric-starter-rest','latest','stable')
                     tagDockerImage('fabric-starter-rest','latest',newFabricStarterTag)
@@ -185,7 +185,7 @@ node {
                 sh "docker container exec ubuntu_dockerized ps" 
                 sh "docker container exec ubuntu_dockerized ls"
                 sh "docker container exec ubuntu_dockerized pwd"
-                sh "docker container exec ubuntu_dockerized ps -p \$\$"
+                sh "docker container exec ubuntu_dockerized ps -p \"\$\$\""
                 //sh '''  docker container exec ubuntu_dockerized export TEST='test'
                 //        docker container exec ubuntu_dockerized echo 'TEST: ' \${TEST}
                 //'''
