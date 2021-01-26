@@ -191,7 +191,7 @@ node {
                 //        docker container exec ubuntu_dockerized echo 'TEST: ' \${TEST}
                 //'''
 
-                sh ''' echo "Running tests"
+                sh ''' echo "Running tests for \$FABRIC_VERSION"
                 docker container exec ubuntu_dockerized bash -c "cd /root/tests/fabric-starter/test; git checkout stable; FABRIC_VERSION=\$FABRIC_VERSION; export TERM=xterm; source ./local-test-env.sh example.com; echo 'creating network'; sleep 10; ./scenarios/01-fabric-starter-acceptance-test/create-test-network.sh org1 org2; ./scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2; DEBUG=true ./scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2"
                 '''
 
