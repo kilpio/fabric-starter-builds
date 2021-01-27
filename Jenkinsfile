@@ -179,10 +179,10 @@ node {
                         docker run -v test_volume:/root alpine ls /root/fabric-starter/
                         docker image ls
                         docker pull kilpio/ubuntu_sysbox_dockerized:latest
-                        docker run -d --rm --name ubuntu_sysbox_dockerized -v test_volume:/root/tests -v /var/run/docker.sock:/var/run/docker.sock kilpio/ubuntu_sysbox_dockerized:latest tail -f /dev/null
-                        
+                        docker run --runtime=sysbox-runc -it --rm -P --name=ubuntu_sysbox_dockerized -v test_volume:/root/tests kilpio/ubuntu_sysbox_dockerized:latest  tail -f /dev/null
                 '''
-
+//                        docker run -d --rm --name ubuntu_sysbox_dockerized -v test_volume:/root/tests -v /var/run/docker.sock:/var/run/docker.sock kilpio/ubuntu_sysbox_dockerized:latest tail -f /dev/null
+//
                 sh "docker container exec ubuntu_sysbox_dockerized ps" 
                 sh "docker container exec ubuntu_sysbox_dockerized ls /root"
                 sh "docker container exec ubuntu_sysbox_dockerized pwd"
