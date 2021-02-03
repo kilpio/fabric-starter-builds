@@ -185,9 +185,9 @@ node {
 //
         sh "docker container exec ubuntu_sysbox_dockerized mkdir -p  /root/tests/fabric-starter"
         sh "docker cp $WORKSPACE/fabric-starter/ ubuntu_sysbox_dockerized:/root/tests"
-                sh "docker container exec ubuntu_sysbox_dockerized service docker start; sleep 5"
+                //sh "docker container exec ubuntu_sysbox_dockerized service docker start; sleep 5"
                 sh "docker container exec ubuntu_sysbox_dockerized docker ps" 
-                sh "docker container exec ubuntu_sysbox_dockerized ls /root"
+                sh "docker container exec ubuntu_sysbox_dockerized ls /root/tests"
                 sh "docker container exec ubuntu_sysbox_dockerized pwd"
                 //sh "docker container exec ubuntu_sysbox_dockerized bash -c 'export TEST=123; echo \$TEST; ps -ef'"
                 //sh '''  docker container exec ubuntu_sysbox_dockerized export TEST='test'
