@@ -173,23 +173,23 @@ node {
             
 //                sh    "docker container stop ubuntu_sysbox_dockerized || true"
 //                sh    "docker container rm \$(docker volume rm test_volume 2>&1 | awk -F'[][]' '{print \$2}' | sed -e 's/,//g') || docker volume rm test_volume || true"
-                sh '''              docker container create --name dummy -v test_volume:/root hello-world
 //                        docker cp $WORKSPACE/fabric-starter/ dummy:/root
+//                sh '''              docker container create --name dummy -v test_volume:/root hello-world
 //                        docker rm dummy
 //                        docker run -v test_volume:/root alpine ls /root/fabric-starter/
 //                        docker image ls
 //                        docker pull kilpio/ubuntu_sysbox_dockerized:latest
 //                        docker run -d --runtime=sysbox-runc --rm --name=ubuntu_sysbox_dockerized -v test_volume:/root/tests kilpio/ubuntu_sysbox_dockerized:latest  tail -f /dev/null
-                '''
+//                '''
 //                        docker run -d --rm --name ubuntu_sysbox_dockerized -v test_volume:/root/tests -v /var/run/docker.sock:/var/run/docker.sock kilpio/ubuntu_sysbox_dockerized:latest tail -f /dev/null
 //
-		sh "docker container exec ubuntu_sysbox_dockerized mkdir -p  /root/tests/fabric-starter"
-		sh "docker cp $WORKSPACE/fabric-starter/ ubuntu_sysbox_dockerized:/root/tests/fabric-starter"
-                sh "docker container exec ubuntu_sysbox_dockerized service docker start; sleep 10"
+        sh "docker container exec ubuntu_sysbox_dockerized mkdir -p  /root/tests/fabric-starter"
+        sh "docker cp $WORKSPACE/fabric-starter/ ubuntu_sysbox_dockerized:/root/tests/fabric-starter"
+                sh "docker container exec ubuntu_sysbox_dockerized service docker start; sleep 5"
                 sh "docker container exec ubuntu_sysbox_dockerized docker ps" 
                 sh "docker container exec ubuntu_sysbox_dockerized ls /root"
                 sh "docker container exec ubuntu_sysbox_dockerized pwd"
-                sh "docker container exec ubuntu_sysbox_dockerized bash -c 'export TEST=123; echo \$TEST; ps -ef'"
+                //sh "docker container exec ubuntu_sysbox_dockerized bash -c 'export TEST=123; echo \$TEST; ps -ef'"
                 //sh '''  docker container exec ubuntu_sysbox_dockerized export TEST='test'
                 //        docker container exec ubuntu_sysbox_dockerized echo 'TEST: ' \${TEST}
                 //'''
