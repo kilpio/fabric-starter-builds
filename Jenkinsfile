@@ -184,7 +184,7 @@ node {
 //                        docker run -d --rm --name ubuntu_sysbox_dockerized -v test_volume:/root/tests -v /var/run/docker.sock:/var/run/docker.sock kilpio/ubuntu_sysbox_dockerized:latest tail -f /dev/null
 //
 		sh "docker container exec ubuntu_sysbox_dockerized mkdir -p  /root/tests/fabric-starter"
-		sh "docker cp $WORKSPACE/fabric-starter/ ubuntu_sysbox_dockerized:/root/tests/fabric-starter
+		sh "docker cp $WORKSPACE/fabric-starter/ ubuntu_sysbox_dockerized:/root/tests/fabric-starter"
                 sh "docker container exec ubuntu_sysbox_dockerized service docker start; sleep 10"
                 sh "docker container exec ubuntu_sysbox_dockerized docker ps" 
                 sh "docker container exec ubuntu_sysbox_dockerized ls /root"
