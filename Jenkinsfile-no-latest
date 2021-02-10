@@ -143,6 +143,7 @@ node {
 
             echo CRED
             stage('Fabic-Starter-REST-build-docker-images') {
+                if (!SKIP_FS_REST_BUILD){
                 echo 'Build snapshot, stable and latest fabric-starter-rest images'
                 echo CGREEN
 
@@ -159,7 +160,7 @@ node {
                     //buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                     //buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
 
-                }
+                }}
                 echo CNORMAL
                 }
 
@@ -168,20 +169,22 @@ node {
             echo CRED
             stage('Fabic-Starter-REST-push-docker-images') {
                 echo CBLUE
-
-                pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-                pushDockerImage('fabric-starter-rest', 'stable')
-                pushDockerImage('fabric-starter-rest', 'latest')
+            if (!SKIP_DOCKER_PUSH) {
+                    pushDockerImage('fabric-starter-rest', newFabricStarterTag)
+                    pushDockerImage('fabric-starter-rest', 'stable')
+                    pushDockerImage('fabric-starter-rest', 'latest')
+                }
                 echo CNORMAL
             }
 
             echo CRED
             stage('Fabic-Starter-push-docker-images') {
                 echo CCYAN
-                pushDockerImage('fabric-tools-extended', newFabricStarterTag)
-                pushDockerImage('fabric-tools-extended', 'stable')
-                pushDockerImage('fabric-tools-extended', 'latest')
-
+                if (!SKIP_DOCKER_PUSH || !SKIP_FS_REST_BUILD ) {
+                    pushDockerImage('fabric-tools-extended', newFabricStarterTag)
+                    pushDockerImage('fabric-tools-extended', 'stable')
+                    pushDockerImage('fabric-tools-extended', 'latest')
+                }
                 echo CNORMAL
             }
 
