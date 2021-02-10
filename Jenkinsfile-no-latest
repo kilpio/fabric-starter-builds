@@ -143,7 +143,7 @@ node {
 
             echo CRED
             stage('Fabic-Starter-REST-build-docker-images') {
-                if (!SKIP_FS_REST_BUILD){
+                if !(SKIP_FS_REST_BUILD == true){
                 echo 'Build snapshot, stable and latest fabric-starter-rest images'
                 echo CGREEN
 
@@ -169,7 +169,7 @@ node {
             echo CRED
             stage('Fabic-Starter-REST-push-docker-images') {
                 echo CBLUE
-            if (!SKIP_DOCKER_PUSH) {
+            if !(SKIP_DOCKER_PUSH=='true') {
                     pushDockerImage('fabric-starter-rest', newFabricStarterTag)
                     pushDockerImage('fabric-starter-rest', 'stable')
                     pushDockerImage('fabric-starter-rest', 'latest')
@@ -180,7 +180,7 @@ node {
             echo CRED
             stage('Fabic-Starter-push-docker-images') {
                 echo CCYAN
-                if (!SKIP_DOCKER_PUSH || !SKIP_FS_REST_BUILD ) {
+                if (!(SKIP_DOCKER_PUSH == 'true') || !(SKIP_FS_REST_BUILD=='true') ) {
                     pushDockerImage('fabric-tools-extended', newFabricStarterTag)
                     pushDockerImage('fabric-tools-extended', 'stable')
                     pushDockerImage('fabric-tools-extended', 'latest')
