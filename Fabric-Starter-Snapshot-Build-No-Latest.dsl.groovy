@@ -3,7 +3,7 @@ pipelineJob("Fabric-Starter-Snapshot-Build-Test-No-Latest") {
     keepDependencies(false)
     parameters {
         booleanParam("MERGE_FROM_MASTER", true, "True if merge current \${MASTER_BRANCH} into stable")
-        booleanParam("SKIP_DOCKER_PUSH, false, "True if we do not watn to push images to docker")
+        booleanParam("SKIP_DOCKER_PUSH", false, "True if we do not watn to push images to docker")
         booleanParam("SKIP_FS_REST_BUILD", false, "True if we do not want ot build and pus Fabric Starter REST")
         credentialsParam("GITHUB_SSH_CREDENTIALS_ID") {
             description("GitHub username with private key")
