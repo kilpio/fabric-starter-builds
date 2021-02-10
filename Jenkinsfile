@@ -226,6 +226,7 @@ node {
 }//node
 
 //! ======================================== FUNCTIONS ===========================================
+//?CONTAINER="ubuntu_sysbox_dockerized" network=$(docker inspect $CONTAINER -f '{{json .NetworkSettings.Networks}}' | jq -r 'keys[]'); docker inspect $CONTAINER -f "{{json .NetworkSettings.Networks.$network.IPAddress}}"|sed -e 's/"//g'
 
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
     echo 'If login fails here with right credentials, please add github.com to known hosts for jenkins user (ssh-keyscan -H github.com >> .ssh/known_hosts)'
