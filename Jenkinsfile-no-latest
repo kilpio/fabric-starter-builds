@@ -103,7 +103,7 @@ node {
                     tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,'stable')
                     tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,newFabricStarterTag)
                     tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,'latest')
-                }
+                    }
                 echo CNORMAL
             }
             //? ======================================== BUILDING FABRIC-STARTER-REST IMAGES =========================
