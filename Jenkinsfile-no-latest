@@ -169,6 +169,8 @@ node {
             echo CRED
             stage('Fabic-Starter-REST-push-docker-images') {
                 echo CBLUE
+                echo SKIP_DOCKER_PUSH
+
             if (SKIP_DOCKER_PUSH =='false') {
                     pushDockerImage('fabric-starter-rest', newFabricStarterTag)
                     pushDockerImage('fabric-starter-rest', 'stable')
@@ -180,6 +182,7 @@ node {
             echo CRED
             stage('Fabic-Starter-push-docker-images') {
                 echo CCYAN
+                echo SKIP_FS_REST_BUILD
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD =='false') ) {
                     pushDockerImage('fabric-tools-extended', newFabricStarterTag)
                     pushDockerImage('fabric-tools-extended', 'stable')
