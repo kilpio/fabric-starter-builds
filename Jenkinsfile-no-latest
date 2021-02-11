@@ -172,7 +172,6 @@ node {
                 echo SKIP_DOCKER_PUSH
 
             if (SKIP_DOCKER_PUSH =='false') {
-                    echo 
                     pushDockerImage('fabric-starter-rest', newFabricStarterTag)
                     pushDockerImage('fabric-starter-rest', 'stable')
                     pushDockerImage('fabric-starter-rest', 'latest')
