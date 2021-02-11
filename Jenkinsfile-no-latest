@@ -394,6 +394,8 @@ def updateComposeFilesWithVersions(fabricVersion, replaceTag, currentBranch) { /
     updateImagesReferencesVersion('build-fabric-tools-extended.sh', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('docker-compose-open-net.yaml', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('fabric-tools-extended/Dockerfile', fabricVersion, replaceTag, currentBranch)
+    updateImagesReferencesVersion('main_old.sh', fabricVersion, replaceTag, currentBranch)
+    updateImagesReferencesVersion('main.sh', fabricVersion, replaceTag, currentBranch)
 }
 
 def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch) {
