@@ -391,6 +391,10 @@ def updateComposeFilesWithVersions(fabricVersion, replaceTag, currentBranch) { /
     updateImagesReferencesVersion('https/docker-compose-generate-tls-certs.yaml', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('extra/docker-registry-local/start-docker-registry-local.sh', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('deploy.sh', fabricVersion, replaceTag, currentBranch)
+    updateImagesReferencesVersion('build-fabric-tools-extended.sh', fabricVersion, replaceTag, currentBranch)
+    updateImagesReferencesVersion('docker-compose-open-net.yaml', fabricVersion, replaceTag, currentBranch)
+    updateImagesReferencesVersion('fabric-tools-extended/Dockerfile', fabricVersion, replaceTag, currentBranch)
+
 }
 
 def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch) {
