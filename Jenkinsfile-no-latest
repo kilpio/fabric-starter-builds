@@ -400,9 +400,10 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     fileContent = readFile fileToProcess
 
     fileContent = fileContent.replace("\${FABRIC_VERSION:-" + "${replaceTag}" + '}', "\${FABRIC_VERSION:-" + "${fabricVersion}" + '}')
+    fileContent = fileContent.replace("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}', "\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}')
     fileContent = fileContent.replace("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}', "\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}')
 
-    fileContent = fileContent.replace("\${FABRIC_VERSION:-" + '"' + "${replaceTag}" +'"' + '}', "\${FABRIC_VERSION:-" + '"' + "${fabricVersion}" + '"' + '}')
+    fileContent = fileContent.replace("\${FABRIC_VERSION:-" + '"' + "${replaceTag}" + '"' + '}', "\${FABRIC_VERSION:-" + '"' + "${fabricVersion}" + '"' + '}')
     fileContent = fileContent.replace("\${FABRIC_STARTER_VERSION:-" + '"' +"${replaceTag}" +'"' + '}', "\${FABRIC_STARTER_VERSION:-" + '"' + "${currentBranch}" + '"' + '}')
 
 
