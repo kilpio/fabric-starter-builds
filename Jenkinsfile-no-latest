@@ -412,6 +412,11 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     fileContent = fileContent.replace('FABRIC_VERSION:=' + "${replaceTag}", 'FABRIC_VERSION:=' + "${fabricVersion}")
     fileContent = fileContent.replace('FABRIC_STARTER_VERSION:=' + "${replaceTag}", 'FABRIC_STARTER_VERSION:=' + "${currentBranch}")
     
+    fileContent = fileContent.replace('FABRIC_VERSION:=' + '"' + "${replaceTag}" + '"', 'FABRIC_VERSION:=' + '"' + "${fabricVersion}" + '"')
+    fileContent = fileContent.replace('FABRIC_STARTER_VERSION:='  + '"'+ "${replaceTag}" + '"', 'FABRIC_STARTER_VERSION:='  + '"' + "${currentBranch}" + '"')
+    
+
+
     fileContent = fileContent.replaceAll("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}", "{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
 
     writeFile file: fileToProcess, text: fileContent
