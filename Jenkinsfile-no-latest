@@ -388,13 +388,12 @@ def updateComposeFilesWithVersions(fabricVersion, replaceTag, currentBranch) { /
     updateImagesReferencesVersion('network-create-base.sh', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('peer-start.sh', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('raft-start-docker-machine.sh', fabricVersion, replaceTag, currentBranch)
-    updateImagesReferencesVersion('https/docker-compose-generate-tls-certs.yaml', fabricVersion, replaceTag, currentBranch)
+//    updateImagesReferencesVersion('https/docker-compose-generate-tls-certs.yaml', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('extra/docker-registry-local/start-docker-registry-local.sh', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('deploy.sh', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('build-fabric-tools-extended.sh', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('docker-compose-open-net.yaml', fabricVersion, replaceTag, currentBranch)
     updateImagesReferencesVersion('fabric-tools-extended/Dockerfile', fabricVersion, replaceTag, currentBranch)
-
 }
 
 def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch) {
@@ -406,6 +405,10 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     fileContent = fileContent.replace('FABRIC_VERSION=' + "${replaceTag}", 'FABRIC_VERSION=' + "${fabricVersion}")
     fileContent = fileContent.replace('FABRIC_STARTER_VERSION=' + "${replaceTag}", 'FABRIC_STARTER_VERSION=' + "${currentBranch}")
     
+    fileContent = fileContent.replace('FABRIC_VERSION:=' + "${replaceTag}", 'FABRIC_VERSION:=' + "${fabricVersion}")
+    fileContent = fileContent.replace('FABRIC_STARTER_VERSION:=' + "${replaceTag}", 'FABRIC_STARTER_VERSION:=' + "${currentBranch}")
+    
+
     fileContent = fileContent.replaceAll("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}", "{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
 
     writeFile file: fileToProcess, text: fileContent
