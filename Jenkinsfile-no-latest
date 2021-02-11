@@ -143,7 +143,7 @@ node {
 
             echo CRED
             stage('Fabic-Starter-REST-build-docker-images') {
-                if (SKIP_FS_REST_BUILD != true){ 
+                if (SKIP_FS_REST_BUILD == 'false'){ 
                 echo 'Build snapshot, stable and latest fabric-starter-rest images'
                 echo CGREEN
 
