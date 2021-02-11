@@ -102,6 +102,7 @@ node {
 
                     tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,'stable')
                     tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,newFabricStarterTag)
+                    tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,'latest')
                 }
                 echo CNORMAL
             }
@@ -156,6 +157,8 @@ node {
 
                     tagDockerImage('fabric-starter-rest',LATEST_FABRIC_VERSION,'stable')
                     tagDockerImage('fabric-starter-rest',LATEST_FABRIC_VERSION,newFabricStarterTag)
+                    tagDockerImage('fabric-starter-rest',LATEST_FABRIC_VERSION,'latest')
+
                     //buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                     //buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
 
