@@ -37,7 +37,7 @@ node {
             sh 'ls -ld $(find .)'
         }
         }
-    LATEST_FABRIC_VERSION = 'latest'
+    LATEST_FABRIC_VERSION = '1.4.9'
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
     stage('Fabric-Starter-snapshot') {
         ansiColor('xterm') {
