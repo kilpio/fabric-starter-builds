@@ -430,8 +430,9 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     ]
 
     replacementRules.keySet().each {
-        it.each {
-            println it + '--->' replacementRules.get.it
+    //    it.each {
+    //        println it + '--->' replacementRules.get.it
+    println it
         }
     }
 
