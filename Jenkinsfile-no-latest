@@ -1,3 +1,4 @@
+/* groovylint-disable LineLength */
 CRED = '\033[1;31m'
 CGREEN = '\033[1;32m'
 CYELLOW = '\033[1;33m'
@@ -410,6 +411,33 @@ def updateComposeFilesWithVersions(filesToRepalace,fabricVersion, replaceTag, cu
 
 def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch) {
     fileContent = readFile fileToProcess
+
+
+    replacementRules =[
+        "\${FABRIC_VERSION:-" + "${replaceTag}" + '}'       :       "\${FABRIC_VERSION:-" + "${fabricVersion}" + '}',
+        "\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}'   :       "\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}',
+        'FABRIC_VERSION='  + "${replaceTag}"                :       'FABRIC_VERSION=' + "${fabricVersion}",
+        'FABRIC_VERSION='  + "\"${replaceTag}\""            :       'FABRIC_VERSION=' + "\"${fabricVersion}\"",
+        'FABRIC_VERSION:=' + "${replaceTag}"                :       'FABRIC_VERSION:=' + "${fabricVersion}",
+        'FABRIC_VERSION:=' + "\"${replaceTag}\""            :       'FABRIC_VERSION:=' + "\"${fabricVersion}\"",
+        "\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}'       :       "\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}',
+        "\${FABRIC_STARTER_VERSION:-"  +"\"${replaceTag}\"" + '}'   :       "\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\""  + '}',
+        'FABRIC_STARTER_VERSION=' + "${replaceTag}"                 :       'FABRIC_STARTER_VERSION=' + "${currentBranch}",
+        'FABRIC_STARTER_VERSION=' + "\"${replaceTag}\""             :       'FABRIC_STARTER_VERSION=' + "\"${currentBranch}\"",
+        'FABRIC_STARTER_VERSION:=' + "${replaceTag}"                :       'FABRIC_STARTER_VERSION:=' + "${currentBranch}",
+        'FABRIC_STARTER_VERSION:=' + "\"${replaceTag}\""            :       'FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\"",
+        "\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}"                   :       "{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}"
+    ]
+
+    replacementRules.keySet().each {
+        it.each {
+            println it + '--->' replacementRules.get.it
+        }
+    }
+
+
+
+
 
     fileContent = fileContent.replace("\${FABRIC_VERSION:-" + "${replaceTag}" + '}', "\${FABRIC_VERSION:-" + "${fabricVersion}" + '}')
     fileContent = fileContent.replace("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}', "\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}')
