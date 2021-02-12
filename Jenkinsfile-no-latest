@@ -415,7 +415,7 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
 
     replacementRules = [
         ("\${FABRIC_VERSION:-" + "${replaceTag}" + '}')             :       ("\${FABRIC_VERSION:-" + "${fabricVersion}" + '}'),
-        ("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}')         :       ("\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}',
+        ("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}')         :       ("\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}'),
         ('FABRIC_VERSION='  + "${replaceTag}")                      :       ('FABRIC_VERSION=' + "${fabricVersion}"),
         ('FABRIC_VERSION='  + "\"${replaceTag}\"")                  :       ('FABRIC_VERSION=' + "\"${fabricVersion}\""),
         ('FABRIC_VERSION:=' + "${replaceTag}")                      :       ('FABRIC_VERSION:=' + "${fabricVersion}"),
@@ -430,13 +430,8 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     ]
 
     replacementRules.keySet().each {
-        it.each {
             println it 
-            //println replacementRules.get(it.toString())
-        }
-    //println it
-    //println replacementRules.get.it
-        
+            println replacementRules.get(it)
     }
 
 
