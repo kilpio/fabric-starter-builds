@@ -414,7 +414,7 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
 
 
     replacementRules =[
-        ("\${FABRIC_VERSION:-" + "${replaceTag}" + '}')             :       toString(){"\${FABRIC_VERSION:-" + "${fabricVersion}" + '}'},
+        ("\${FABRIC_VERSION:-" + "${replaceTag}" + '}')             :       "\${FABRIC_VERSION:-" + "${fabricVersion}" + '}',
         ("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}')         :       "\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}',
         ('FABRIC_VERSION='  + "${replaceTag}")                      :       'FABRIC_VERSION=' + "${fabricVersion}",
         ('FABRIC_VERSION='  + "\"${replaceTag}\"")                  :       'FABRIC_VERSION=' + "\"${fabricVersion}\"",
