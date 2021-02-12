@@ -341,7 +341,25 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
     }
 
     updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
-    updateComposeFilesWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
+
+    filesToRepalace = ['docker-compose.yaml',
+            'docker-compose-clean.yaml',
+            'docker-compose-orderer.yaml',
+            'docker-compose-listener.yaml',
+            'docker-compose-deploy.yaml',
+            'network-create-base.sh',
+            'peer-start.sh',
+            'raft-start-docker-machine.sh',
+            'https/docker-compose-generate-tls-certs.yaml',
+            'extra/docker-registry-local/start-docker-registry-local.sh',
+            'deploy.sh',
+            'build-fabric-tools-extended.sh',
+            'docker-compose-open-net.yaml',
+            'fabric-tools-extended/Dockerfile',
+            'main_old.sh',
+            'main.sh']
+
+    updateComposeFilesWithVersions(filesToRepalace,FABRIC_VERSION, replaceTag, toBranchName)
 
     commitBranch(toBranchName)
 }
@@ -386,43 +404,8 @@ void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
     updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
 }
 
-def updateComposeFilesWithVersions(fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
-
-filesToRepalace = ['docker-compose.yaml',
-            'docker-compose-clean.yaml',
-            'docker-compose-orderer.yaml',
-            'docker-compose-listener.yaml',
-            'docker-compose-deploy.yaml',
-            'network-create-base.sh',
-            'peer-start.sh',
-            'raft-start-docker-machine.sh',
-            'https/docker-compose-generate-tls-certs.yaml',
-            'extra/docker-registry-local/start-docker-registry-local.sh',
-            'deploy.sh',
-            'build-fabric-tools-extended.sh',
-            'docker-compose-open-net.yaml',
-            'fabric-tools-extended/Dockerfile',
-            'main_old.sh',
-            'main.sh']
-
-filesToRepalace.each {updateImagesReferencesVersion(it, fabricVersion, replaceTag, currentBranch)}
-
-//     updateImagesReferencesVersion('docker-compose.yaml', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('docker-compose-clean.yaml', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('docker-compose-orderer.yaml', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('docker-compose-listener.yaml', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('docker-compose-deploy.yaml', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('network-create-base.sh', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('peer-start.sh', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('raft-start-docker-machine.sh', fabricVersion, replaceTag, currentBranch)
-// //    updateImagesReferencesVersion('https/docker-compose-generate-tls-certs.yaml', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('extra/docker-registry-local/start-docker-registry-local.sh', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('deploy.sh', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('build-fabric-tools-extended.sh', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('docker-compose-open-net.yaml', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('fabric-tools-extended/Dockerfile', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('main_old.sh', fabricVersion, replaceTag, currentBranch)
-//     updateImagesReferencesVersion('main.sh', fabricVersion, replaceTag, currentBranch)
+def updateComposeFilesWithVersions(filesToRepalace,fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
+    filesToRepalace.each {updateImagesReferencesVersion(it, fabricVersion, replaceTag, currentBranch)}
 }
 
 def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch) {
