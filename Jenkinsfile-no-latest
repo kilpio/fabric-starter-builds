@@ -433,7 +433,7 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     //    it.each {
     //        println it + '--->' replacementRules.get.it
     println it
-        }
+        
     }
 
 
