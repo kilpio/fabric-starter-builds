@@ -427,15 +427,13 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
         ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       'FABRIC_STARTER_VERSION:=' + "${currentBranch}",
         ('FABRIC_STARTER_VERSION:=' + "\"${replaceTag}\"")          :       'FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\"",
         ("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}")                 :       "{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}"
-    
+    ]
 
     replacementRules.keySet().each {
         it.each {
             println it + '--->' replacementRules.get.it
         }
     }
-
-
 
 
 
