@@ -413,20 +413,20 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     fileContent = readFile fileToProcess
 
 
-    replacementRules =[
-        ("\${FABRIC_VERSION:-" + "${replaceTag}" + '}')             :       "\${FABRIC_VERSION:-" + "${fabricVersion}" + '}',
-        ("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}')         :       "\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}',
-        ('FABRIC_VERSION='  + "${replaceTag}")                      :       'FABRIC_VERSION=' + "${fabricVersion}",
-        ('FABRIC_VERSION='  + "\"${replaceTag}\"")                  :       'FABRIC_VERSION=' + "\"${fabricVersion}\"",
-        ('FABRIC_VERSION:=' + "${replaceTag}")                      :       'FABRIC_VERSION:=' + "${fabricVersion}",
-        ('FABRIC_VERSION:=' + "\"${replaceTag}\"")                  :       'FABRIC_VERSION:=' + "\"${fabricVersion}\"",
-        ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       "\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}',
-        ("\${FABRIC_STARTER_VERSION:-"  +"\"${replaceTag}\"" + '}') :       "\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\""  + '}',
-        ('FABRIC_STARTER_VERSION=' + "${replaceTag}")               :       'FABRIC_STARTER_VERSION=' + "${currentBranch}",
-        ('FABRIC_STARTER_VERSION=' + "\"${replaceTag}\"")           :       'FABRIC_STARTER_VERSION=' + "\"${currentBranch}\"",
-        ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       'FABRIC_STARTER_VERSION:=' + "${currentBranch}",
-        ('FABRIC_STARTER_VERSION:=' + "\"${replaceTag}\"")          :       'FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\"",
-        ("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}")                 :       "{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}"
+    replacementRules = [
+        ("\${FABRIC_VERSION:-" + "${replaceTag}" + '}')             :       ("\${FABRIC_VERSION:-" + "${fabricVersion}" + '}'),
+        ("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}')         :       ("\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}',
+        ('FABRIC_VERSION='  + "${replaceTag}")                      :       ('FABRIC_VERSION=' + "${fabricVersion}"),
+        ('FABRIC_VERSION='  + "\"${replaceTag}\"")                  :       ('FABRIC_VERSION=' + "\"${fabricVersion}\""),
+        ('FABRIC_VERSION:=' + "${replaceTag}")                      :       ('FABRIC_VERSION:=' + "${fabricVersion}"),
+        ('FABRIC_VERSION:=' + "\"${replaceTag}\"")                  :       ('FABRIC_VERSION:=' + "\"${fabricVersion}\""),
+        ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       ("\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}'),
+        ("\${FABRIC_STARTER_VERSION:-"  +"\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\""  + '}'),
+        ('FABRIC_STARTER_VERSION=' + "${replaceTag}")               :       ('FABRIC_STARTER_VERSION=' + "${currentBranch}"),
+        ('FABRIC_STARTER_VERSION=' + "\"${replaceTag}\"")           :       ('FABRIC_STARTER_VERSION=' + "\"${currentBranch}\""),
+        ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       ('FABRIC_STARTER_VERSION:=' + "${currentBranch}"),
+        ('FABRIC_STARTER_VERSION:=' + "\"${replaceTag}\"")          :       ('FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\""),
+        ("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}")                 :       ("{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
     ]
 
     replacementRules.keySet().each {
