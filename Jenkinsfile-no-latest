@@ -38,7 +38,7 @@ node {
             sh 'ls -ld $(find .)'
         }
         }
-    LATEST_FABRIC_VERSION = '1.4.9'
+    //LATEST_FABRIC_VERSION = '1.4.9'
     LATEST_FABRIC_STARTER_VERSION = 'latest'
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
     stage('Fabric-Starter-snapshot') {
@@ -430,8 +430,8 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     ]
 
     replacementRules.keySet().each {
-            println it 
-            println replacementRules.get(it)
+            //println it 
+            //println replacementRules.get(it)
             fileContent = fileContent.replace(it,replacementRules.get(it))
     }
 
