@@ -39,7 +39,7 @@ node {
         }
         }
     //LATEST_FABRIC_VERSION = '1.4.9'
-    LATEST_FABRIC_STARTER_VERSION = 'latest'
+    //LATEST_FABRIC_STARTER_VERSION = 'latest'
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
     stage('Fabric-Starter-snapshot') {
         ansiColor('xterm') {
@@ -68,7 +68,7 @@ node {
                 dir('fabric-starter') {
                     sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                     sh "git config user.name  ${GIT_REPO_OWNER}"
-                    updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, 'stable')
+                    updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, BUILD_BRANCH)
                 }
                 echo CNORMAL
             }
@@ -83,7 +83,7 @@ node {
                 echo '______________________________________________________'
                 echo CCYAN
                 dir('fabric-starter') {
-                    updateAndCommitBranch('stable', 'stable', newFabricStarterTag)
+                    updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
                 }
                 echo CNORMAL
             }
@@ -102,7 +102,7 @@ node {
                                         "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile ."
                                     )
 
-                    tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,'stable')
+                    tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,BUILD_BRANCH)
                     tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,newFabricStarterTag)
                     tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,'latest')
                     }
@@ -128,7 +128,7 @@ node {
                     dir('fabric-starter-rest') {
                         sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                         sh "git config user.name  ${GIT_REPO_OWNER}"
-                        updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, 'stable')
+                        updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, BUILD_BRANCH)
                     }
                 echo CNORMAL
             }
@@ -138,7 +138,7 @@ node {
             stage('Farbric-starter-REST-copy-stable-to-snapshot') {
                 echo CYELLOW
                 dir('fabric-starter-rest') {
-                        updateAndCommitRESTBranch('stable', 'stable', newFabricStarterTag)
+                        updateAndCommitRESTBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
                 }
                 echo CNORMAL
             }
@@ -157,7 +157,7 @@ node {
                                         "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile ."
                                     )
 
-                    tagDockerImage('fabric-starter-rest',LATEST_FABRIC_VERSION,'stable')
+                    tagDockerImage('fabric-starter-rest',LATEST_FABRIC_VERSION,BUILD_BRANCH)
                     tagDockerImage('fabric-starter-rest',LATEST_FABRIC_VERSION,newFabricStarterTag)
                     tagDockerImage('fabric-starter-rest',LATEST_FABRIC_VERSION,'latest')
 
@@ -177,7 +177,7 @@ node {
 
             if (SKIP_DOCKER_PUSH =='false') {
                     pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-                    pushDockerImage('fabric-starter-rest', 'stable')
+                    pushDockerImage('fabric-starter-rest', BUILD_BRANCH)
                     pushDockerImage('fabric-starter-rest', LATEST_FABRIC_VERSION)
                     pushDockerImage('fabric-starter-rest', 'latest')
                 }
@@ -190,7 +190,7 @@ node {
                 echo SKIP_FS_REST_BUILD
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD =='false') ) {
                     pushDockerImage('fabric-tools-extended', newFabricStarterTag)
-                    pushDockerImage('fabric-tools-extended', 'stable')
+                    pushDockerImage('fabric-tools-extended', BUILD_BRANCH)
                     pushDockerImage('fabric-tools-extended', LATEST_FABRIC_VERSION)
                     pushDockerImage('fabric-tools-extended', 'latest')
                 }
@@ -211,7 +211,7 @@ node {
             stage('Fabic-Starter-REST-git-push-stable') {
                 echo CGREEN
                 dir('fabric-starter-rest') {
-                    gitPushToBranch('stable', 'fabric-starter-rest')
+                    gitPushToBranch(BUILD_BRANCH, 'fabric-starter-rest')
                 }
                 echo CNORMAL
             }
@@ -229,7 +229,7 @@ node {
             stage ('Fabic-Starter-git-push-stable') {
                 echo CBLUE
                 dir('fabric-starter') {
-                    gitPushToBranch('stable', 'fabric-starter')
+                    gitPushToBranch(BUILD_BRANCH, 'fabric-starter')
                 }
                 echo CNORMAL
             }
@@ -434,29 +434,6 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
             //println replacementRules.get(it)
             fileContent = fileContent.replace(it,replacementRules.get(it))
     }
-
-
-
-    // fileContent = fileContent.replace("\${FABRIC_VERSION:-" + "${replaceTag}" + '}', "\${FABRIC_VERSION:-" + "${fabricVersion}" + '}')
-    // fileContent = fileContent.replace("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}', "\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}')
-    // fileContent = fileContent.replace("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}', "\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}')
-
-    // fileContent = fileContent.replace("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}', "\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}')
-    // fileContent = fileContent.replace("\${FABRIC_STARTER_VERSION:-"  +"\"${replaceTag}\"" + '}', "\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\""  + '}')
-
-
-    // fileContent = fileContent.replace('FABRIC_VERSION=' + "${replaceTag}", 'FABRIC_VERSION=' + "${fabricVersion}")
-    // fileContent = fileContent.replace('FABRIC_STARTER_VERSION=' + "${replaceTag}", 'FABRIC_STARTER_VERSION=' + "${currentBranch}")
-    
-    // fileContent = fileContent.replace('FABRIC_VERSION:=' + "${replaceTag}", 'FABRIC_VERSION:=' + "${fabricVersion}")
-    // fileContent = fileContent.replace('FABRIC_STARTER_VERSION:=' + "${replaceTag}", 'FABRIC_STARTER_VERSION:=' + "${currentBranch}")
-    
-    // fileContent = fileContent.replace('FABRIC_VERSION:=' + "\"${replaceTag}\"" , 'FABRIC_VERSION:=' + "\"${fabricVersion}\"")
-    // fileContent = fileContent.replace('FABRIC_STARTER_VERSION:='  + "\"${replaceTag}\"", 'FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\"")
-    
-
-
-    // fileContent = fileContent.replaceAll("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}", "{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
 
     writeFile file: fileToProcess, text: fileContent
 
