@@ -178,7 +178,7 @@ node {
             if (SKIP_DOCKER_PUSH =='false') {
                     pushDockerImage('fabric-starter-rest', newFabricStarterTag)
                     pushDockerImage('fabric-starter-rest', BUILD_BRANCH)
-                    pushDockerImage('fabric-starter-rest', LATEST_FABRIC_VERSION)
+                    pushDockerImage('fabric-starter-rest', FABRIC_VERSION)
                     pushDockerImage('fabric-starter-rest', 'latest')
                 }
                 echo CNORMAL
@@ -191,7 +191,7 @@ node {
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD =='false') ) {
                     pushDockerImage('fabric-tools-extended', newFabricStarterTag)
                     pushDockerImage('fabric-tools-extended', BUILD_BRANCH)
-                    pushDockerImage('fabric-tools-extended', LATEST_FABRIC_VERSION)
+                    pushDockerImage('fabric-tools-extended', FABRIC_VERSION)
                     pushDockerImage('fabric-tools-extended', 'latest')
                 }
                 echo CNORMAL
