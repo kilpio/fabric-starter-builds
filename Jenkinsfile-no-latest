@@ -102,10 +102,11 @@ node {
                                         "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile ."
                                     )
 
-                    tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,BUILD_BRANCH)
-                    tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,newFabricStarterTag)
-                    tagDockerImage('fabric-tools-extended',LATEST_FABRIC_VERSION,'latest')
+                    tagDockerImage('fabric-tools-extended',FABRIC_VERSION,BUILD_BRANCH)
+                    tagDockerImage('fabric-tools-extended',FABRIC_VERSION,newFabricStarterTag)
+                    tagDockerImage('fabric-tools-extended',FABRIC_VERSION,'latest')
                     }
+                    
                 echo CNORMAL
             }
             //? ======================================== BUILDING FABRIC-STARTER-REST IMAGES =========================
