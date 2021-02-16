@@ -173,7 +173,6 @@ node {
                 }
 
 //? ========================================== DOCKER PUSH==============================================
-                    newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
 
             echo CRED
             stage('Fabic-Starter-REST-push-docker-images') {
