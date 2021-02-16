@@ -240,7 +240,7 @@ node {
             //? ====================================== REPORT =====================================
             stage('printReport') {
                 echo CGREEN
-                reportList.each {println "it"}
+                reportList.each {echo it}
                 echo CNORMAL
             }
         } //AnsiColor
