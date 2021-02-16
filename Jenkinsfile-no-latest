@@ -12,6 +12,7 @@ CUNDERLINED = '\033[4m'
 CNOTUNDERLINED = '\033[24m'
 CNORMAL = '\033[0m'
 // https://en.wikipedia.org/wiki/ANSI_escape_code
+def reportList = []
 
 node {
 
@@ -40,7 +41,6 @@ node {
         }
     //LATEST_FABRIC_VERSION = '1.4.9'
     //LATEST_FABRIC_STARTER_VERSION = 'latest'
-    def reportList = []
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
     stage('Fabric-Starter-snapshot') {
