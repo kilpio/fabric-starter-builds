@@ -40,6 +40,8 @@ node {
         }
     //LATEST_FABRIC_VERSION = '1.4.9'
     //LATEST_FABRIC_STARTER_VERSION = 'latest'
+    def reportList = []
+
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
     stage('Fabric-Starter-snapshot') {
         ansiColor('xterm') {
@@ -156,11 +158,11 @@ node {
                                         'fabric-starter-rest',
                                         FABRIC_VERSION,
                                         MASTER_BRANCH,
-                                        "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile ."
+                                        "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile ."
                                     )
 
-                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,BUILD_BRANCH)
                     tagDockerImage('fabric-starter-rest',FABRIC_VERSION,newFabricStarterTag)
+                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,BUILD_BRANCH)
                     tagDockerImage('fabric-starter-rest',FABRIC_VERSION,'latest')
 
                     //buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
@@ -171,6 +173,7 @@ node {
                 }
 
 //? ========================================== DOCKER PUSH==============================================
+                    newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
 
             echo CRED
             stage('Fabic-Starter-REST-push-docker-images') {
@@ -235,6 +238,12 @@ node {
                 }
                 echo CNORMAL
             }
+            //? ====================================== REPORT =====================================
+            stage('printReport') {
+                echo CGREEN
+                reportList.each {println "it"}
+                echo CNORMAL
+            }
         } //AnsiColor
     } //Fabric-Starter-Packages-snapshot
 }//node
@@ -266,6 +275,7 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
 
     newTag = newGitTag.split('/')[1]
     echo "New Tag for ${repositoryTitle}: ${newTag}"
+    reportList.add("New Tag for ${repositoryTitle}: ${newTag}")
     newTag
 }
 
@@ -291,7 +301,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     echo "docker build args: $args"
 
     sh "docker image build ${args}"
-
+    reportList.add("docker image build ${args}")
     echo CUNDERLINED
     sh 'docker image ls'
     echo CRED
@@ -304,6 +314,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 
 void tagDockerImage(imageName, tag, newTag) {
     sh "docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}"
+    reportList.add("docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}")
 }
 
 void pushDockerImage(imageName, tag) {
@@ -313,12 +324,14 @@ usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
         sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
         sh "docker push ${USERNAME}/${imageName}:${tag}"
         sh "docker logout"
+        reportList.add("docker push ${USERNAME}/${imageName}:${tag}")
     }
 }
 
 void commitBranch(branchName) {
     sh "git checkout ${branchName}"
     sh "git commit -m '${branchName}' || true"
+    reportList.add("git commit -m ${branchName}")
 }
 
 void gitPushToBranch(branchName, repoName) {
@@ -328,6 +341,7 @@ void gitPushToBranch(branchName, repoName) {
         sh "git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git"
         sh "git checkout ${branchName}"
         sh("git push -u origin ${branchName}")
+        reportList.add("git push -u origin ${branchName}")
     }
 }
                         // master:      LATEST_FABRIC_VERSION   ->   stable
@@ -362,7 +376,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
             'main_old.sh',
             'main.sh']
 
-    updateComposeFilesWithVersions(filesToRepalace,FABRIC_VERSION, replaceTag, toBranchName)
+    updateComposeFilesWithVersions(filesToRepalace, FABRIC_VERSION, replaceTag, toBranchName)
 
     commitBranch(toBranchName)
 }
@@ -373,7 +387,7 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
     }
-  
+
     updateImagesReferencesVersion('Dockerfile', '', replaceTag, toBranchName)
     commitBranch(toBranchName)
 }
@@ -432,8 +446,6 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     ]
 
     replacementRules.keySet().each {
-            //println it 
-            //println replacementRules.get(it)
             fileContent = fileContent.replace(it,replacementRules.get(it))
     }
 
