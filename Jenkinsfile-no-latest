@@ -288,7 +288,8 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
     int minorVersion = (minorVer as int)
 //    def newGitTag = "${branchPrefix}-${majorVer}.${minorVersion + 1}-${FABRIC_VERSION}"
     def newGitTag = "${FABRIC_VERSION}-${branchPrefix}-${majorVer}-${minorVersion + 1}"
-    newTag = newGitTag.split('/')[1]
+    echo "git tag before split: ${newGitTag}"
+    newTag = newGitTag.split('/')[2]
     echo "New Tag for ${repositoryTitle}: ${newTag}"
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newTag}")
     newTag
