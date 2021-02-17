@@ -282,12 +282,12 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
-//    def (branchPrefix, version, fabricVersion) = lastSnapshot.tokenize('-')
-    def (branchPrefix, fabricVersion, version) = lastSnapshot.tokenize('-')
+    def (branchPrefix, version, fabricVersion) = lastSnapshot.tokenize('-')
+//    def (branchPrefix, fabricVersion, version) = lastSnapshot.tokenize('-')
     def (majorVer, minorVer) = version.tokenize('.')
     int minorVersion = (minorVer as int)
-    //def newGitTag = "${branchPrefix}-${majorVer}.${minorVersion + 1}-${FABRIC_VERSION}"
-    def newGitTag = "${branchPrefix}-${FABRIC_VERSION}-${majorVer}.${minorVersion + 1}"
+    def newGitTag = "${branchPrefix}-${majorVer}.${minorVersion + 1}-${FABRIC_VERSION}"
+//    def newGitTag = "${branchPrefix}-${FABRIC_VERSION}-${majorVer}.${minorVersion + 1}"
     newTag = newGitTag.split('/')[1]
     echo "New Tag for ${repositoryTitle}: ${newTag}"
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newTag}")
