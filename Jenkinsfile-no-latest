@@ -294,8 +294,8 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
     //
     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
-    newTag
-}
+    newGitTag
+    }
 
 
 void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {

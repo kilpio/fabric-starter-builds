@@ -91,7 +91,7 @@ node {
             stage('Fabric-Tools-Extended-build-extended-images') {
                 echo 'Build fabric-tools-extended images for latest, stable and snapshot'
                 echo CYELLOW
-                dir('fabric-starter') {
+                dir('fabric-starter') {newTag
                     //buildDockerImage('fabric-tools-extended', newFabricStarterTag, newFabricStarterTag, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
                     //buildDockerImage('fabric-tools-extended', 'stable', 'stable', "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
                     buildDockerImage(
@@ -183,7 +183,7 @@ node {
                 pushDockerImage('fabric-tools-extended', 'latest')
 
                 echo CNORMAL
-            }
+            }newTag
 
             //? ==================================== GIT PUSH==========================================
             echo CRED
@@ -211,7 +211,7 @@ node {
                     gitPushToBranch(newFabricStarterTag, 'fabric-starter')
                 }
                 echo CNORMAL
-            }
+            }newTag
 
             echo CRED
             stage ('Fabic-Starter-git-push-stable') {
@@ -237,12 +237,7 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
             dir(repositoryName) {
                     sh "git checkout ${MASTER_BRANCH}"
                     sh 'git pull'
-            }
-    }
-}
-
-def evaluateNextSnapshotGitTag(repositoryTitle) {
-    echo "Evaluate next snapshot name for ${repositoryTitle}"
+            }newTagryTitle}"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
     def (branchPrefix, version, fabricVersion) = lastSnapshot.tokenize('-')
