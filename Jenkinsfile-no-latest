@@ -248,10 +248,10 @@ node {
                 def report
                 reportList[0]="."
                 reportList.each {
-                    line = it.replaceFirst('^',"${CCYAN} ");
+                    line = it.replaceFirst('^',"${CCYAN}");
                     line = line.replaceFirst(': ',":${CGREEN} ")
-                    line = it.replaceFirst('STAGE',"${CRED}STAGE${CGREEN}");
-                    line = it.replaceFirst('$',"${CNORMAL} ");
+                    line = line.replaceFirst('STAGE:',"${CRED}-- STAGE:${CGREEN}");
+                    line = line.replaceFirst('$',"${CNORMAL}");
                     report += line +"\n"}
                 echo report
                 echo CNORMAL
