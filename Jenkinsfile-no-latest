@@ -98,16 +98,17 @@ node {
                 dir('fabric-starter') {
                     //buildDockerImage('fabric-tools-extended', newFabricStarterTag, newFabricStarterTag, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
                     //buildDockerImage('fabric-tools-extended', 'stable', 'stable', "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
+                def fabricToolExtendedName = 'fabric-tools-extended'    
                     buildDockerImage(
-                                        'fabric-tools-extended',
+                                        fabricToolExtendedName,
                                         FABRIC_VERSION,
                                         MASTER_BRANCH,
                                         "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile ."
                                     )
 
-                    tagDockerImage('fabric-tools-extended',FABRIC_VERSION,BUILD_BRANCH)
-                    tagDockerImage('fabric-tools-extended',FABRIC_VERSION,newFabricStarterTag)
-                    tagDockerImage('fabric-tools-extended',FABRIC_VERSION,'latest')
+                    tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, BUILD_BRANCH)    // e.g. stable
+                    tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag) //e.g. snapshot
+                    tagDockerImage(fabricToolExtendedName, FABRIC_VERSION,'latest')
                     }
                     
                 echo CNORMAL
@@ -274,7 +275,7 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
 
     newTag = newGitTag.split('/')[1]
     echo "New Tag for ${repositoryTitle}: ${newTag}"
-    reportList.add("New Tag for ${repositoryTitle}: ${newTag}")
+    reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newTag}")
     newTag
 }
 
@@ -284,9 +285,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     CRED = '\033[1;31m'
 
     echo CUNDERLINED
-    echo imageName
-    echo tag
-    echo branchToBuildImageFrom
+    echo "Building ${imageName} with tag ${tag} from branch ${branchToBuildImageFrom}"
     sh 'id'
     sh 'docker image ls'
     echo CNOTUNDERLINED
@@ -296,24 +295,24 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
         args = '-f Dockerfile .'
     }
 
-    args = "-t ${DOCKER_REPO}/${imageName}:${tag} --label \"jenkins_job_build=${BUILD_NUMBER}\" --label \"jenkins_job_name=${JOB_NAME}\" ${args}"
-    echo "docker build args: $args"
+    arguments = "-t ${DOCKER_REPO}/${imageName}:${tag} --label \"jenkins_job_build=${BUILD_NUMBER}\" --label \"jenkins_job_name=${JOB_NAME}\" ${args}"
+    echo "docker build args: $arguments"
 
-    sh "docker image build ${args}"
-    reportList.add("docker image build ${args}")
+    sh "docker image build ${arguments}"
+    reportList.add("docker image build ${arguments}")
     echo CUNDERLINED
     sh 'docker image ls'
     echo CRED
-    echo imageName
-    echo tag
-    echo branchToBuildImageFrom
+    //echo imageName
+    //echo tag
+    //echo branchToBuildImageFrom
 
     echo CNOTUNDERLINED
 }
 
 void tagDockerImage(imageName, tag, newTag) {
     sh "docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}"
-    reportList.add("docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}")
+    reportList.add("tagDockerImage: docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}")
 }
 
 void pushDockerImage(imageName, tag) {
@@ -323,14 +322,14 @@ usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
         sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
         sh "docker push ${USERNAME}/${imageName}:${tag}"
         sh "docker logout"
-        reportList.add("docker push ${USERNAME}/${imageName}:${tag}")
+        reportList.add("pushDockerImage: docker push ${USERNAME}/${imageName}:${tag}")
     }
 }
 
 void commitBranch(branchName) {
     sh "git checkout ${branchName}"
     sh "git commit -m '${branchName}' || true"
-    reportList.add("git commit -m ${branchName}")
+    reportList.add("commitBranch: git commit -m ${branchName}")
 }
 
 void gitPushToBranch(branchName, repoName) {
@@ -340,7 +339,7 @@ void gitPushToBranch(branchName, repoName) {
         sh "git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git"
         sh "git checkout ${branchName}"
         sh("git push -u origin ${branchName}")
-        reportList.add("git push -u origin ${branchName}")
+        reportList.add("gitPushToBranch: git push -u origin ${branchName}")
     }
 }
                         // master:      LATEST_FABRIC_VERSION   ->   stable
@@ -349,6 +348,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
     echo "Now merging from ${fromBranchName}"
     checkoutAndThenPullIfRemoteExists(toBranchName)
     if (MERGE_FROM_MASTER == 'true') {
+        reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
         sh "git checkout ${MASTER_BRANCH} -- .env"
@@ -385,6 +385,7 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
     if (MERGE_FROM_MASTER == 'true') {
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
+        reportList.add("updateAndCommitRESTBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
     }
 
     updateImagesReferencesVersion('Dockerfile', '', replaceTag, toBranchName)
@@ -394,6 +395,7 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
 void checkoutAndThenPullIfRemoteExists(toBranchName) {
     if (remoteBranchExists(toBranchName)) {
         sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
+            reportList.add("checkoutAndThenPullIfRemoteExists: git checkout ${toBranchName}")
             sh "git checkout ${toBranchName}"
             sh 'git pull'
         }
@@ -405,12 +407,14 @@ void checkoutAndThenPullIfRemoteExists(toBranchName) {
 void envAppendVersionVars(currentBranchName, fabricVersion) {
     def fileContent = readFile '.env'
     writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}"
+    reportList.add("envAppendVersionVars: writeFile file: '.env', text: ${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}")
     sh 'git add .env'
 }
 
 void envAppendRepoVar(currentRepoName) {
     def fileContent = readFile '.env'
     writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}"
+    reportList.add("envAppendRepoVar: writeFile file: '.env', text: ${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}")
     sh 'git add .env'
 }
 
