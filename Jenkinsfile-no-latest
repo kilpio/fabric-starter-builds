@@ -247,8 +247,8 @@ node {
                 echo CGREEN
                 def report
                 reportList.each {
-                    line = it.replaceFirst('^',CCYAN);
-                    line = line.replaceFirst(': ',: CNORMAL)
+                    line = it.replaceFirst('^',":${CCYAN} ");
+                    line = line.replaceFirst(': ',":${CNORMAL} ")
                     report += line +"\n"}
                 echo report
                 echo CNORMAL
