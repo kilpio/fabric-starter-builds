@@ -44,6 +44,7 @@ node {
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
     stage('Fabric-Starter-snapshot') {
+        reportList.add("STAGE: Fabric-Starter-snapshot")
         ansiColor('xterm') {
             def newFabricStarterTag
             echo CRED
@@ -61,6 +62,7 @@ node {
 
             echo CRED
             stage ('Fabric-Starter-Merge-master-to-stable') {//BUILD_NUMBER
+            reportList.add("STAGE: Fabric-Starter-Merge-master-to-stable")
                 echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to stable'
                 echo 'Modify .env files according to new tag, modify current yamls -> stable'
                 echo 'Commit modifications'
@@ -78,6 +80,7 @@ node {
 
             echo CRED
             stage ('Fabric-Starter-Merge-stable-to-snapshot') {
+                reportList.add("STAGE: Fabric-Starter-Merge-stable-to-snapshot")
                 echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to stable'
                 echo 'Modify .env files according to new tag, modify current yamls -> current snapshot'
                 echo 'Commit modifications'
@@ -93,6 +96,7 @@ node {
 
             echo CRED
             stage('Fabric-Tools-Extended-build-extended-images') {
+                reportList.add("STAGE: Fabric-Tools-Extended-build-extended-images")
                 echo 'Build fabric-tools-extended images for LATEST_FABRIC_VERSION, stable and snapshot'
                 echo CYELLOW
                 dir('fabric-starter') {
@@ -116,19 +120,11 @@ node {
             //? ======================================== BUILDING FABRIC-STARTER-REST IMAGES =========================
             echo CRED
             stage('Farbric-starter-REST-checkout') {
+                reportList.add("STAGE: Farbric-starter-REST-checkout")
                 echo 'Pull fabric-starter-rest and checkout to the master branch'
                 echo CCYAN
                 checkoutFromGithubToSubfolder('fabric-starter-rest')
-                // dir('fabric-starter-rest') {
-                //     sh "git checkout ${MASTER_BRANCH}"
-                //     sh "git pull"
-                // }
-                echo CNORMAL
-            }
-
-            echo CRED
-            echo 'Take updates from master to stable, commit stable (create stable branch if does not exist)'
-            stage('Farbric-starter-REST-merge-master-to-stable') {
+                // dir('fabric-starter-rest') {ite-master-to-stable') {
                 echo CBLUE
                     dir('fabric-starter-rest') {
                         sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
@@ -141,6 +137,7 @@ node {
             echo CRED
             echo 'Take updates from master (pretend as from stable) to snapshot, commit snapshot (create snapshot branch if does not exist)'
             stage('Farbric-starter-REST-copy-stable-to-snapshot') {
+                reportList.add("STAGE: Farbric-starter-REST-copy-stable-to-snapshot")
                 echo CYELLOW
                 dir('fabric-starter-rest') {
                         updateAndCommitRESTBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
@@ -150,6 +147,7 @@ node {
 
             echo CRED
             stage('Fabic-Starter-REST-build-docker-images') {
+                reportList.add("STAGE: Fabic-Starter-REST-build-docker-images")
                 if (SKIP_FS_REST_BUILD == 'false'){ 
                 echo 'Build snapshot, stable and LATEST_FABRIC_VERSION fabric-starter-rest images'
                 echo CGREEN
@@ -177,6 +175,7 @@ node {
 
             echo CRED
             stage('Fabic-Starter-REST-push-docker-images') {
+                reportList.add("STAGE: Fabic-Starter-REST-push-docker-images")
                 echo CBLUE
                 echo SKIP_DOCKER_PUSH
 
@@ -191,13 +190,13 @@ node {
 
             echo CRED
             stage('Fabic-Starter-push-docker-images') {
+                reportList.add("STAGE: Fabic-Starter-push-docker-images")
                 echo CCYAN
                 echo SKIP_FS_REST_BUILD
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD =='false') ) {
                     pushDockerImage('fabric-tools-extended', newFabricStarterTag)
                     pushDockerImage('fabric-tools-extended', BUILD_BRANCH)
-                    pushDockerImage('fabric-tools-extended', FABRIC_VERSION)
-                    pushDockerImage('fabric-tools-extended', 'latest')
+                    pushDockerImage('fabric-titc-tools-extended', 'latest')
                 }
                 echo CNORMAL
             }
@@ -205,6 +204,7 @@ node {
             //? ==================================== GIT PUSH==========================================
             echo CRED
             stage('Fabic-Starter-REST-git-push-snapshot') {
+                reportList.add("STAGE: Fabic-Starter-REST-git-push-snapshot")
                 echo CBLUE
                 dir('fabric-starter-rest') {
                         gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
@@ -214,6 +214,7 @@ node {
 
             echo CRED
             stage('Fabic-Starter-REST-git-push-stable') {
+                reportList.add("STAGE: Fabic-Starter-REST-git-push-stable")
                 echo CGREEN
                 dir('fabric-starter-rest') {
                     gitPushToBranch(BUILD_BRANCH, 'fabric-starter-rest')
@@ -223,6 +224,7 @@ node {
 
             echo CRED
             stage ('Fabic-Starter-git-push-snapshot') {
+                reportList.add("STAGE: Fabic-Starter-git-push-snapshot")
                 echo CMAGENTA
                 dir('fabric-starter') {
                     gitPushToBranch(newFabricStarterTag, 'fabric-starter')
@@ -232,6 +234,7 @@ node {
 
             echo CRED
             stage ('Fabic-Starter-git-push-stable') {
+                reportList.add("STAGE: Fabic-Starter-git-push-stable")
                 echo CBLUE
                 dir('fabric-starter') {
                     gitPushToBranch(BUILD_BRANCH, 'fabric-starter')
@@ -240,6 +243,7 @@ node {
             }
             //? ====================================== REPORT =====================================
             stage('printReport') {
+                reportList.add("STAGE: printReport")
                 echo CGREEN
                 def report
                 reportList.each {
