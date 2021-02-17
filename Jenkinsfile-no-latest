@@ -242,7 +242,7 @@ node {
             stage('printReport') {
                 echo CGREEN
                 def report
-                reportList.each {report += it}
+                reportList.each {report += it +"\n"}
                 echo report
                 echo CNORMAL
             }
