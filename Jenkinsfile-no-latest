@@ -302,7 +302,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     echo "docker build args: $arguments"
 
     sh "docker image build ${arguments}"
-    reportList.add("docker image build ${arguments}")
+    reportList.add("buildDockerImage: docker image build ${arguments}")
     echo CUNDERLINED
     sh 'docker image ls'
     echo CRED
