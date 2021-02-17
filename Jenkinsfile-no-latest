@@ -12,7 +12,7 @@ CUNDERLINED = '\033[4m'
 CNOTUNDERLINED = '\033[24m'
 CNORMAL = '\033[0m'
 // https://en.wikipedia.org/wiki/ANSI_escape_code
-reportList = []
+reportList = ["${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
 node {
 
@@ -242,7 +242,10 @@ node {
             stage('printReport') {
                 echo CGREEN
                 def report
-                reportList.each {report += it +"\n"}
+                reportList.each {
+                    line = it.replaceFirst('^',CCYAN);
+                    line = line.replaceFirst(':\s',: CNORMAL)
+                    report += line +"\n"}
                 echo report
                 echo CNORMAL
             }
