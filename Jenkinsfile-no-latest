@@ -246,9 +246,12 @@ node {
                 reportList.add("STAGE: printReport")
                 echo CGREEN
                 def report
+                reportList[0]="."
                 reportList.each {
-                    line = it.replaceFirst('^',":${CCYAN} ");
-                    line = line.replaceFirst(': ',":${CNORMAL} ")
+                    line = it.replaceFirst('^',"${CCYAN} ");
+                    line = line.replaceFirst(': ',":${CGREEN} ")
+                    line = it.replaceFirst('STAGE',"${CRED}STAGE${CGREEN}");
+                    line = it.replaceFirst('$',"${CNORMAL} ");
                     report += line +"\n"}
                 echo report
                 echo CNORMAL
