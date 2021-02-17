@@ -54,7 +54,7 @@ node {
                 dir('fabric-starter') {
                     // sh "git checkout ${MASTER_BRANCH}"
                     // sh "git pull"
-                    newFabricStarterTag = evaluateNextSnapshotGitTag('fabric-starter')
+                    newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
                 }
                 echo CNORMAL
             }
