@@ -333,7 +333,7 @@ void commitBranch(branchName) {
     reportList.add("commitBranch: git commit -m ${branchName}")
 }
 
-void gitPushToBranche-(branchName, repoName) {
+void gitPushToBranch(branchName, repoName) {
     echo GITHUB_SSH_CREDENTIALS_ID
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         sh "git config user.name ${GIT_REPO_OWNER}"
