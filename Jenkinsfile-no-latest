@@ -288,6 +288,26 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
     int minorVersion = (minorVer as int)
 //    def newGitTag = "${branchPrefix}-${majorVer}.${minorVersion + 1}-${FABRIC_VERSION}"
     def cleanBranchPrefix=branchPrefix.split('/')[1]
+    def newGitTag = "${FABRIC_VERSION}-${cleanBranchPrefix}-${majorVer}.${minorVersion + 1}"
+    //
+    //newTag = newGitTag.split('/')[1]
+    //
+    echo "New Tag for ${repositoryTitle}: ${newGitTag}"
+    reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
+    newGitTag
+    }
+
+
+    def evaluateNextSnapshotGitTag1(repositoryTitle) {
+    echo "Evaluate next snapshot name for ${repositoryTitle}"
+    def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
+    echo "Current latest snapshot: ${lastSnapshot}"
+//    def (branchPrefix, version, fabricVersion) = lastSnapshot.tokenize('-')
+    def (fabricVersion, branchPrefix, fabricVersion, version) = lastSnapshot.tokenize('-')
+    def (majorVer, minorVer) = fabricVersion.tokenize('.')
+    int minorVersion = (minorVer as int)
+//    def newGitTag = "${branchPrefix}-${majorVer}.${minorVersion + 1}-${FABRIC_VERSION}"
+    def cleanBranchPrefix=branchPrefix.split('/')[1]
     def newGitTag = "${FABRIC_VERSION}-${cleanBranchPrefix}-${majorVer}-${minorVersion + 1}"
     //
     //newTag = newGitTag.split('/')[1]
