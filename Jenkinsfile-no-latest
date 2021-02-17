@@ -248,7 +248,7 @@ node {
                 def report
                 reportList.each {
                     line = it.replaceFirst('^',CCYAN);
-                    line = line.replaceFirst(':\s',: CNORMAL)
+                    line = line.replaceFirst(': ',: CNORMAL)
                     report += line +"\n"}
                 echo report
                 echo CNORMAL
