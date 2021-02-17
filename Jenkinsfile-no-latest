@@ -339,7 +339,7 @@ void gitPushToBranch(branchName, repoName) {
         sh "git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git"
         sh "git checkout ${branchName}"
         sh("git push -u origin ${branchName}")
-        reportList.add("git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git"
+        reportList.add("git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git")
         reportList.add("gitPushToBranch: git push -u origin ${branchName}")
     }
 }
