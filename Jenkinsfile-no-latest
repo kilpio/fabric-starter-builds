@@ -436,7 +436,7 @@ void envAppendRepoVar(currentRepoName) {
 // master:      LATEST_FABRIC_VERSION   ->    stable
 // stable:      LATEST_FABRIC_VERSION   ->    snapshot
 void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
-      updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
+    updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
 }
 
 def updateComposeFilesWithVersions(filesToRepalace,fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
