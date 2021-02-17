@@ -436,7 +436,7 @@ void envAppendRepoVar(currentRepoName) {
 // master:      LATEST_FABRIC_VERSION   ->    stable
 // stable:      LATEST_FABRIC_VERSION   ->    snapshot
 void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
-    updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
+      updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
 }
 
 def updateComposeFilesWithVersions(filesToRepalace,fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
@@ -445,8 +445,7 @@ def updateComposeFilesWithVersions(filesToRepalace,fabricVersion, replaceTag, cu
 
 def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch) {
     fileContent = readFile fileToProcess
-
-
+    reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess}, fabricVersion: ${fabricVersion}, replaceTag: ${replaceTag} currentBranch: ${currentBranch}")
     replacementRules = [
         ("\${FABRIC_VERSION:-" + "${replaceTag}" + '}')             :       ("\${FABRIC_VERSION:-" + "${fabricVersion}" + '}'),
         ("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}')         :       ("\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}'),
