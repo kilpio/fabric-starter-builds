@@ -305,7 +305,7 @@ def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
 //    def (branchPrefix, version, fabricVersion) = lastSnapshot.tokenize('-')
     def (fabricVersion, branchPrefix, version) = lastSnapshot.tokenize('-')
     def cleanFabricVersion=fabricVersion.split('/')[1]
-    def (majorVer, minorVer) = cleanFabricVersion.tokenize('.')
+    def (majorVer, minorVer) = version.tokenize('.')
     int minorVersion = (minorVer as int)
 //    def newGitTag = "${branchPrefix}-${majorVer}.${minorVersion + 1}-${FABRIC_VERSION}"
     //def cleanBranchPrefix=branchPrefix.split('/')[1]
