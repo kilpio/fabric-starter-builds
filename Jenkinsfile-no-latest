@@ -13,10 +13,9 @@ CNOTUNDERLINED = '\033[24m'
 CNORMAL = '\033[0m'
 // https://en.wikipedia.org/wiki/ANSI_escape_code
 
-import groovy.transform.Field
-@Field List reportList = []
-
-reportList[0] = "${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"
+//import groovy.transform.Field
+//@Field List reportList = []
+reportList = ["${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
 node {
 
@@ -252,13 +251,14 @@ node {
                 def report
                 
                 reportList.eachWithIndex {
+                    if (it!=null){
                     line = it.replaceFirst('^',"${CCYAN}")
-                    //line = line.replaceFirst('^null','')
                     line = line.replaceFirst(': ',":${CGREEN} ")
                     line = line.replaceFirst('STAGE:',"${CRED}-- STAGE:${CBLUE}")
                     line = line.replaceFirst('$',"${CNORMAL}")
                     report += line +"\n"
                     }
+                }
                 echo report
                 echo CNORMAL
             }
