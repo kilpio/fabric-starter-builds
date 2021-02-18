@@ -247,13 +247,13 @@ node {
                 echo CGREEN
                 def report
                 
-                reportList.eachWithIndex { it, i->
+                reportList.eachWithIndex {
                     line = it.replaceFirst('^',"${CCYAN}")
                     //line = line.replaceFirst('^null','')
                     line = line.replaceFirst(': ',":${CGREEN} ")
                     line = line.replaceFirst('STAGE:',"${CRED}-- STAGE:${CBLUE}")
                     line = line.replaceFirst('$',"${CNORMAL}")
-                    if (i > 1) {report += line +"\n"}
+                    report += line +"\n"
                     }
                 echo report
                 echo CNORMAL
