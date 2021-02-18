@@ -203,7 +203,7 @@ node {
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD =='false') ) {
                     if (BUILD_BRANCH == 'stable') {pushDockerImage('fabric-tools-extended', newFabricStarterTag)}
                     pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                    pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-latest')
+                    pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-latest")
                 }
                 echo CNORMAL
             }
