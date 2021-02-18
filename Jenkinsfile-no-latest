@@ -1,3 +1,4 @@
+import groovy.transform.Field
 /* groovylint-disable LineLength */
 CRED = '\033[1;31m'
 CGREEN = '\033[1;32m'
