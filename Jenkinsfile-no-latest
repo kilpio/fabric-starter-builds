@@ -253,7 +253,7 @@ node {
                     line = line.replaceFirst(': ',":${CGREEN} ")
                     line = line.replaceFirst('STAGE:',"${CRED}-- STAGE:${CBLUE}")
                     line = line.replaceFirst('$',"${CNORMAL}")
-                    if (i > 0) {report += line +"\n"}
+                    if (i > 1) {report += line +"\n"}
                     }
                 echo report
                 echo CNORMAL
