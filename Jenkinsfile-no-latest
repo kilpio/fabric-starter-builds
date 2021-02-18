@@ -278,7 +278,7 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
     }
 }
 
-def evaluateNextSnapshotGitTag(repositoryTitle) {
+def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
@@ -298,17 +298,18 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
     }
 
 
-    def evaluateNextSnapshotGitTag1(repositoryTitle) {
+    def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
 //    def (branchPrefix, version, fabricVersion) = lastSnapshot.tokenize('-')
     def (fabricVersion, branchPrefix, version) = lastSnapshot.tokenize('-')
-    def (majorVer, minorVer) = fabricVersion.tokenize('.')
+    cleanFabricVersion=fabricVersion.split('/')[1]
+    def (majorVer, minorVer) = cleanFabricVersion.tokenize('.')
     int minorVersion = (minorVer as int)
 //    def newGitTag = "${branchPrefix}-${majorVer}.${minorVersion + 1}-${FABRIC_VERSION}"
-    def cleanBranchPrefix=branchPrefix.split('/')[1]
-    def newGitTag = "${FABRIC_VERSION}-${cleanBranchPrefix}-${majorVer}-${minorVersion + 1}"
+    //def cleanBranchPrefix=branchPrefix.split('/')[1]
+    def newGitTag = "${FABRIC_VERSION}-${BranchPrefix}-${majorVer}.${minorVersion + 1}"
     //
     //newTag = newGitTag.split('/')[1]
     //
