@@ -12,6 +12,7 @@ CUNDERLINED = '\033[4m'
 CNOTUNDERLINED = '\033[24m'
 CNORMAL = '\033[0m'
 // https://en.wikipedia.org/wiki/ANSI_escape_code
+reportList = []
 reportList[0] = "${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"
 
 node {
