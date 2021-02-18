@@ -146,7 +146,7 @@ node {
                 reportList.add("STAGE: Farbric-starter-REST-copy-stable-to-snapshot")
                 echo CYELLOW
                 dir('fabric-starter-rest') {
-                        updateAndCommitRESTBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
+                        updateAndCommitRESTBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag)
                 }
                 } else {reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH}")}
                 echo CNORMAL
