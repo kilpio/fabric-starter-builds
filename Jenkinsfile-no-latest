@@ -247,13 +247,14 @@ node {
                 echo CGREEN
                 def report
                 
-                reportList.each {
+                reportList.eachWithIndex { it, i->
                     line = it.replaceFirst('^',"${CCYAN}")
-                    line = line.replaceFirst('^null','')
+                    //line = line.replaceFirst('^null','')
                     line = line.replaceFirst(': ',":${CGREEN} ")
                     line = line.replaceFirst('STAGE:',"${CRED}-- STAGE:${CBLUE}")
                     line = line.replaceFirst('$',"${CNORMAL}")
-                    report += line +"\n"}
+                    if (i > 0) {report += line +"\n"}
+                    }
                 echo report
                 echo CNORMAL
             }
@@ -278,20 +279,16 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
     }
 }
 
+//Temporaly rename this function as evaluateNextSnapshotGitTag to generate snapshot in new format '1.4.4-snapshot-0.12'
 def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
-//    def (branchPrefix, version, fabricVersion) = lastSnapshot.tokenize('-')
     def (branchPrefix, fabricVersion, version) = lastSnapshot.tokenize('-')
     def (majorVer, minorVer) = fabricVersion.tokenize('.')
     int minorVersion = (minorVer as int)
-//    def newGitTag = "${branchPrefix}-${majorVer}.${minorVersion + 1}-${FABRIC_VERSION}"
     def cleanBranchPrefix=branchPrefix.split('/')[1]
     def newGitTag = "${FABRIC_VERSION}-${cleanBranchPrefix}-${majorVer}.${minorVersion + 1}"
-    //
-    //newTag = newGitTag.split('/')[1]
-    //
     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
     newGitTag
@@ -302,17 +299,11 @@ def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
-//    def (branchPrefix, version, fabricVersion) = lastSnapshot.tokenize('-')
     def (fabricVersion, branchPrefix, version) = lastSnapshot.tokenize('-')
     def cleanFabricVersion=fabricVersion.split('/')[1]
     def (majorVer, minorVer) = version.tokenize('.')
     int minorVersion = (minorVer as int)
-//    def newGitTag = "${branchPrefix}-${majorVer}.${minorVersion + 1}-${FABRIC_VERSION}"
-    //def cleanBranchPrefix=branchPrefix.split('/')[1]
     def newGitTag = "${FABRIC_VERSION}-${branchPrefix}-${majorVer}.${minorVersion + 1}"
-    //
-    //newTag = newGitTag.split('/')[1]
-    //
     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
     newGitTag
