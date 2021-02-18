@@ -15,7 +15,7 @@ CNORMAL = '\033[0m'
 
 //import groovy.transform.Field
 //@Field List reportList = []
-reportList = ["${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
+reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
 node {
 
@@ -84,6 +84,7 @@ node {
             echo CRED
             stage ('Fabric-Starter-Merge-stable-to-snapshot') {
                 reportList.add("STAGE: Fabric-Starter-Merge-stable-to-snapshot")
+                if (BUILD_BRANCH === 'stable') {
                 echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to stable'
                 echo 'Modify .env files according to new tag, modify current yamls -> current snapshot'
                 echo 'Commit modifications'
@@ -94,6 +95,7 @@ node {
                 dir('fabric-starter') {
                     updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
                 }
+                } else {reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH}")}
                 echo CNORMAL
             }
 
@@ -114,7 +116,7 @@ node {
                                     )
 
                     tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, BUILD_BRANCH)    // e.g. stable
-                    tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag) //e.g. snapshot
+                    if (BUILD_BRANCH === 'stable') {tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag)} //e.g. snapshot
                     tagDockerImage(fabricToolExtendedName, FABRIC_VERSION,'latest')
                     }
                     
@@ -140,11 +142,13 @@ node {
             echo CRED
             echo 'Take updates from master (pretend as from stable) to snapshot, commit snapshot (create snapshot branch if does not exist)'
             stage('Farbric-starter-REST-copy-stable-to-snapshot') {
+                if (BUILD_BRANCH === 'stable') {
                 reportList.add("STAGE: Farbric-starter-REST-copy-stable-to-snapshot")
                 echo CYELLOW
                 dir('fabric-starter-rest') {
                         updateAndCommitRESTBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
                 }
+                } else {reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH}")}
                 echo CNORMAL
             }
 
@@ -162,8 +166,8 @@ node {
                                         MASTER_BRANCH,
                                         "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile ."
                                     )
-
-                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,newFabricStarterTag)
+                    if (BUILD_BRANCH === 'stable') {
+                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,newFabricStarterTag)}
                     tagDockerImage('fabric-starter-rest',FABRIC_VERSION,BUILD_BRANCH)
                     tagDockerImage('fabric-starter-rest',FABRIC_VERSION,'latest')
 
@@ -183,7 +187,7 @@ node {
                 echo SKIP_DOCKER_PUSH
 
             if (SKIP_DOCKER_PUSH =='false') {
-                    pushDockerImage('fabric-starter-rest', newFabricStarterTag)
+                    if (BUILD_BRANCH === 'stable') {pushDockerImage('fabric-starter-rest', newFabricStarterTag)}
                     pushDockerImage('fabric-starter-rest', BUILD_BRANCH)
                     pushDockerImage('fabric-starter-rest', FABRIC_VERSION)
                     pushDockerImage('fabric-starter-rest', 'latest')
@@ -197,7 +201,7 @@ node {
                 echo CCYAN
                 echo SKIP_FS_REST_BUILD
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD =='false') ) {
-                    pushDockerImage('fabric-tools-extended', newFabricStarterTag)
+                    if (BUILD_BRANCH === 'stable') {pushDockerImage('fabric-tools-extended', newFabricStarterTag)}
                     pushDockerImage('fabric-tools-extended', BUILD_BRANCH)
                     pushDockerImage('fabric-tools-extended', 'latest')
                 }
@@ -217,6 +221,7 @@ node {
 
             echo CRED
             stage('Fabic-Starter-REST-git-push-stable') {
+                
                 reportList.add("STAGE: Fabic-Starter-REST-git-push-stable")
                 echo CGREEN
                 dir('fabric-starter-rest') {
@@ -229,8 +234,10 @@ node {
             stage ('Fabic-Starter-git-push-snapshot') {
                 reportList.add("STAGE: Fabic-Starter-git-push-snapshot")
                 echo CMAGENTA
+                if (BUILD_BRANCH === 'stable') {
                 dir('fabric-starter') {
                     gitPushToBranch(newFabricStarterTag, 'fabric-starter')
+                }
                 }
                 echo CNORMAL
             }
@@ -381,9 +388,9 @@ void gitPushToBranch(branchName, repoName) {
                         // master:      LATEST_FABRIC_VERSION   ->   stable
                         // stable:      LATEST_FABRIC_VERSION   ->   snapshot
 void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
-    echo "Now merging from ${fromBranchName}"
     checkoutAndThenPullIfRemoteExists(toBranchName)
     if (MERGE_FROM_MASTER == 'true') {
+        echo "Now merging from ${fromBranchName}"
         reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
