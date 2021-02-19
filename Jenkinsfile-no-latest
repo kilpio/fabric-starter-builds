@@ -401,6 +401,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         echo "envAppendRepoVar"
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
+        echo "Finished envAppendRepoVar"
     }
 
     updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
