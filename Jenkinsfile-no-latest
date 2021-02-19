@@ -448,10 +448,10 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
     
     //updateImagesReferencesVersion(filesToReplace, '', replaceTag, toBranchName)
-    filesToReplace.each {updateImagesReferencesVersion(it, '', replaceTag, toBranchName)}
+    //filesToReplace.each {updateImagesReferencesVersion(it, '', replaceTag, toBranchName)}
     
-    
-    //updateImagesReferencesVersion('custom-admin.dockerfile', '', replaceTag, toBranchName)
+    updateImagesReferencesVersion('Dockerfile', '', replaceTag, toBranchName)
+    updateImagesReferencesVersion('custom-admin.dockerfile', '', replaceTag, toBranchName)
     
     commitBranch(toBranchName)
 }
