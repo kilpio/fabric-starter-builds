@@ -400,12 +400,10 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
         sh "git checkout ${MASTER_BRANCH} -- .env"
-        echo "envAppendVersionVars"
+        
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
-        echo "envAppendRepoVar"
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
-        echo "Finished envAppendRepoVar"
-    }
+        }
 
     updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
 
@@ -446,9 +444,10 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
         'custom-admin.dockerfile',
         'Dockerfile'
     ]
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
     updateComposeFilesFabricStarterVersionFromLatest(filesToRepalace)
     updateImagesReferencesVersion('Dockerfile', '', replaceTag, toBranchName)
+    updateImagesReferencesVersion('custom-admin.dockerfile', '', replaceTag, toBranchName)
     commitBranch(toBranchName)
 }
 
