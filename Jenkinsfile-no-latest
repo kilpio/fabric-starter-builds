@@ -295,9 +295,6 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
 //Temporaly rename this function as evaluateNextSnapshotGitTag to generate snapshot in new format '1.4.4-snapshot-0.12'
 def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
-    sh "git branch -r"
-    sh "git branch -r git branch -r --list 'origin/snapshot-*'"
-    sh "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
     def (branchPrefix, fabricVersion, version) = lastSnapshot.tokenize('-')
@@ -313,6 +310,9 @@ def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
 
     def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
+    sh "git branch -r"
+    sh "git branch -r git branch -r --list 'origin/snapshot-*'"
+    sh "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
     def (fabricVersion, branchPrefix, version) = lastSnapshot.tokenize('-')
