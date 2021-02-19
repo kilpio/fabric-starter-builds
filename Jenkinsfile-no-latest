@@ -371,7 +371,7 @@ usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 
 void commitBranch(branchName) {
     sh "git checkout ${branchName}"
-    sh "git commit -m '${branchName}' || true"
+    sh "git commit -m "${branchName}" || true"
     reportList.add("commitBranch: git commit -m ${branchName}")
 }
 
@@ -419,10 +419,11 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
             'fabric-tools-extended/Dockerfile',
             'main_old.sh',
             'main.sh']
-
+    updateComposeFilesFabricStarterVersionFromLatest(filesToRepalace) 
     updateComposeFilesWithVersions(filesToRepalace, FABRIC_VERSION, replaceTag, toBranchName)
 
     commitBranch(toBranchName)
+
 }
 
 void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
@@ -472,6 +473,36 @@ void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
 def updateComposeFilesWithVersions(filesToRepalace,fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
     filesToRepalace.each {updateImagesReferencesVersion(it, fabricVersion, replaceTag, currentBranch)}
 }
+
+def updateComposeFilesFabricStarterVersionFromLatest(filesToRepalace) { //mergeBranch -> currenBranch
+    filesToRepalace.each {updateImagesReferencesVersionFromlatestToKnown(it)}
+}
+
+def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
+    fileContent = readFile fileToProcess
+    reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess}, fabricVersion: ${fabricVersion}, replaceTag: ${replaceTag} currentBranch: ${currentBranch}")
+    def replaceTag='latest'
+    def currentBranch=LATEST_FABRIC_VERSION
+
+    replacementRules = [
+        ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       ("\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}'),
+        ("\${FABRIC_STARTER_VERSION:-"  +"\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\""  + '}'),
+        ('FABRIC_STARTER_VERSION=' + "${replaceTag}")               :       ('FABRIC_STARTER_VERSION=' + "${currentBranch}"),
+        ('FABRIC_STARTER_VERSION=' + "\"${replaceTag}\"")           :       ('FABRIC_STARTER_VERSION=' + "\"${currentBranch}\""),
+        ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       ('FABRIC_STARTER_VERSION:=' + "${currentBranch}"),
+        ('FABRIC_STARTER_VERSION:=' + "\"${replaceTag}\"")          :       ('FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\""),
+        ("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}")                 :       ("{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
+    ]
+
+    replacementRules.keySet().each {
+            fileContent = fileContent.replace(it,replacementRules.get(it))
+    }
+    writeFile file: fileToProcess, text: fileContent
+    echo "Content for ${fileToProcess}: ${fileContent}"
+    sh "git add ${fileToProcess}"
+}
+
+
 
 def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch) {
     fileContent = readFile fileToProcess
