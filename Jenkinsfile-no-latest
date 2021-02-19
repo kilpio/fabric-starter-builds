@@ -424,7 +424,9 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
             'docker-compose-open-net.yaml',
             'fabric-tools-extended/Dockerfile',
             'main_old.sh',
-            'main.sh']
+            'main.sh',
+            'lib/backup-point.sh',
+            'lib/restore-point.sh']
     updateComposeFilesFabricStarterVersionFromLatest(filesToRepalace)
     updateComposeFilesWithVersions(filesToRepalace, FABRIC_VERSION, replaceTag, toBranchName)
 
@@ -440,6 +442,12 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
         reportList.add("updateAndCommitRESTBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
     }
 
+    def filesToRepalace=[
+        'custom-admin.dockerfile',
+        'Dockerfile'
+    ]
+
+    updateComposeFilesFabricStarterVersionFromLatest(filesToRepalace)
     updateImagesReferencesVersion('Dockerfile', '', replaceTag, toBranchName)
     commitBranch(toBranchName)
 }
