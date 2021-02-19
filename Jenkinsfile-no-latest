@@ -397,7 +397,9 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
         sh "git checkout ${MASTER_BRANCH} -- .env"
+        echo "envAppendVersionVars"
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
+        echo "envAppendRepoVar"
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
     }
 
@@ -419,7 +421,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
             'fabric-tools-extended/Dockerfile',
             'main_old.sh',
             'main.sh']
-    updateComposeFilesFabricStarterVersionFromLatest(filesToRepalace) 
+    updateComposeFilesFabricStarterVersionFromLatest(filesToRepalace)
     updateComposeFilesWithVersions(filesToRepalace, FABRIC_VERSION, replaceTag, toBranchName)
 
     commitBranch(toBranchName)
