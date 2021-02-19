@@ -371,10 +371,11 @@ usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 }
 
 void commitBranch(branchName) {
-    echo "void commitBranch ${branchName}"
-    sh "git checkout ${branchName}"
-    sh "git commit -m \'${branchName}'\" || true"
+   echo "void commitBranch ${branchName}"
+   sh "git checkout ${branchName}"
+    sh "git commit -m ${branchName} || true"
     reportList.add("commitBranch: git commit -m ${branchName}")
+
 }
 
 void gitPushToBranch(branchName, repoName) {
@@ -485,7 +486,7 @@ def updateComposeFilesFabricStarterVersionFromLatest(filesToRepalace) { //mergeB
 
 def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
     fileContent = readFile fileToProcess
-    reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess}, fabricVersion: ${fabricVersion}, replaceTag: ${replaceTag} currentBranch: ${currentBranch}")
+    reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess}")
     def replaceTag='latest'
     def currentBranch=LATEST_FABRIC_VERSION
 
