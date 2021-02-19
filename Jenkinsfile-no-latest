@@ -78,6 +78,7 @@ node {
                     // LATEST_FABRIC_VERSION will be replaced with FABRIC_VERSION
                     updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                 }
+                echo 'Finish Fabric-Starter-Merge-master-to-stable'
                 echo CNORMAL
             }
 
