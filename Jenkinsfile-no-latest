@@ -26,7 +26,7 @@ node {
     previousBuildNumber = previousJobNo.toString()
     echo CRED
     echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
-    sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\"" \\ --filter \"label=jenkins_job_build=${previousBuildNumber}\""
+    sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\"" // --filter \"label=jenkins_job_build=${previousBuildNumber}\""
     echo CNORMAL
 
     //? Cleaning workspace
