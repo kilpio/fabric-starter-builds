@@ -56,8 +56,6 @@ node {
                 echo CBLUE
                 checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                 dir('fabric-starter') {
-                    // sh "git checkout ${MASTER_BRANCH}"
-                    // sh "git pull"
                     newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
                 }
                 echo CNORMAL
@@ -66,7 +64,7 @@ node {
             echo CRED
             stage ('Fabric-Starter-Merge-master-to-stable') {//BUILD_NUMBER
             reportList.add("STAGE: Fabric-Starter-Merge-master-to-stable")
-                echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to stable'
+                echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to BUILD_BRANCH'
                 echo 'Modify .env files according to new tag, modify current yamls -> stable'
                 echo 'Commit modifications'
                 echo ' '
@@ -77,6 +75,9 @@ node {
                     sh "git config user.name  ${GIT_REPO_OWNER}"
                     // LATEST_FABRIC_VERSION will be replaced with FABRIC_VERSION
                     updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
+                    if (BUILD_BRANCH == 'stable') {
+                        updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
+                    }
                 }
                 echo 'Finish Fabric-Starter-Merge-master-to-stable'
                 echo CNORMAL
@@ -117,8 +118,8 @@ node {
                                     )
 
                     tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")    // e.g. stable
-                    if (BUILD_BRANCH == 'stable') {tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag)} //e.g. snapshot
-                    //tagDockerImage(fabricToolExtendedName, FABRIC_VERSION,"${FABRIC_VERSION}-latest")
+                    if (BUILD_BRANCH == 'stable')  {tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag)} //e.g. snapshot
+                                                    tagDockerImage(fabricToolExtendedName, FABRIC_VERSION,"${FABRIC_VERSION}") //e.g. :1.4.9
                     }
                     
                 echo CNORMAL
@@ -136,6 +137,9 @@ node {
                         sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                         sh "git config user.name  ${GIT_REPO_OWNER}"
                         updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
+                        if (BUILD_BRANCH == 'stable')  {
+                                    updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
+                        }
                     }
                 echo CNORMAL
             }
@@ -168,7 +172,9 @@ node {
                                         "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile ."
                                     )
                     if (BUILD_BRANCH == 'stable') {
-                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,newFabricStarterTag)}
+                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,newFabricStarterTag)
+                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,"${FABRIC_VERSION}")
+                    }
                     tagDockerImage('fabric-starter-rest',FABRIC_VERSION,"${FABRIC_VERSION}-${BUILD_BRANCH}")
                     //tagDockerImage('fabric-starter-rest',FABRIC_VERSION,"${FABRIC_VERSION}-latest")
 
@@ -202,7 +208,9 @@ node {
                 echo CCYAN
                 echo SKIP_FS_REST_BUILD
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD =='false') ) {
-                    if (BUILD_BRANCH == 'stable') {pushDockerImage('fabric-tools-extended', newFabricStarterTag)}
+                    if (BUILD_BRANCH == 'stable') { pushDockerImage('fabric-tools-extended', newFabricStarterTag)
+                                                    pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
+                    }
                     pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     //pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-latest")
                 }
@@ -217,6 +225,7 @@ node {
                 if (BUILD_BRANCH == 'stable') {
                 dir('fabric-starter-rest') {
                         gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
+                        gitPushToBranch(${FABRIC_VERSION}, 'fabric-starter-rest')
                 }
                 }
                 echo CNORMAL
@@ -240,6 +249,7 @@ node {
                 if (BUILD_BRANCH == 'stable') {
                 dir('fabric-starter') {
                     gitPushToBranch(newFabricStarterTag, 'fabric-starter')
+                    gitPushToBranch(${FABRIC_VERSION}, 'fabric-starter')
                 }
                 }
                 echo CNORMAL
@@ -310,10 +320,6 @@ def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
 
     def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
-   //sh "git branch -r"
-    sh "git branch -r git branch -r --list 'origin/*-snapshot-*'"
-    sh "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse -t '-' -k 2 | head -1"
-    sh "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort -t '-' -k 2 --reverse | head -1"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse -t '-' -k 2 | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
     def (fabricVersion, branchPrefix, version) = lastSnapshot.tokenize('-')
@@ -375,8 +381,8 @@ usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 }
 
 void commitBranch(branchName) {
-   echo "void commitBranch ${branchName}"
-   sh "git checkout ${branchName}"
+    echo "void commitBranch ${branchName}"
+    sh "git checkout ${branchName}"
     sh "git commit -m ${branchName} || true"
     reportList.add("commitBranch: git commit -m ${branchName}")
 
