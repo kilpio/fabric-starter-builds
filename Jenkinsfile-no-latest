@@ -313,8 +313,8 @@ def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
    //sh "git branch -r"
     sh "git branch -r git branch -r --list 'origin/*-snapshot-*'"
     sh "git branch -r --list 'origin/${FABRIC_VERSION}-snapshot-*' --sort=-committerdate | sort --version-sort --reverse -t '-' -k 2 | head -1"
-    sh "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --field-separator='-' --key=2 | head -1"
-    def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --field-separator='-' --key=2 | head -1").trim()
+    sh "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort -t '-' -k 2 | head -1"
+    def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort -t '-' -k 2 | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
     def (fabricVersion, branchPrefix, version) = lastSnapshot.tokenize('-')
     def cleanFabricVersion=fabricVersion.split('/')[1]
