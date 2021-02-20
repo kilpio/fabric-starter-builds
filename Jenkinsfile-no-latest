@@ -225,7 +225,7 @@ node {
                 if (BUILD_BRANCH == 'stable') {
                 dir('fabric-starter-rest') {
                         gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
-                        gitPushToBranch(${FABRIC_VERSION}, 'fabric-starter-rest')
+                        gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
                 }
                 }
                 echo CNORMAL
@@ -249,7 +249,7 @@ node {
                 if (BUILD_BRANCH == 'stable') {
                 dir('fabric-starter') {
                     gitPushToBranch(newFabricStarterTag, 'fabric-starter')
-                    gitPushToBranch(${FABRIC_VERSION}, 'fabric-starter')
+                    gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
                 }
                 }
                 echo CNORMAL
