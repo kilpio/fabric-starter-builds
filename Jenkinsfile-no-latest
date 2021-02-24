@@ -194,7 +194,8 @@ node {
                 echo SKIP_DOCKER_PUSH
 
             if (SKIP_DOCKER_PUSH =='false') {
-                    if (BUILD_BRANCH == 'stable') {pushDockerImage('fabric-starter-rest', newFabricStarterTag)}
+                    if (BUILD_BRANCH == 'stable') {pushDockerImage('fabric-starter-rest', newFabricStarterTag)
+                                                    pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")}
                     pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     //pushDockerImage('fabric-starter-rest', FABRIC_VERSION)
                     //pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-latest")
