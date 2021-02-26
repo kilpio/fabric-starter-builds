@@ -18,11 +18,10 @@ CNORMAL = '\033[0m'
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
 node {
-
     //? Delete images from previous build
     echo "Runnning build ${BUILD_NUMBER} of ${JOB_NAME}"
     int previousJobNo = BUILD_NUMBER as Integer
-    previousJobNo-= 1
+    previousJobNo -= 1
     previousBuildNumber = previousJobNo.toString()
     echo CRED
     echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
@@ -31,23 +30,23 @@ node {
 
     //? Cleaning workspace
     def isWorkspaceNotOK = !(WORKSPACE?.trim())
-        if (isWorkspaceNotOK) {
+            if (isWorkspaceNotOK) {
         echo 'Failure: WORKSPACE variable is undefined!'
         currentBuild.result = 'FAILURE'
         return
         } else {
         echo "Cleaning workspace: ${WORKSPACE}"
         dir(WORKSPACE) {
-            deleteDir()
-            sh 'ls -ld $(find .)'
+                deleteDir()
+                sh 'ls -ld $(find .)'
         }
-        }
+            }
     //LATEST_FABRIC_VERSION = '1.4.9'
     //LATEST_FABRIC_STARTER_VERSION = 'latest'
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
     stage('Fabric-Starter-snapshot') {
-        reportList.add("STAGE: Fabric-Starter-snapshot")
+        reportList.add("STAGE: ${STAGE_NAME}")
         ansiColor('xterm') {
             def newFabricStarterTag
             echo CRED
@@ -62,8 +61,8 @@ node {
             }
 
             echo CRED
-            stage ('Fabric-Starter-Merge-master-to-stable') {//BUILD_NUMBER
-            reportList.add("STAGE: Fabric-Starter-Merge-master-to-stable")
+            stage ('Fabric-Starter-Merge-master-to-stable') { //BUILD_NUMBER
+                reportList.add('STAGE: Fabric-Starter-Merge-master-to-stable')
                 echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to BUILD_BRANCH'
                 echo 'Modify .env files according to new tag, modify current yamls -> stable'
                 echo 'Commit modifications'
@@ -85,31 +84,31 @@ node {
 
             echo CRED
             stage ('Fabric-Starter-Merge-stable-to-snapshot') {
-                reportList.add("STAGE: Fabric-Starter-Merge-stable-to-snapshot")
+                reportList.add('STAGE: Fabric-Starter-Merge-stable-to-snapshot')
                 if (BUILD_BRANCH == 'stable') {
-                echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to stable'
-                echo 'Modify .env files according to new tag, modify current yamls -> current snapshot'
-                echo 'Commit modifications'
-                //sh "git config --global --list"
-                sh 'git config --list'
-                echo '______________________________________________________'
-                echo CCYAN
-                dir('fabric-starter') {
-                    updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
-                }
-                } else {reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH}")}
+                    echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to stable'
+                    echo 'Modify .env files according to new tag, modify current yamls -> current snapshot'
+                    echo 'Commit modifications'
+                    //sh "git config --global --list"
+                    sh 'git config --list'
+                    echo '______________________________________________________'
+                    echo CCYAN
+                    dir('fabric-starter') {
+                        updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
+                    }
+                    } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
                 echo CNORMAL
-            }
+                }
 
             echo CRED
             stage('Fabric-Tools-Extended-build-extended-images') {
-                reportList.add("STAGE: Fabric-Tools-Extended-build-extended-images")
+                reportList.add('STAGE: Fabric-Tools-Extended-build-extended-images')
                 echo 'Build fabric-tools-extended images for LATEST_FABRIC_VERSION, stable and snapshot'
                 echo CYELLOW
                 dir('fabric-starter') {
                     //buildDockerImage('fabric-tools-extended', newFabricStarterTag, newFabricStarterTag, "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
                     //buildDockerImage('fabric-tools-extended', 'stable', 'stable', "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
-                def fabricToolExtendedName = 'fabric-tools-extended'    
+                    def fabricToolExtendedName = 'fabric-tools-extended'
                     buildDockerImage(
                                         fabricToolExtendedName,
                                         FABRIC_VERSION,
@@ -118,16 +117,16 @@ node {
                                     )
 
                     tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")    // e.g. stable
-                    if (BUILD_BRANCH == 'stable')  {tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag)} //e.g. snapshot
-                                                    tagDockerImage(fabricToolExtendedName, FABRIC_VERSION,"${FABRIC_VERSION}") //e.g. :1.4.9
-                    }
-                    
+                    if (BUILD_BRANCH == 'stable')  { tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag) } //e.g. snapshot
+                    tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, "${FABRIC_VERSION}") //e.g. :1.4.9
+                }
+
                 echo CNORMAL
             }
             //? ======================================== BUILDING FABRIC-STARTER-REST IMAGES =========================
             echo CRED
             stage('Farbric-starter-REST-checkout') {
-                reportList.add("STAGE: Farbric-starter-REST-checkout")
+                reportList.add('STAGE: Farbric-starter-REST-checkout')
                 echo 'Pull fabric-starter-rest and checkout to the master branch'
                 echo CCYAN
                 checkoutFromGithubToSubfolder('fabric-starter-rest')
@@ -138,49 +137,48 @@ node {
                         sh "git config user.name  ${GIT_REPO_OWNER}"
                         updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                         if (BUILD_BRANCH == 'stable')  {
-                                    updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
+                        updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
                         }
                     }
                 echo CNORMAL
-            }
+                }
 
             echo CRED
             echo 'Take updates from master (pretend as from stable) to snapshot, commit snapshot (create snapshot branch if does not exist)'
             stage('Farbric-starter-REST-copy-stable-to-snapshot') {
                 if (BUILD_BRANCH == 'stable') {
-                reportList.add("STAGE: Farbric-starter-REST-copy-stable-to-snapshot")
-                echo CYELLOW
-                dir('fabric-starter-rest') {
+                    reportList.add('STAGE: Farbric-starter-REST-copy-stable-to-snapshot')
+                    echo CYELLOW
+                    dir('fabric-starter-rest') {
                         updateAndCommitRESTBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag)
-                }
-                } else {reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH}")}
+                    }
+                    } else { reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
                 echo CNORMAL
-            }
+                }
 
             echo CRED
             stage('Fabic-Starter-REST-build-docker-images') {
-                if (SKIP_FS_REST_BUILD == 'false'){ 
-                reportList.add("STAGE: Fabic-Starter-REST-build-docker-images")
-                echo 'Build snapshot, stable and LATEST_FABRIC_VERSION fabric-starter-rest images'
-                echo CGREEN
+                if (SKIP_FS_REST_BUILD == 'false') {
+                    reportList.add('STAGE: Fabic-Starter-REST-build-docker-images')
+                    echo 'Build snapshot, stable and LATEST_FABRIC_VERSION fabric-starter-rest images'
+                    echo CGREEN
 
-                dir('fabric-starter-rest') {
-                    buildDockerImage(
+                    dir('fabric-starter-rest') {
+                        buildDockerImage(
                                         'fabric-starter-rest',
                                         FABRIC_VERSION,
                                         MASTER_BRANCH,
                                         "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile ."
                                     )
-                    if (BUILD_BRANCH == 'stable') {
-                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,newFabricStarterTag)
-                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,"${FABRIC_VERSION}")
-                    }
-                    tagDockerImage('fabric-starter-rest',FABRIC_VERSION,"${FABRIC_VERSION}-${BUILD_BRANCH}")
+                        if (BUILD_BRANCH == 'stable') {
+                            tagDockerImage('fabric-starter-rest', FABRIC_VERSION, newFabricStarterTag)
+                            tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}")
+                        }
+                        tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     //tagDockerImage('fabric-starter-rest',FABRIC_VERSION,"${FABRIC_VERSION}-latest")
 
-                    //buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-                    //buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-
+                //buildDockerImage('fabric-starter-rest', newFabricStarterTag, newFabricStarterTag, "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
+                //buildDockerImage('fabric-starter-rest', 'stable', 'stable', "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
                 }}
                 echo CNORMAL
                 }
@@ -189,31 +187,31 @@ node {
 
             echo CRED
             stage('Fabic-Starter-REST-push-docker-images') {
-                reportList.add("STAGE: Fabic-Starter-REST-push-docker-images")
+                reportList.add('STAGE: Fabic-Starter-REST-push-docker-images')
                 echo CBLUE
                 echo SKIP_DOCKER_PUSH
 
-            if (SKIP_DOCKER_PUSH =='false') {
-                    if (BUILD_BRANCH == 'stable') {pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-                                                    pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")}
+                if (SKIP_DOCKER_PUSH == 'false') {
+                    if (BUILD_BRANCH == 'stable') { pushDockerImage('fabric-starter-rest', newFabricStarterTag)
+                        pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")}
                     pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                    //pushDockerImage('fabric-starter-rest', FABRIC_VERSION)
-                    //pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-latest")
+                //pushDockerImage('fabric-starter-rest', FABRIC_VERSION)
+                //pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-latest")
                 }
                 echo CNORMAL
             }
 
             echo CRED
             stage('Fabic-Starter-push-docker-images') {
-                reportList.add("STAGE: Fabic-Starter-push-docker-images")
+                reportList.add('STAGE: Fabic-Starter-push-docker-images')
                 echo CCYAN
                 echo SKIP_FS_REST_BUILD
-                if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD =='false') ) {
+                if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false') ) {
                     if (BUILD_BRANCH == 'stable') { pushDockerImage('fabric-tools-extended', newFabricStarterTag)
-                                                    pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
+                        pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
                     }
                     pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                    //pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-latest")
+                //pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-latest")
                 }
                 echo CNORMAL
             }
@@ -221,21 +219,20 @@ node {
             //? ==================================== GIT PUSH==========================================
             echo CRED
             stage('Fabic-Starter-REST-git-push-snapshot') {
-                reportList.add("STAGE: Fabic-Starter-REST-git-push-snapshot")
+                reportList.add('STAGE: Fabic-Starter-REST-git-push-snapshot')
                 echo CBLUE
                 if (BUILD_BRANCH == 'stable') {
-                dir('fabric-starter-rest') {
+                    dir('fabric-starter-rest') {
                         gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
                         gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
-                }
+                    }
                 }
                 echo CNORMAL
             }
 
             echo CRED
             stage('Fabic-Starter-REST-git-push-stable') {
-                
-                reportList.add("STAGE: Fabic-Starter-REST-git-push-stable")
+                reportList.add('STAGE: Fabic-Starter-REST-git-push-stable')
                 echo CGREEN
                 dir('fabric-starter-rest') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter-rest')
@@ -245,20 +242,20 @@ node {
 
             echo CRED
             stage ('Fabic-Starter-git-push-snapshot') {
-                reportList.add("STAGE: Fabic-Starter-git-push-snapshot")
+                reportList.add('STAGE: Fabic-Starter-git-push-snapshot')
                 echo CMAGENTA
                 if (BUILD_BRANCH == 'stable') {
-                dir('fabric-starter') {
-                    gitPushToBranch(newFabricStarterTag, 'fabric-starter')
-                    gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
-                }
+                    dir('fabric-starter') {
+                        gitPushToBranch(newFabricStarterTag, 'fabric-starter')
+                        gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
+                    }
                 }
                 echo CNORMAL
             }
 
             echo CRED
             stage ('Fabic-Starter-git-push-stable') {
-                reportList.add("STAGE: Fabic-Starter-git-push-stable")
+                reportList.add('STAGE: Fabic-Starter-git-push-stable')
                 echo CBLUE
                 dir('fabric-starter') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter')
@@ -267,17 +264,17 @@ node {
             }
             //? ====================================== REPORT =====================================
             stage('printReport') {
-                reportList.add("STAGE: printReport")
+                reportList.add('STAGE: printReport')
                 echo CGREEN
                 def report
-                
+
                 reportList.eachWithIndex {
-                    if (it!=null){
-                    line = it.replaceFirst('^',"${CCYAN}")
-                    line = line.replaceFirst(': ',":${CGREEN} ")
-                    line = line.replaceFirst('STAGE:',"${CRED}-- STAGE:${CBLUE}")
-                    line = line.replaceFirst('$',"${CNORMAL}")
-                    report += line +"\n"
+                    if (it != null) {
+                        line = it.replaceFirst('^', "${CCYAN}")
+                        line = line.replaceFirst(': ', ":${CGREEN} ")
+                        line = line.replaceFirst('STAGE:', "${CRED}-- STAGE:${CBLUE}")
+                        line = line.replaceFirst('$', "${CNORMAL}")
+                        report += line + '\n'
                     }
                 }
                 echo report
@@ -311,28 +308,26 @@ def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
     def (branchPrefix, fabricVersion, version) = lastSnapshot.tokenize('-')
     def (majorVer, minorVer) = fabricVersion.tokenize('.')
     int minorVersion = (minorVer as int)
-    def cleanBranchPrefix=branchPrefix.split('/')[1]
+    def cleanBranchPrefix = branchPrefix.split('/')[1]
     def newGitTag = "${FABRIC_VERSION}-${cleanBranchPrefix}-${majorVer}.${minorVersion + 1}"
     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
     newGitTag
-    }
+}
 
-
-    def evaluateNextSnapshotGitTag(repositoryTitle) {
+def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse -t '-' -k 2 | head -1").trim()
     echo "Current latest snapshot: ${lastSnapshot}"
     def (fabricVersion, branchPrefix, version) = lastSnapshot.tokenize('-')
-    def cleanFabricVersion=fabricVersion.split('/')[1]
+    def cleanFabricVersion = fabricVersion.split('/')[1]
     def (majorVer, minorVer) = version.tokenize('.')
     int minorVersion = (minorVer as int)
     def newGitTag = "${FABRIC_VERSION}-${branchPrefix}-${majorVer}.${minorVersion + 1}"
     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
     newGitTag
-    }
-
+}
 
 void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     CUNDERLINED = '\033[4m'
@@ -373,12 +368,12 @@ void tagDockerImage(imageName, tag, newTag) {
 void pushDockerImage(imageName, tag) {
     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '${DOCKER_CREDENTIALS_ID}',
 usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-        sh "docker logout"
+        sh 'docker logout'
         sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
         sh "docker push ${USERNAME}/${imageName}:${tag}"
-        sh "docker logout"
+        sh 'docker logout'
         reportList.add("pushDockerImage: docker push ${USERNAME}/${imageName}:${tag}")
-    }
+}
 }
 
 void commitBranch(branchName) {
@@ -386,7 +381,6 @@ void commitBranch(branchName) {
     sh "git checkout ${branchName}"
     sh "git commit -m ${branchName} || true"
     reportList.add("commitBranch: git commit -m ${branchName}")
-
 }
 
 void gitPushToBranch(branchName, repoName) {
@@ -400,8 +394,8 @@ void gitPushToBranch(branchName, repoName) {
         reportList.add("gitPushToBranch: git push -u origin ${branchName}")
     }
 }
-                        // master:      LATEST_FABRIC_VERSION   ->   stable
-                        // stable:      LATEST_FABRIC_VERSION   ->   snapshot
+// master:      LATEST_FABRIC_VERSION   ->   stable
+// stable:      LATEST_FABRIC_VERSION   ->   snapshot
 void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
     reportList.add("updateAndCommitBranch: fromBranchName: ${fromBranchName}, replaceTag: {replaceTag}, toBranchName: {toBranchName}")
     checkoutAndThenPullIfRemoteExists(toBranchName)
@@ -411,10 +405,10 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
         sh "git checkout ${MASTER_BRANCH} -- .env"
-        
+
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
-        }
+    }
 
     updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
 
@@ -440,7 +434,6 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
     updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
 
     commitBranch(toBranchName)
-
 }
 
 void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
@@ -451,19 +444,19 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
         reportList.add("updateAndCommitRESTBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
     }
 
-    def filesToReplace=[
+    def filesToReplace = [
         'custom-admin.dockerfile',
         'Dockerfile'
     ]
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
-    
+
     //updateImagesReferencesVersion(filesToReplace, '', replaceTag, toBranchName)
     //filesToReplace.each {updateImagesReferencesVersion(it, '', replaceTag, toBranchName)}
-    
+
     updateImagesReferencesVersion('Dockerfile', '', replaceTag, toBranchName)
     updateImagesReferencesVersion('custom-admin.dockerfile', '', replaceTag, toBranchName)
-    
+
     commitBranch(toBranchName)
 }
 
@@ -499,23 +492,23 @@ void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
     updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
 }
 
-def updateComposeFilesWithVersions(filesToReplace,fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
-    filesToReplace.each {updateImagesReferencesVersion(it, fabricVersion, replaceTag, currentBranch)}
+def updateComposeFilesWithVersions(filesToReplace, fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
+    filesToReplace.each { updateImagesReferencesVersion(it, fabricVersion, replaceTag, currentBranch) }
 }
 
 def updateComposeFilesFabricStarterVersionFromLatest(filesToReplace) { //mergeBranch -> currenBranch
-    filesToReplace.each {updateImagesReferencesVersionFromlatestToKnown(it)}
+    filesToReplace.each { updateImagesReferencesVersionFromlatestToKnown(it) }
 }
 
 def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
     fileContent = readFile fileToProcess
     reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess}")
-    def replaceTag='latest'
-    def currentBranch=LATEST_FABRIC_VERSION
+    def replaceTag = 'latest'
+    def currentBranch = LATEST_FABRIC_VERSION
 
     replacementRules = [
         ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       ("\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}'),
-        ("\${FABRIC_STARTER_VERSION:-"  +"\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\""  + '}'),
+        ("\${FABRIC_STARTER_VERSION:-" + "\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\"" + '}'),
         ('FABRIC_STARTER_VERSION=' + "${replaceTag}")               :       ('FABRIC_STARTER_VERSION=' + "${currentBranch}"),
         ('FABRIC_STARTER_VERSION=' + "\"${replaceTag}\"")           :       ('FABRIC_STARTER_VERSION=' + "\"${currentBranch}\""),
         ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       ('FABRIC_STARTER_VERSION:=' + "${currentBranch}"),
@@ -524,14 +517,12 @@ def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
     ]
 
     replacementRules.keySet().each {
-            fileContent = fileContent.replace(it,replacementRules.get(it))
+            fileContent = fileContent.replace(it, replacementRules.get(it))
     }
     writeFile file: fileToProcess, text: fileContent
     echo "Content for ${fileToProcess}: ${fileContent}"
     sh "git add ${fileToProcess}"
 }
-
-
 
 def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch) {
     fileContent = readFile fileToProcess
@@ -544,7 +535,7 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
         ('FABRIC_VERSION:=' + "${replaceTag}")                      :       ('FABRIC_VERSION:=' + "${fabricVersion}"),
         ('FABRIC_VERSION:=' + "\"${replaceTag}\"")                  :       ('FABRIC_VERSION:=' + "\"${fabricVersion}\""),
         ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       ("\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}'),
-        ("\${FABRIC_STARTER_VERSION:-"  +"\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\""  + '}'),
+        ("\${FABRIC_STARTER_VERSION:-" + "\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\"" + '}'),
         ('FABRIC_STARTER_VERSION=' + "${replaceTag}")               :       ('FABRIC_STARTER_VERSION=' + "${currentBranch}"),
         ('FABRIC_STARTER_VERSION=' + "\"${replaceTag}\"")           :       ('FABRIC_STARTER_VERSION=' + "\"${currentBranch}\""),
         ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       ('FABRIC_STARTER_VERSION:=' + "${currentBranch}"),
@@ -553,7 +544,7 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
     ]
 
     replacementRules.keySet().each {
-            fileContent = fileContent.replace(it,replacementRules.get(it))
+            fileContent = fileContent.replace(it, replacementRules.get(it))
     }
 
     writeFile file: fileToProcess, text: fileContent
@@ -568,3 +559,6 @@ def remoteBranchExists(branchName) {
     def whetherExists = checkRemoteBranch.isInteger() ? checkRemoteBranch.toInteger() : 0
     return (whetherExists > 0)
 }
+
+
+
