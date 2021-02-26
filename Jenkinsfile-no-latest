@@ -51,7 +51,7 @@ node {
             def newFabricStarterTag
             echo CRED
 
-            wrappedStage('Test', "${CBLUE}", 'Pull fabric-starter master and evaluate next snapshot') {
+            wrappedStage('Test', "${CBLUE}", 'Testing wrapped stage') {
                 echo "wrappedStage ${STAGE_NAME}"
             }
 
@@ -567,11 +567,11 @@ def remoteBranchExists(branchName) {
 
 def wrappedStage(name, color, description, Closure closure) {
     stage(name) {
-        if (color) { echo color }
+        if (color) { echo '*'; echo color }
         if (description) { echo description }
         reportList.add("STAGE: ${STAGE_NAME}")
         def result = closure.call()
-        if (color) { echo CNORMAL }
+        if (color) { echo '*'; echo CNORMAL }
         return result
             }
 }
