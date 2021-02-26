@@ -571,7 +571,7 @@ def wrappedStage(name, color, description, Closure closure) {
         if (description) {echo description}
         reportList.add("STAGE: ${STAGE_NAME}")
         def result = closure.call()
-        if color {echo CNORMAL}
+        if (color) {echo CNORMAL}
         return result
             }
 }
