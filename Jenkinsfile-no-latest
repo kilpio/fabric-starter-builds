@@ -399,8 +399,8 @@ void envAppendRepoVar(currentRepoName) {
     sh 'git add .env'
 }
 
-// master:      LATEST_FABRIC_VERSION   ->    stable
-// stable:      LATEST_FABRIC_VERSION   ->    snapshot
+                    // master:      LATEST_FABRIC_VERSION   ->    stable
+                    // stable:      LATEST_FABRIC_VERSION   ->    snapshot
 void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
     updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
 }
