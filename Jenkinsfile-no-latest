@@ -55,13 +55,13 @@ node {
                         checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                 }
 
-            wrappedStage('Evaluate-Next-Snapshot-Git-Tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
+            wrappedStage('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
                         //dir('fabric-starter') {
                         newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
                         //}
                 }
 
-            wrappedStage('Fabric-Starter-Merge-master-to-stable', CMAGENTA, "Merge from ${MASTER_BRANCH} and commit ${STABLE_BRANCH_NAME}", './fabric-starter') { //BUILD_NUMBER
+            wrappedStage('Fabric-Starter-merge-master-to-stable', CMAGENTA, "Merge from ${MASTER_BRANCH} and commit ${STABLE_BRANCH_NAME}", './fabric-starter') { //BUILD_NUMBER
                 
                         sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                         sh "git config user.name  ${GIT_REPO_OWNER}"
@@ -73,7 +73,7 @@ node {
                 }
 
             
-            wrappedStage('Fabric-Starter-Merge-stable-to-snapshot', CCYAN, "Merge from ${BUILD_BRANCH} and commit ${newFabricStarterTag}", './fabric-starter' ) {
+            wrappedStage('Fabric-Starter-merge-stable-to-snapshot', CCYAN, "Merge from ${BUILD_BRANCH} and commit ${newFabricStarterTag}", './fabric-starter' ) {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                                                 updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
                     } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
@@ -95,11 +95,11 @@ node {
                 }
 
             //? ======================================== BUILDING FABRIC-STARTER-REST IMAGES =========================
-            wrappedStage('Farbric-starter-rest-checkout', CCYAN, 'Pull fabric-starter-rest and checkout to the master branch') {
+            wrappedStage('Farbric-Starter-Rest-checkout', CCYAN, 'Pull fabric-starter-rest and checkout to the master branch') {
                             checkoutFromGithubToSubfolder('fabric-starter-rest')
                 }
 
-            wrappedStage('Farbric-starter-rest-update-and-commit', CCYAN, 'Pull fabric-starter-rest and checkout to the master branch', './fabric-starter-rest') {
+            wrappedStage('Farbric-Starter-Rest-update-and-commit', CCYAN, 'Pull fabric-starter-rest and checkout to the master branch', './fabric-starter-rest') {
                 
                     sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                     sh "git config user.name  ${GIT_REPO_OWNER}"
@@ -109,7 +109,7 @@ node {
                     }
                 }
 
-            wrappedStage('Farbric-starter-rest-copy-stable-to-snapshot', CYELLOW, 'Take updates from master (pretend as from stable) to snapshot,commit snapshot (create snapshot branch if does not exist)', './fabric-starter-rest') {
+            wrappedStage('Farbric-Starter-Rest-copy-stable-to-snapshot', CYELLOW, 'Take updates from master (pretend as from stable) to snapshot,commit snapshot (create snapshot branch if does not exist)', './fabric-starter-rest') {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                             updateAndCommitRESTBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag)
                     } else {
@@ -117,7 +117,7 @@ node {
                     }
                 }
 
-            wrappedStage('Fabic-Starter-REST-build-docker-images', CGREEN, 'Build snapshot,stable and LATEST_FABRIC_VERSION fabric-starter-rest images', './fabric-starter-rest') {
+            wrappedStage('Fabic-Starter-Rest-build-docker-images', CGREEN, 'Build snapshot,stable and LATEST_FABRIC_VERSION fabric-starter-rest images', './fabric-starter-rest') {
                 if (SKIP_FS_REST_BUILD == 'false') {
                     buildDockerImage(
                                         'fabric-starter-rest',
@@ -138,7 +138,7 @@ node {
 
 //? ========================================== DOCKER PUSH==============================================
 
-            wrappedStage('Fabic-Starter-REST-push-snapshot-docker-images', CBLUE, 'Push fabric-starter-rest $(newFabricStarterTag) and ${FABRIC_VERSION} images to dockerhub') {
+            wrappedStage('Fabic-Starter-Rest-push-snapshot-docker-images', CBLUE, 'Push fabric-starter-rest $(newFabricStarterTag) and ${FABRIC_VERSION} images to dockerhub') {
                     if (SKIP_DOCKER_PUSH == 'false') {
                         if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") { 
                                     pushDockerImage('fabric-starter-rest', newFabricStarterTag)
@@ -160,7 +160,7 @@ node {
 
             //? ==================================== GIT PUSH==========================================
 
-            wrappedStage('Fabic-Starter-REST-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github") {
+            wrappedStage('Fabic-Starter-Rest-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github") {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                     //dir('fabric-starter-rest') {
                         gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
@@ -169,7 +169,7 @@ node {
                 }
             }
 
-            wrappedStage('Fabic-Starter-REST-git-push-stable', CGREEN, 'push fabric-starter-rest to github') {
+            wrappedStage('Fabic-Starter-Rest-git-push-stable', CGREEN, 'push fabric-starter-rest to github') {
                 //dir('fabric-starter-rest') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter-rest')
                 //}
@@ -192,7 +192,7 @@ node {
             }
 
             //? ====================================== REPORT =====================================
-            wrappedStage('printReport',CGREEN, 'print report') {
+            wrappedStage('Print-report',CGREEN, 'print report') {
                 def report
 
                 reportList.eachWithIndex {
