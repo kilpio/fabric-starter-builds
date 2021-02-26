@@ -567,11 +567,11 @@ def remoteBranchExists(branchName) {
 
 def wrappedStage(name, color, description, Closure closure) {
     stage(name) {
-        if (color) {echo color}
-        if (description) {echo description}
+        if (color) { echo color }
+        if (description) { echo description }
         reportList.add("STAGE: ${STAGE_NAME}")
         def result = closure.call()
-        if (color) {echo CNORMAL}
+        if (color) { echo CNORMAL }
         return result
             }
 }
