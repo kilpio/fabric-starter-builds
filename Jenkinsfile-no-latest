@@ -19,8 +19,7 @@ reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORM
 
 node {
     //? Delete images from previous build
-
-    wrappedStage('Delete-previous-results',CRED,"Runnning build ${BUILD_NUMBER} of ${JOB_NAME}") {
+        wrappedStage('Delete-previous-results',CRED,"Runnning build ${BUILD_NUMBER} of ${JOB_NAME}") {
         echo "Runnning build ${BUILD_NUMBER} of ${JOB_NAME}"
         int previousJobNo = BUILD_NUMBER as Integer
         previousJobNo -= 1
@@ -28,21 +27,21 @@ node {
         echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
         sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\"" // --filter \"label=jenkins_job_build=${previousBuildNumber}\""
     }
+    
     //? Cleaning workspace
-    wrappedStage('Cleaning-workspace', CMAGENTA, Cleaning workspace: ${WORKSPACE}) {}
+    wrappedStage('Cleaning-workspace', CMAGENTA, Cleaning workspace: ${WORKSPACE}) {
     def isWorkspaceNotOK = !(WORKSPACE?.trim())
-    if (isWorkspaceNotOK) {
-        echo 'Failure: WORKSPACE variable is undefined!'
-        currentBuild.result = 'FAILURE'
-        return
-} else {
-        echo "Cleaning workspace: ${WORKSPACE}"
-        dir(WORKSPACE) {
-            deleteDir()
-            sh 'ls -ld $(find .)'
+        if (isWorkspaceNotOK) {
+            echo 'Failure: WORKSPACE variable is undefined!'
+            currentBuild.result = 'FAILURE'
+            return
+        } else {
+            dir(WORKSPACE) {
+                deleteDir()
+                sh 'ls -ld $(find .)'
+            }
         }
     }
-}
 //LATEST_FABRIC_VERSION = '1.4.9'
 //LATEST_FABRIC_STARTER_VERSION = 'latest'
 
