@@ -13,6 +13,8 @@ CNOTUNDERLINED = '\033[24m'
 CNORMAL = '\033[0m'
 // https://en.wikipedia.org/wiki/ANSI_escape_code
 
+STABLE_BRANCH_NAME='stable'
+
 //import groovy.transform.Field
 //@Field List reportList = []
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
@@ -68,7 +70,7 @@ node {
                     sh "git config user.name  ${GIT_REPO_OWNER}"
                     // LATEST_FABRIC_VERSION will be replaced with FABRIC_VERSION
                     updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                    if (BUILD_BRANCH == 'stable') {
+                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                         updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
                     }
                 }
@@ -76,8 +78,7 @@ node {
 
             
             wrappedStage('Fabric-Starter-Merge-stable-to-snapshot', CCYAN) {
-                reportList.add('STAGE: Fabric-Starter-Merge-stable-to-snapshot')
-                if (BUILD_BRANCH == 'stable') {
+                if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                         echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to stable'
                         echo 'Modify .env files according to new tag,modify current yamls -> current snapshot'
                         echo 'Commit modifications'
@@ -87,7 +88,7 @@ node {
                         //echo CCYAN
                         dir('fabric-starter') {
                         updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
-                    }
+                        }
                     } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
                 //echo CNORMAL
                 }
@@ -106,7 +107,7 @@ node {
                                     )
 
                     tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")    // e.g. stable
-                    if (BUILD_BRANCH == 'stable')  { tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag) } //e.g. snapshot
+                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}")  { tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag) } //e.g. snapshot
                     tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, "${FABRIC_VERSION}") //e.g. :1.4.9
                 }
             }
@@ -118,14 +119,14 @@ node {
                     sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                     sh "git config user.name  ${GIT_REPO_OWNER}"
                     updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                    if (BUILD_BRANCH == 'stable')  {
+                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}")  {
                         updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
                     }
                 }
             }
 
             wrappedStage('Farbric-starter-REST-copy-stable-to-snapshot', CYELLOW, 'Take updates from master (pretend as from stable) to snapshot,commit snapshot (create snapshot branch if does not exist)') {
-                if (BUILD_BRANCH == 'stable') {
+                if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                     dir('fabric-starter-rest') {
                         updateAndCommitRESTBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag)
                     }
@@ -143,7 +144,7 @@ node {
                                             MASTER_BRANCH,
                                             "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile ."
                     )
-                        if (BUILD_BRANCH == 'stable') {
+                        if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                             tagDockerImage('fabric-starter-rest', FABRIC_VERSION, newFabricStarterTag)
                             tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}")
                         }
@@ -160,7 +161,7 @@ node {
             wrappedStage('Fabic-Starter-REST-push-docker-images', CBLUE, 'Push fabric-starter-rest images to dockerhub') {
 
                 if (SKIP_DOCKER_PUSH == 'false') {
-                    if (BUILD_BRANCH == 'stable') { pushDockerImage('fabric-starter-rest', newFabricStarterTag)
+                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") { pushDockerImage('fabric-starter-rest', newFabricStarterTag)
                         pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")
                     }
                     pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
@@ -171,7 +172,7 @@ node {
 
             wrappedStage('Fabic-Starter-push-docker-images', CCYAN, 'Push fabric-starter images to dockerhub') {
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false') ) {
-                    if (BUILD_BRANCH == 'stable') { pushDockerImage('fabric-tools-extended', newFabricStarterTag)
+                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") { pushDockerImage('fabric-tools-extended', newFabricStarterTag)
                         pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
                     }
                     pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-${BUILD_BRANCH}")
@@ -182,7 +183,7 @@ node {
             //? ==================================== GIT PUSH==========================================
 
             wrappedStage('Fabic-Starter-REST-git-push-snapshot', CBLUE, 'push fabric-starter-rest snapshot to github') {
-                if (BUILD_BRANCH == 'stable') {
+                if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                     dir('fabric-starter-rest') {
                         gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
                         gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
@@ -198,7 +199,7 @@ node {
             }
 
             wrappedStage ('Fabic-Starter-git-push-snapshot', CMAGENTA, 'push fabric-starter snapshot branch to github') {
-                if (BUILD_BRANCH == 'stable') {
+                if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                     dir('fabric-starter') {
                         gitPushToBranch(newFabricStarterTag, 'fabric-starter')
                         gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
