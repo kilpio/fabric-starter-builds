@@ -51,7 +51,7 @@ node {
             def newFabricStarterTag
             echo CRED
 
-            wrappedStage('Test', "${CBLUE}") {
+            wrappedStage('Test', "${CBLUE}", 'Pull fabric-starter master and evaluate next snapshot') {
                 echo "wrappedStage ${STAGE_NAME}"
             }
 
@@ -290,7 +290,7 @@ MASTER_BRANCH,
 
 //! ======================================== FUNCTIONS ===========================================
 
-def checkoutFromGithubToSubfolder(repositoryName,def branch = 'master') {
+def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
     echo 'If login fails here with right credentials,please add github.com to known hosts for jenkins user (ssh-keyscan -H github.com >> .ssh/known_hosts)'
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         sh 'pwd'
@@ -565,13 +565,13 @@ def remoteBranchExists(branchName) {
     return (whetherExists > 0)
 }
 
-def wrappedStage(name, color, Closure closure) {
+def wrappedStage(name, color, description, Closure closure) {
     stage(name) {
-        echo color
-        echo "Beginning of stage"
+        if (color) {echo color}
+        if (description) {echo description}
+        reportList.add("STAGE: ${STAGE_NAME}")
         def result = closure.call()
-        echo "End of stage"
-        echo CNORMAL
+        if color {echo CNORMAL}
         return result
             }
 }
