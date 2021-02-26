@@ -51,7 +51,7 @@ node {
             def newFabricStarterTag
             echo CRED
 
-            wrappedStage('Test',"${CBLUE}") {
+            wrappedStage('Test', "${CBLUE}") {
                 echo "wrappedStage ${STAGE_NAME}"
             }
 
