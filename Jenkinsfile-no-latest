@@ -55,7 +55,7 @@ node {
                         checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                 }
 
-            wrappedStage('evaluate-Next-Snapshot-Git-Tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
+            wrappedStage('Evaluate-Next-Snapshot-Git-Tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
                         //dir('fabric-starter') {
                         newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
                         //}
