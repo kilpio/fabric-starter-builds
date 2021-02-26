@@ -29,7 +29,7 @@ node {
     }
     
     //? Cleaning workspace
-    wrappedStage('Cleaning-workspace', CMAGENTA, Cleaning workspace: ${WORKSPACE}) {
+    wrappedStage('Cleaning-workspace', CMAGENTA, "Cleaning workspace: ${WORKSPACE}") {
     def isWorkspaceNotOK = !(WORKSPACE?.trim())
         if (isWorkspaceNotOK) {
             echo 'Failure: WORKSPACE variable is undefined!'
