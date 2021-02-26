@@ -52,7 +52,7 @@ node {
             echo CRED
 
 //            wrappedStage('Test', "${CBLUE}", 'Testing wrapped stage') {
-            wrappedStage('Test') {
+            wrappedStage('Test',CBLUE) {
                 echo "wrappedStage name: ${STAGE_NAME}"
             }
 
