@@ -45,6 +45,11 @@ node {
     //LATEST_FABRIC_STARTER_VERSION = 'latest'
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
+
+    wrappedStage('test') {
+        echo "Running ${STAGE_NAME}"
+    }
+
     stage('Fabric-Starter-snapshot') {
         reportList.add("STAGE: ${STAGE_NAME}")
         ansiColor('xterm') {
@@ -195,7 +200,14 @@ node {
                     if (BUILD_BRANCH == 'stable') { pushDockerImage('fabric-starter-rest', newFabricStarterTag)
                         pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")}
                     pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                //pushDockerImage('fabric-starter-rest', FABRIC_VERSION)
+                //pushDockerImage('fabric-starter-rest', FABRIC_VERSION)def wrappedStage(name, Closure closure) {
+    stage(name) {
+        echo "Beginning of stage"
+        def result = closure.call()
+        echo "End of stage"
+        return result
+    }
+}
                 //pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-latest")
                 }
                 echo CNORMAL
@@ -205,7 +217,14 @@ node {
             stage('Fabic-Starter-push-docker-images') {
                 reportList.add('STAGE: Fabic-Starter-push-docker-images')
                 echo CCYAN
-                echo SKIP_FS_REST_BUILD
+                echo SKIP_FS_REST_BUILDdef wrappedStage(name, Closure closure) {
+    stage(name) {
+        echo "Beginning of stage"
+        def result = closure.call()
+        echo "End of stage"
+        return result
+    }
+}
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false') ) {
                     if (BUILD_BRANCH == 'stable') { pushDockerImage('fabric-tools-extended', newFabricStarterTag)
                         pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
@@ -486,10 +505,14 @@ void envAppendRepoVar(currentRepoName) {
     sh 'git add .env'
 }
 
-// master:      LATEST_FABRIC_VERSION   ->    stable
-// stable:      LATEST_FABRIC_VERSION   ->    snapshot
-void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
-    updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
+// master:      LATEST_FABRIC_VERSION   ->    stabledef wrappedStage(name, Closure closure) {
+    stage(name) {
+        echo "Beginning of stage"
+        def result = closure.call()
+        echo "End of stage"
+        return result
+    }
+}
 }
 
 def updateComposeFilesWithVersions(filesToReplace, fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
@@ -560,5 +583,12 @@ def remoteBranchExists(branchName) {
     return (whetherExists > 0)
 }
 
-
+def wrappedStage(name, Closure closure) {
+    stage(name) {
+        echo "Beginning of stage"
+        def result = closure.call()
+        echo "End of stage"
+        return result
+    }
+}
 
