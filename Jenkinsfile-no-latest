@@ -52,7 +52,7 @@ node {
             echo CRED
 
             wrappedStage('Test', "${CBLUE}", 'Testing wrapped stage') {
-                echo "wrappedStage ${STAGE_NAME}"
+                echo "wrappedStage name: ${STAGE_NAME}"
             }
 
             stage('Fabric-Starter-git-checkout-pull-master') {
