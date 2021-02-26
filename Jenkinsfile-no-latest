@@ -51,7 +51,7 @@ node {
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
 
-            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/${repoName}") {
+            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/fabric-starter") {
                         checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                 }
 
