@@ -51,7 +51,7 @@ node {
             def newFabricStarterTag
             echo CRED
 
-            wrappedStage('Test') {
+            wrappedStage(name: 'Test', color: CBLUE) {
                 echo "wrappedStage ${STAGE_NAME}"
             }
 
@@ -565,11 +565,13 @@ def remoteBranchExists(branchName) {
     return (whetherExists > 0)
 }
 
-def wrappedStage(name, Closure closure) {
+def wrappedStage(name, Closure closure, color) {
     stage(name) {
+        echo color
         echo "Beginning of stage"
         def result = closure.call()
         echo "End of stage"
+        echo CNORMAL
         return result
-    }
+            }
 }
