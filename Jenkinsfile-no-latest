@@ -46,15 +46,16 @@ node {
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
 
-    wrappedStage('test') {
-        echo "Running ${STAGE_NAME}"
-    }
 
     stage('Fabric-Starter-snapshot') {
         reportList.add("STAGE: ${STAGE_NAME}")
         ansiColor('xterm') {
             def newFabricStarterTag
             echo CRED
+
+            wrappedStage('test') {
+                    echo "Running ${STAGE_NAME}"
+            }
             stage('Fabric-Starter-git-checkout-pull-master') {
                 echo 'Pull fabric-starter master and evaluate next snapshot'
                 echo CBLUE
