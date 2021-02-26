@@ -50,31 +50,34 @@ node {
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
 
-            wrappedStage('Fabric-Starter-git-checkout-pull-master', CBLUE, 'Pull fabric-starter master and evaluate next snapshot') {
-                checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
-                dir('fabric-starter') {
-                    newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
+            wrappedStage('Fabric-Starter-git-checkout-pull-master', CBLUE, 'Pull fabric-starter from ${GIT_REPO_OWNER}/${repoName}') {
+                        checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                 }
-            }
+
+            wrappedStage('evaluate-Next-Snapshot-Git-Tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
+                        //dir('fabric-starter') {
+                        newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
+                        //}
+                }
 
             wrappedStage('Fabric-Starter-Merge-master-to-stable', CMAGENTA) { //BUILD_NUMBER
                 
-                echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to BUILD_BRANCH'
-                echo 'Modify .env files according to new tag,modify current yamls -> stable'
-                echo 'Commit modifications'
-                echo ' '
-                
-                echo "Master Branch is: ${MASTER_BRANCH}"
-                dir('fabric-starter') {
-                    sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
-                    sh "git config user.name  ${GIT_REPO_OWNER}"
-                    // LATEST_FABRIC_VERSION will be replaced with FABRIC_VERSION
-                    updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                        updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
+                    echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to BUILD_BRANCH'
+                    echo 'Modify .env files according to new tag,modify current yamls -> stable'
+                    echo 'Commit modifications'
+                    echo ' '
+                    
+                    echo "Master Branch is: ${MASTER_BRANCH}"
+                    dir('fabric-starter') {
+                        sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
+                        sh "git config user.name  ${GIT_REPO_OWNER}"
+                        // LATEST_FABRIC_VERSION will be replaced with FABRIC_VERSION
+                        updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
+                        if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
+                            updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
+                        }
                     }
                 }
-            }
 
             
             wrappedStage('Fabric-Starter-Merge-stable-to-snapshot', CCYAN) {
@@ -466,6 +469,7 @@ def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
                         ]
 
     replacementRules.keySet().each {
+}
         fileContent = fileContent.replace(it, replacementRules.get(it))
     }
     writeFile file: fileToProcess, text: fileContent
@@ -509,15 +513,17 @@ def remoteBranchExists(branchName) {
     return (whetherExists > 0)
 }
 
-def wrappedStage(name, def color=CNORMAL, def description=null, Closure closure) {
+def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
     stage(name) {
-        echo color
-        if (description) { echo description }
-        reportList.add("STAGE: ${STAGE_NAME}")
-
-        def result = closure.call()
-
-        echo CNORMAL
-        return result
+        dir(currentDir) {
+            echo color
+            if (description) { echo description }
+            reportList.add("STAGE: ${STAGE_NAME}")
+// Run stage
+            def result = closure.call()
+//            
+            echo CNORMAL
+            return result
+        }
     }
 }
