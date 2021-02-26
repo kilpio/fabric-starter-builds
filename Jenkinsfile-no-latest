@@ -19,16 +19,17 @@ reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORM
 
 node {
     //? Delete images from previous build
-    echo "Runnning build ${BUILD_NUMBER} of ${JOB_NAME}"
-    int previousJobNo = BUILD_NUMBER as Integer
-    previousJobNo -= 1
-    previousBuildNumber = previousJobNo.toString()
-    echo CRED
-    echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
-    sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\"" // --filter \"label=jenkins_job_build=${previousBuildNumber}\""
-    echo CNORMAL
 
+    wrappedStage('Delete-previous-results',CRED,"Runnning build ${BUILD_NUMBER} of ${JOB_NAME}") {
+        echo "Runnning build ${BUILD_NUMBER} of ${JOB_NAME}"
+        int previousJobNo = BUILD_NUMBER as Integer
+        previousJobNo -= 1
+        previousBuildNumber = previousJobNo.toString()
+        echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
+        sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\"" // --filter \"label=jenkins_job_build=${previousBuildNumber}\""
+    }
     //? Cleaning workspace
+    wrappedStage('Cleaning-workspace', CMAGENTA, Cleaning workspace: ${WORKSPACE}) {}
     def isWorkspaceNotOK = !(WORKSPACE?.trim())
     if (isWorkspaceNotOK) {
         echo 'Failure: WORKSPACE variable is undefined!'
@@ -41,6 +42,7 @@ node {
             sh 'ls -ld $(find .)'
         }
     }
+}
 //LATEST_FABRIC_VERSION = '1.4.9'
 //LATEST_FABRIC_STARTER_VERSION = 'latest'
 
@@ -566,13 +568,15 @@ def remoteBranchExists(branchName) {
     return (whetherExists > 0)
 }
 
-def wrappedStage(name, def color=null, def description=null, Closure closure) {
+def wrappedStage(name, def color=CNORMAL, def description=null, Closure closure) {
     stage(name) {
-        if (color) { echo '*'; echo color }
-        if (description) { echo description }
+         echo color
+         if (description) { echo description }
         reportList.add("STAGE: ${STAGE_NAME}")
+
         def result = closure.call()
-        if (color) { echo '*'; echo CNORMAL }
+        
+        echo CNORMAL 
         return result
             }
 }
