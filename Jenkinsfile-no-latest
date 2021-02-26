@@ -19,7 +19,6 @@ reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORM
 
 node {
     wrappedStage('Fabric-Starter-snapshot') {
-        //reportList.add('STAGE: Fabric-Starter-snapshot')
         ansiColor('xterm') {
             def newFabricStarterTag
 
@@ -37,11 +36,11 @@ node {
                     echo 'Failure: WORKSPACE variable is undefined!'
                     currentBuild.result = 'FAILURE'
                     return
-            } else {
-                    dir(WORKSPACE) {
-                        deleteDir()
-                        sh 'ls -ld $(find .)'
-                    }
+                } else {
+                        dir(WORKSPACE) {
+                            deleteDir()
+                            sh 'ls -ld $(find .)'
+                        }
                 }
             }
 //LATEST_FABRIC_VERSION = '1.4.9'
@@ -49,29 +48,20 @@ node {
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
 
-            //            wrappedStage('Test', "${CBLUE}", 'Testing wrapped stage') {
-            wrappedStage('Test', '', 'testing wrappedStage') {
-                echo "wrappedStage name: ${STAGE_NAME}"
-            }
-
-            stage('Fabric-Starter-git-checkout-pull-master') {
-                echo 'Pull fabric-starter master and evaluate next snapshot'
-                echo CBLUE
+            wrappedStage('Fabric-Starter-git-checkout-pull-master', CBLUE, 'Pull fabric-starter master and evaluate next snapshot') {
                 checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                 dir('fabric-starter') {
                     newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
                 }
-                echo CNORMAL
             }
 
-            echo CRED
-            stage ('Fabric-Starter-Merge-master-to-stable') { //BUILD_NUMBER
-                reportList.add('STAGE: Fabric-Starter-Merge-master-to-stable')
+            wrappedStage('Fabric-Starter-Merge-master-to-stable',CMAGENTA) { //BUILD_NUMBER
+                
                 echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to BUILD_BRANCH'
                 echo 'Modify .env files according to new tag,modify current yamls -> stable'
                 echo 'Commit modifications'
                 echo ' '
-                echo CMAGENTA
+                
                 echo "Master Branch is: ${MASTER_BRANCH}"
                 dir('fabric-starter') {
                     sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
@@ -82,60 +72,48 @@ node {
                         updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
                     }
                 }
-                echo 'Finish Fabric-Starter-Merge-master-to-stable'
-                echo CNORMAL
             }
 
-            echo CRED
-            stage ('Fabric-Starter-Merge-stable-to-snapshot') {
+            
+            wrappedStage('Fabric-Starter-Merge-stable-to-snapshot',CCYAN) {
                 reportList.add('STAGE: Fabric-Starter-Merge-stable-to-snapshot')
                 if (BUILD_BRANCH == 'stable') {
-                    echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to stable'
-                    echo 'Modify .env files according to new tag,modify current yamls -> current snapshot'
-                    echo 'Commit modifications'
-                    //sh "git config --global --list"
-                    sh 'git config --list'
-                    echo '______________________________________________________'
-                    echo CCYAN
-                    dir('fabric-starter') {
+                        echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to stable'
+                        echo 'Modify .env files according to new tag,modify current yamls -> current snapshot'
+                        echo 'Commit modifications'
+                        //sh "git config --global --list"
+                        //sh 'git config --list'
+                        //echo '______________________________________________________'
+                        //echo CCYAN
+                        dir('fabric-starter') {
                         updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
                     }
                     } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
-                echo CNORMAL
+                //echo CNORMAL
                 }
 
-            echo CRED
-            stage('Fabric-Tools-Extended-build-extended-images') {
-                reportList.add('STAGE: Fabric-Tools-Extended-build-extended-images')
-                echo 'Build fabric-tools-extended images for LATEST_FABRIC_VERSION,stable and snapshot'
-                echo CYELLOW
+            
+            wrappedStage('Fabric-Tools-Extended-build-extended-images',CYELLOW,'Build fabric-tools-extended images for LATEST_FABRIC_VERSION,stable and snapshot') {
                 dir('fabric-starter') {
                     //buildDockerImage('fabric-tools-extended',newFabricStarterTag,newFabricStarterTag,"--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
                     //buildDockerImage('fabric-tools-extended','stable','stable',"--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile .")
                     def fabricToolExtendedName = 'fabric-tools-extended'
                     buildDockerImage(
-fabricToolExtendedName,
-FABRIC_VERSION,
-MASTER_BRANCH,
-"--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile ."
-)
+                                        fabricToolExtendedName,
+                                        FABRIC_VERSION,
+                                        MASTER_BRANCH,
+                                        "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile ."
+                                    )
 
                     tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")    // e.g. stable
                     if (BUILD_BRANCH == 'stable')  { tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, newFabricStarterTag) } //e.g. snapshot
                     tagDockerImage(fabricToolExtendedName, FABRIC_VERSION, "${FABRIC_VERSION}") //e.g. :1.4.9
                 }
-
-                echo CNORMAL
             }
             //? ======================================== BUILDING FABRIC-STARTER-REST IMAGES =========================
-            echo CRED
-            stage('Farbric-starter-REST-checkout') {
-                reportList.add('STAGE: Farbric-starter-REST-checkout')
-                echo 'Pull fabric-starter-rest and checkout to the master branch'
-                echo CCYAN
+
+            wrappedStage('Farbric-starter-REST-checkout', CCYAN, 'Pull fabric-starter-rest and checkout to the master branch') {
                 checkoutFromGithubToSubfolder('fabric-starter-rest')
-                // dir('fabric-starter-rest') {ite-master-to-stable') {
-                echo CBLUE
                 dir('fabric-starter-rest') {
                     sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                     sh "git config user.name  ${GIT_REPO_OWNER}"
@@ -144,29 +122,20 @@ MASTER_BRANCH,
                         updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
                     }
                 }
-                echo CNORMAL
-                }
+            }
 
-            echo CRED
-            echo 'Take updates from master (pretend as from stable) to snapshot,commit snapshot (create snapshot branch if does not exist)'
-            stage('Farbric-starter-REST-copy-stable-to-snapshot') {
+            wrappedStage('Farbric-starter-REST-copy-stable-to-snapshot',CYELLOW, 'Take updates from master (pretend as from stable) to snapshot,commit snapshot (create snapshot branch if does not exist)') {
                 if (BUILD_BRANCH == 'stable') {
-                    reportList.add('STAGE: Farbric-starter-REST-copy-stable-to-snapshot')
-                    echo CYELLOW
                     dir('fabric-starter-rest') {
                         updateAndCommitRESTBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag)
                     }
-                    } else { reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
-                echo CNORMAL
+                } else {
+                    reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }")
                 }
+            }
 
-            echo CRED
-            stage('Fabic-Starter-REST-build-docker-images') {
+            wrappedStage('Fabic-Starter-REST-build-docker-images', CGREEN, 'Build snapshot,stable and LATEST_FABRIC_VERSION fabric-starter-rest images') {
                 if (SKIP_FS_REST_BUILD == 'false') {
-                    reportList.add('STAGE: Fabic-Starter-REST-build-docker-images')
-                    echo 'Build snapshot,stable and LATEST_FABRIC_VERSION fabric-starter-rest images'
-                    echo CGREEN
-
                     dir('fabric-starter-rest') {
                         buildDockerImage(
                                             'fabric-starter-rest',
@@ -182,33 +151,25 @@ MASTER_BRANCH,
 //tagDockerImage('fabric-starter-rest',FABRIC_VERSION,"${FABRIC_VERSION}-latest")
 //buildDockerImage('fabric-starter-rest',newFabricStarterTag,newFabricStarterTag,"--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
 //buildDockerImage('fabric-starter-rest','stable','stable',"--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY}  --no-cache -f Dockerfile .")
-}}
-                echo CNORMAL
+                                            }
                 }
+            }
 
 //? ========================================== DOCKER PUSH==============================================
 
-            echo CRED
-            stage('Fabic-Starter-REST-push-docker-images') {
-                reportList.add('STAGE: Fabic-Starter-REST-push-docker-images')
-                echo CBLUE
-                echo SKIP_DOCKER_PUSH
+            wrappedStage('Fabic-Starter-REST-push-docker-images', CBLUE, 'Push fabric-starter-rest images to dockerhub') {
 
                 if (SKIP_DOCKER_PUSH == 'false') {
                     if (BUILD_BRANCH == 'stable') { pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-                        pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")}
+                        pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")
+                    }
                     pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
                 //pushDockerImage('fabric-starter-rest',FABRIC_VERSION)
                 //pushDockerImage('fabric-starter-rest',"${FABRIC_VERSION}-latest")
                 }
-                echo CNORMAL
             }
 
-            echo CRED
-            stage('Fabic-Starter-push-docker-images') {
-                reportList.add('STAGE: Fabic-Starter-push-docker-images')
-                echo CCYAN
-                echo SKIP_FS_REST_BUILD
+            wrappedStage('Fabic-Starter-push-docker-images',CCYAN, 'Push fabric-starter images to dockerhub') {
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false') ) {
                     if (BUILD_BRANCH == 'stable') { pushDockerImage('fabric-tools-extended', newFabricStarterTag)
                         pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
@@ -216,59 +177,43 @@ MASTER_BRANCH,
                     pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-${BUILD_BRANCH}")
                 //pushDockerImage('fabric-tools-extended',"${FABRIC_VERSION}-latest")
                 }
-                echo CNORMAL
             }
 
             //? ==================================== GIT PUSH==========================================
-            echo CRED
-            stage('Fabic-Starter-REST-git-push-snapshot') {
-                reportList.add('STAGE: Fabic-Starter-REST-git-push-snapshot')
-                echo CBLUE
+
+            wrappedStage('Fabic-Starter-REST-git-push-snapshot', CBLUE, 'push fabric-starter-rest snapshot to github') {
                 if (BUILD_BRANCH == 'stable') {
                     dir('fabric-starter-rest') {
                         gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
                         gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
                     }
                 }
-                echo CNORMAL
             }
 
-            echo CRED
-            stage('Fabic-Starter-REST-git-push-stable') {
-                reportList.add('STAGE: Fabic-Starter-REST-git-push-stable')
-                echo CGREEN
+            wrappedStage('Fabic-Starter-REST-git-push-stable',CGREEN, 'push fabric-starter-rest to github') {
                 dir('fabric-starter-rest') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter-rest')
                 }
                 echo CNORMAL
             }
 
-            echo CRED
-            stage ('Fabic-Starter-git-push-snapshot') {
-                reportList.add('STAGE: Fabic-Starter-git-push-snapshot')
-                echo CMAGENTA
+            wrappedSstage ('Fabic-Starter-git-push-snapshot',CMAGENTA, 'push fabric-starter snapshot branch to github') {
                 if (BUILD_BRANCH == 'stable') {
                     dir('fabric-starter') {
                         gitPushToBranch(newFabricStarterTag, 'fabric-starter')
                         gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
                     }
                 }
-                echo CNORMAL
             }
 
-            echo CRED
-            stage ('Fabic-Starter-git-push-stable') {
-                reportList.add('STAGE: Fabic-Starter-git-push-stable')
-                echo CBLUE
+            wrappedstage ('Fabic-Starter-git-push-stable', CBLUE, 'push fabric-starter stable branch to github') {
                 dir('fabric-starter') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter')
                 }
-                echo CNORMAL
             }
+
             //? ====================================== REPORT =====================================
-            stage('printReport') {
-                reportList.add('STAGE: printReport')
-                echo CGREEN
+            wrappedStage('printReport',CGREEN, 'print report') {
                 def report
 
                 reportList.eachWithIndex {
@@ -281,10 +226,9 @@ MASTER_BRANCH,
                     }
                 }
                 echo report
-                echo CNORMAL
             }
-} //AnsiColor
-} //Fabric-Starter-Packages-snapshot
+        } //AnsiColor
+    } //Fabric-Starter-Packages-snapshot
 }//node
 
 //! ======================================== FUNCTIONS ===========================================
