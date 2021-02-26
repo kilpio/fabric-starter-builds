@@ -20,31 +20,31 @@ FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
 node {
-    wrappedStage('Fabric-Starter-snapshot',,'START THE JOB') {
         ansiColor('xterm') {
+            wrappedStage('Fabric-Starter-snapshot',,'START THE JOB') {
             def newFabricStarterTag
 
             wrappedStage('Delete-previous-results', CRED, "Pruning all previous job images") {
-                int previousJobNo = BUILD_NUMBER as Integer
-                previousJobNo -= 1
-                previousBuildNumber = previousJobNo.toString()
-                echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
-                sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\"" // --filter \"label=jenkins_job_build=${previousBuildNumber}\""
-            }
+                    int previousJobNo = BUILD_NUMBER as Integer
+                    previousJobNo -= 1
+                    previousBuildNumber = previousJobNo.toString()
+                    echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
+                    sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\"" // --filter \"label=jenkins_job_build=${previousBuildNumber}\""
+                }
 
             wrappedStage('Cleaning-job-workspace', CMAGENTA, "Cleaning job workspace: ${WORKSPACE}") {
-                def isWorkspaceNotOK = !(WORKSPACE?.trim())
-                if (isWorkspaceNotOK) {
-                    echo 'Failure: WORKSPACE variable is undefined!'
-                    currentBuild.result = 'FAILURE'
-                    return
-                } else {
-                        dir(WORKSPACE) {
-                            deleteDir()
-                            sh 'ls -ld $(find .)'
-                        }
+                    def isWorkspaceNotOK = !(WORKSPACE?.trim())
+                    if (isWorkspaceNotOK) {
+                        echo 'Failure: WORKSPACE variable is undefined!'
+                        currentBuild.result = 'FAILURE'
+                        return
+                    } else {
+                            dir(WORKSPACE) {
+                                deleteDir()
+                                sh 'ls -ld $(find .)'
+                            }
+                    }
                 }
-            }
 //LATEST_FABRIC_VERSION = '1.4.9'
 //LATEST_FABRIC_STARTER_VERSION = 'latest'
 
@@ -95,7 +95,7 @@ node {
                             checkoutFromGithubToSubfolder('fabric-starter-rest')
                 }
 
-            wrappedStage('Farbric-Starter-Rest-update-and-commit', CCYAN, 'Pull fabric-starter-rest and checkout to the master branch', './fabric-starter-rest') {
+            wrappedStage('Farbric-Starter-Rest-update-and-commit', CCYAN, 'Update and commit fabric-starter-rest branches', './fabric-starter-rest') {
                 
                     sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                     sh "git config user.name  ${GIT_REPO_OWNER}"
