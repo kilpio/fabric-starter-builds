@@ -160,36 +160,27 @@ node {
 
             //? ==================================== GIT PUSH==========================================
 
-            wrappedStage('Fabic-Starter-Rest-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github") {
-                if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                    //dir('fabric-starter-rest') {
-                        gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
-                        gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
-                    //}
+            wrappedStage('Fabic-Starter-Rest-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github", './fabric-starter-rest') {
+                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
+                            gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
+                            gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
+                    }
                 }
-            }
 
-            wrappedStage('Fabic-Starter-Rest-git-push-stable', CGREEN, 'push fabric-starter-rest to github') {
-                //dir('fabric-starter-rest') {
+            wrappedStage('Fabic-Starter-Rest-git-push-stable', CGREEN, 'push fabric-starter-rest to github', './fabric-starter-rest') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter-rest')
-                //}
-                echo CNORMAL
-            }
-
-            wrappedStage ('Fabic-Starter-git-push-snapshot', CMAGENTA, "push fabric-starter ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github") {
-                if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                  //  dir('fabric-starter') {
-                        gitPushToBranch(newFabricStarterTag, 'fabric-starter')
-                        gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
-                    //}
                 }
-            }
 
-            wrappedStage ('Fabic-Starter-git-push-stable', CBLUE, 'push fabric-starter ${FABRIC_VERSION}-${BUILD_BRANCH}" branch to github') {
-                //dir('fabric-starter') {
+            wrappedStage ('Fabic-Starter-git-push-snapshot', CMAGENTA, "push fabric-starter ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github", './fabric-starter') {
+                if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
+                            gitPushToBranch(newFabricStarterTag, 'fabric-starter')
+                            gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
+                    }
+                }
+
+            wrappedStage ('Fabic-Starter-git-push-stable', CBLUE, 'push fabric-starter ${FABRIC_VERSION}-${BUILD_BRANCH}" branch to github',, './fabric-starter') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter')
-                //}
-            }
+                }
 
             //? ====================================== REPORT =====================================
             wrappedStage('Print-report',CGREEN, 'print report') {
