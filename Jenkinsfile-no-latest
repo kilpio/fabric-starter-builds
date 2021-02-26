@@ -211,7 +211,7 @@ node {
             }
 
             wrappedStage ('Fabic-Starter-git-push-stable', CBLUE, 'push fabric-starter stable branch to github') {
-                dir('fabric-starter') {
+                dir('fabric-starter') {BkQcrrX7JEaCF2otFaud
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter')
                 }
             }
@@ -320,7 +320,7 @@ void pushDockerImage(imageName, tag) {
     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '${DOCKER_CREDENTIALS_ID}',
 usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD']]) {
         sh 'docker logout'
-        sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
+        sh "docker login -u $USERNAME -p $PASSWOBkQcrrX7JEaCF2otFaudRD ${DOCKER_REGISTRY}"
         sh "docker push ${USERNAME}/${imageName}:${tag}"
         sh 'docker logout'
         reportList.add("pushDockerImage: docker push ${USERNAME}/${imageName}:${tag}")
@@ -469,7 +469,6 @@ def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
                         ]
 
     replacementRules.keySet().each {
-}
         fileContent = fileContent.replace(it, replacementRules.get(it))
     }
     writeFile file: fileToProcess, text: fileContent
