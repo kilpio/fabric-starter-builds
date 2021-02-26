@@ -113,7 +113,7 @@ node {
                     }
                 }
 
-            wrappedStage('Fabic-Starter-Rest-build-docker-images', CGREEN, 'Build snapshot,stable and LATEST_FABRIC_VERSION fabric-starter-rest images', './fabric-starter-rest') {
+            wrappedStage('Fabic-Starter-Rest-build-docker-images', CGREEN, "Build snapshot, stable and ${FABRIC_VERSION} fabric-starter-rest images", './fabric-starter-rest') {
                 if (SKIP_FS_REST_BUILD == 'false') {
                     buildDockerImage(
                                         'fabric-starter-rest',
