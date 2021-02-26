@@ -366,12 +366,7 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
 'custom-admin.dockerfile',
 'Dockerfile'
 ]
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
-
-//updateImagesReferencesVersion(filesToReplace,'',replaceTag,toBranchName)
-//filesToReplace.each {updateImagesReferencesVersion(it,'',replaceTag,toBranchName)}
-
     updateImagesReferencesVersion('Dockerfile', '', replaceTag, toBranchName)
     updateImagesReferencesVersion('custom-admin.dockerfile', '', replaceTag, toBranchName)
 
