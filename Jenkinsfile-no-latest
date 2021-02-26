@@ -565,7 +565,7 @@ def remoteBranchExists(branchName) {
     return (whetherExists > 0)
 }
 
-def wrappedStage(name, Closure closure, color) {
+def wrappedStage(name, color, Closure closure) {
     stage(name) {
         echo color
         echo "Beginning of stage"
