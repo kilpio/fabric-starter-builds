@@ -56,6 +56,7 @@ node {
             wrappedStage('test') {
                     echo "Running ${STAGE_NAME}"
             }
+            
             stage('Fabric-Starter-git-checkout-pull-master') {
                 echo 'Pull fabric-starter master and evaluate next snapshot'
                 echo CBLUE
@@ -202,12 +203,7 @@ node {
                         pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")}
                     pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
                 //pushDockerImage('fabric-starter-rest', FABRIC_VERSION)def wrappedStage(name, Closure closure) {
-    stage(name) {
-        echo "Beginning of stage"
-        def result = closure.call()
-        echo "End of stage"
-        return result
-    }
+    
 }
                 //pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-latest")
                 }
