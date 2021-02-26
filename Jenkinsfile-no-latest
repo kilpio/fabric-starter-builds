@@ -60,15 +60,8 @@ node {
                         //}
                 }
 
-            wrappedStage('Fabric-Starter-Merge-master-to-stable', CMAGENTA) { //BUILD_NUMBER
+            wrappedStage('Fabric-Starter-Merge-master-to-stable', CMAGENTA, 'Merge from ${MASTER_BRANCH} and commit ${STABLE_BRANCH_NAME}', './fabric-starter') { //BUILD_NUMBER
                 
-                    echo 'Merge current branch and update tags from LATEST_FABRIC_VERSION to BUILD_BRANCH'
-                    echo 'Modify .env files according to new tag,modify current yamls -> stable'
-                    echo 'Commit modifications'
-                    echo ' '
-                    
-                    echo "Master Branch is: ${MASTER_BRANCH}"
-                    dir('fabric-starter') {
                         sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                         sh "git config user.name  ${GIT_REPO_OWNER}"
                         // LATEST_FABRIC_VERSION will be replaced with FABRIC_VERSION
@@ -76,7 +69,6 @@ node {
                         if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                             updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
                         }
-                    }
                 }
 
             
