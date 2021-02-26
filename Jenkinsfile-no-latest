@@ -20,7 +20,7 @@ FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
 node {
-    wrappedStage('Fabric-Starter-snapshot') {
+    wrappedStage('Fabric-Starter-snapshot',,'START THE JOB') {
         ansiColor('xterm') {
             def newFabricStarterTag
 
