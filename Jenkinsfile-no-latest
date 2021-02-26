@@ -465,8 +465,8 @@ def remoteBranchExists(branchName) {
 def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
     stage(name) {
         dir(currentDir) {
+            if (description) { echo "${CRED}${CUNDERLINED}${description}"${CNOTUNDERLINED} }
             echo color
-            if (description) { echo description }
             reportList.add("STAGE: ${STAGE_NAME}")
 // Run stage
             def result = closure.call()
