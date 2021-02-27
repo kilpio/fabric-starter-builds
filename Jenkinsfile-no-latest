@@ -18,7 +18,7 @@ FABRIC_TOOLS_NAME = 'fabric-tools'
 FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 NOSTDERR_OUT = "2>&1 1>/dev/null"
 DEBUG = false
-IF (DEBUG) { NOSTDERR_OUT = ''} else { NOSTDERR_OUT = "2>&1 1>/dev/null" }
+if (DEBUG) { NOSTDERR_OUT = ''} else { NOSTDERR_OUT = "2>&1 1>/dev/null" }
 
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
