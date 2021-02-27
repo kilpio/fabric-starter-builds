@@ -16,7 +16,7 @@ CNORMAL = '\033[0m'
 STABLE_BRANCH_NAME='stable'
 FABRIC_TOOLS_NAME = 'fabric-tools'
 FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
-
+BE_VERBOSE = false
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
 node {
@@ -244,11 +244,9 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     CNOTUNDERLINED = '\033[24m'
     CRED = '\033[1;31m'
 
-    echo CUNDERLINED
-    echo "Building ${imageName} with tag ${tag} from branch ${branchToBuildImageFrom}"
-    sh 'id'
-    sh 'docker image ls'
-    echo CNOTUNDERLINED
+    echo "${CUNDERLINED}Building ${imageName} with tag ${tag} from branch ${branchToBuildImageFrom}${CNOTUNDERLINED}"
+    //sh 'id'
+    if (BE_VERBOSE) { sh 'docker image ls' }
 
     sh "git checkout ${branchToBuildImageFrom}"
     if (!args?.trim()) {
@@ -258,12 +256,14 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     arguments = "-t ${DOCKER_REPO}/${imageName}:${tag} --label \"jenkins_job_build=${BUILD_NUMBER}\" --label \"jenkins_job_name=${JOB_NAME}\" ${args}"
     echo "docker build args: $arguments"
 
-    sh "docker image build ${arguments}"
+    sh "docker image build ${arguments} 2>&1 1>/dev/null"
     reportList.add("buildDockerImage: docker image build ${arguments}")
-    echo CUNDERLINED
-    sh 'docker image ls'
-    echo CRED
-    echo CNOTUNDERLINED
+    if (BE_VERBOSE) {
+            echo CUNDERLINED
+            sh 'docker image ls'
+//            echo CRED
+            echo CNOTUNDERLINED
+    }
 }
 
 void tagDockerImage(imageName, tag, newTag) {
@@ -422,7 +422,7 @@ def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
         fileContent = fileContent.replace(it, replacementRules.get(it))
     }
     writeFile file: fileToProcess, text: fileContent
-    echo "Content for ${fileToProcess}: ${fileContent}"
+    if (BE_VERBOSE) echo "Content for ${fileToProcess}: ${fileContent}"
     sh "git add ${fileToProcess}"
 }
 
