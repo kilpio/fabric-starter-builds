@@ -131,7 +131,7 @@ node {
 
 //? ========================================== DOCKER PUSH==============================================
 
-            wrappedStage('Fabic-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest $(newFabricStarterTag) and ${FABRIC_VERSION} images to Dockerhub") {
+            wrappedStage('Fabic-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
                     if (SKIP_DOCKER_PUSH == 'false') {
                         if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") { 
                                     pushDockerImage('fabric-starter-rest', newFabricStarterTag)
@@ -141,7 +141,7 @@ node {
                     }
             }
 
-            wrappedStage('Fabic-Starter-push-docker-images', CCYAN, 'Push fabric-starter images to Dockerhub') {
+            wrappedStage('Fabic-Starter-push-docker-images', CCYAN, "Push fabric-starter ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false') ) {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                     pushDockerImage('fabric-tools-extended', newFabricStarterTag)
@@ -465,7 +465,9 @@ def remoteBranchExists(branchName) {
 def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
     stage(name) {
         dir(currentDir) {
-            if (description) { echo "${CRED}${CUNDERLINED}${description}${CNOTUNDERLINED}" }
+//            if (description) { echo "${CRED}${CUNDERLINED}${description}${CNOTUNDERLINED}" }
+            if (description) { echo "${description}" }
+
             echo color
             reportList.add("STAGE: ${STAGE_NAME}")
 // Run stage
