@@ -29,7 +29,8 @@ node {
                     previousJobNo -= 1
                     previousBuildNumber = previousJobNo.toString()
                     echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
-                    sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\"" // --filter \"label=jenkins_job_build=${previousBuildNumber}\""
+                    def debug = " | grep 'Total reclaimed space'"
+                    sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\" ${debug}" // --filter \"label=jenkins_job_build=${previousBuildNumber}\""
                 }
 
             wrappedStage('Cleaning-job-workspace', CMAGENTA, "Cleaning job workspace: ${WORKSPACE}") {
