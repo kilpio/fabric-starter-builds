@@ -451,7 +451,7 @@ def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, curr
 
     writeFile file: fileToProcess, text: fileContent
 
-    echo "Content for ${fileToProcess}: ${fileContent}"
+    if (BE_VERBOSE) { echo "Content for ${fileToProcess}: ${fileContent}" }
 
     sh "git add ${fileToProcess}"
 }
