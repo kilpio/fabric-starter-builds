@@ -257,7 +257,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     arguments = "-t ${DOCKER_REPO}/${imageName}:${tag} --label \"jenkins_job_build=${BUILD_NUMBER}\" --label \"jenkins_job_name=${JOB_NAME}\" ${args}"
     echo "docker build args: $arguments"
 
-    sh(returnStdout:false, script: "docker image build ${arguments}")
+    sh(returnStdout:BE_VERBOSE, script: "docker image build ${arguments}")
     reportList.add("buildDockerImage: docker image build ${arguments}")
     if (BE_VERBOSE) {
             echo CUNDERLINED
@@ -277,7 +277,7 @@ void pushDockerImage(imageName, tag) {
 usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD']]) {
         sh 'docker logout'
         sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
-        sh returnStdout: BE_VERBOSE; script:sh "docker push ${USERNAME}/${imageName}:${tag}"
+        sh (returnStdout: BE_VERBOSE, script:sh "docker push ${USERNAME}/${imageName}:${tag}")
         sh 'docker logout'
         reportList.add("pushDockerImage: docker push ${USERNAME}/${imageName}:${tag}")
 }
