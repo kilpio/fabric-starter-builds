@@ -474,7 +474,7 @@ def remoteBranchExists(branchName) {
 
 def fileExists(fileName) {
     def fileToCheck = new File(fileName)
-    file.exists()
+    fileToCheck.exists()
     }
 
 def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
