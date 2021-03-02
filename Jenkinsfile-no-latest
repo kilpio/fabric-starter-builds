@@ -341,9 +341,9 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         sh "git checkout ${fromBranchName} -- ."
         sh "ls -la ./"
         echo fileExists('./.env')
-        echo "Class type:"
-        def a=fileExists('./.env')
-        echo a.getClass()
+        //echo "Class type:"
+        //def a=fileExists('./.env')
+        //echo a.getClass()
         if (fileExists('./.env') == 'true') {reportList.add(".env exists")} else {reportList.add(".env does not exist")}
 //.env block
         sh "git checkout ${MASTER_BRANCH} -- .env"
