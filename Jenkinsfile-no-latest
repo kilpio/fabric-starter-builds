@@ -124,7 +124,7 @@ node {
                                         'fabric-starter-rest',
                                         FABRIC_VERSION,
                                         MASTER_BRANCH,
-                                        "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile ."
+                                        "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile . 2>&1 1>/dev/null"
                                     )
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                 tagDockerImage('fabric-starter-rest', FABRIC_VERSION, newFabricStarterTag)
