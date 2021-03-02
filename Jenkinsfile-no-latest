@@ -45,9 +45,6 @@ filesToReplaceForFabricStarterRest = [
 ]
 
 
-
-
-
 node {
         ansiColor('xterm') {
             wrappedStage('Fabric-Starter-snapshot',,'START THE JOB') {
@@ -95,38 +92,38 @@ node {
                         //sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
                         //sh "git config user.name  ${GIT_REPO_OWNER}"
                         // LATEST_FABRIC_VERSION will be replaced with FABRIC_VERSION
-                        filesToReplace = ['docker-compose.yaml',
-                        'docker-compose-clean.yaml',
-                        'docker-compose-orderer.yaml',
-                        'docker-compose-listener.yaml',
-                        'docker-compose-deploy.yaml',
-                        'network-create-base.sh',
-                        'peer-start.sh',
-                        'raft-start-docker-machine.sh',
-                        'https/docker-compose-generate-tls-certs.yaml',
-                        'extra/docker-registry-local/start-docker-registry-local.sh',
-                        'deploy.sh',
-                        'build-fabric-tools-extended.sh',
-                        'docker-compose-open-net.yaml',
-                        'fabric-tools-extended/Dockerfile',
-                        'main_old.sh',
-                        'main.sh',
-                        'lib/backup-point.sh',
-                        'lib/restore-point.sh'
-                        ]
+                        // filesToReplace = ['docker-compose.yaml',
+                        // 'docker-compose-clean.yaml',
+                        // 'docker-compose-orderer.yaml',
+                        // 'docker-compose-listener.yaml',
+                        // 'docker-compose-deploy.yaml',
+                        // 'network-create-base.sh',
+                        // 'peer-start.sh',
+                        // 'raft-start-docker-machine.sh',
+                        // 'https/docker-compose-generate-tls-certs.yaml',
+                        // 'extra/docker-registry-local/start-docker-registry-local.sh',
+                        // 'deploy.sh',
+                        // 'build-fabric-tools-extended.sh',
+                        // 'docker-compose-open-net.yaml',
+                        // 'fabric-tools-extended/Dockerfile',
+                        // 'main_old.sh',
+                        // 'main.sh',
+                        // 'lib/backup-point.sh',
+                        // 'lib/restore-point.sh'
+                        // ]
 
 
 
-                        updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
+                        updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}",filesToReplaceForFabricStarter)
                         if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                            updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
+                            updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}", filesToReplaceForFabricStarter)
                         }
                 }
 
             
             wrappedStage('Fabric-Starter-merge-stable-to-snapshot', CCYAN, "Merge from ${BUILD_BRANCH} and commit ${newFabricStarterTag}", './fabric-starter' ) {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                                                                updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag)
+                                                                updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag, filesToReplaceForFabricStarter)
                     } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
                 }
             
@@ -153,15 +150,15 @@ node {
                 
                     gitSetUser(GIT_REPO_OWNER)
                     
-                    updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
+                    updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}", filesToReplaceForFabricStarterRest)
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}")  {
-                                                                updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
+                                                                updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}",filesToReplaceForFabricStarter)
                     }
                 }
 
             wrappedStage('Farbric-Starter-Rest-copy-stable-to-snapshot', CYELLOW, 'Take updates from master (pretend as from stable) to snapshot, commit snapshot ', './fabric-starter-rest') {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                                            updateAndCommitRESTBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag)
+                                            updateAndCommitRESTBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag,filesToReplaceForFabricStarter)
                     } else {
                             reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }")
                     }
@@ -362,7 +359,7 @@ void gitPushToBranch(branchName, repoName) {
 }
 // master:      LATEST_FABRIC_VERSION   ->   stable
 // stable:      LATEST_FABRIC_VERSION   ->   snapshot
-void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
+void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToReplace) {
     reportList.add("updateAndCommitBranch: fromBranchName: ${fromBranchName},replaceTag: ${replaceTag}, toBranchName: ${toBranchName}")
     checkoutAndThenPullIfRemoteExists(toBranchName)
     if (MERGE_FROM_MASTER == 'true') {
@@ -380,14 +377,14 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
 
 
 
-    updateComposeFilesFabricStarterVersionFromLatest(filesToReplaceForFabricStarter)
-    updateComposeFilesWithVersions(filesToReplaceForFabricStarter, FABRIC_VERSION, replaceTag, toBranchName)
+    updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
+    updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
 
     commitBranch(toBranchName)
 }
 
 
-void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
+void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName, filesToReplace) {
     reportList.add("updateAndCommitRestBranch: fromBranchName: ${fromBranchName},replaceTag: ${replaceTag}, toBranchName: ${toBranchName}")
     checkoutAndThenPullIfRemoteExists(toBranchName)
     if (MERGE_FROM_MASTER == 'true') {
@@ -403,8 +400,8 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
 //'Dockerfile'
 //]
 
-    updateComposeFilesFabricStarterVersionFromLatest(filesToReplaceForFabricStarterRest)
-    updateComposeFilesWithVersions(filesToReplaceForFabricStarterRest, FABRIC_VERSION, replaceTag, toBranchName)
+    updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
+    updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
 
     commitBranch(toBranchName)
 }
