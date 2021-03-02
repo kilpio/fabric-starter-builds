@@ -354,7 +354,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
     commitBranch(toBranchName)
 }
 
-void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
+void updateAndCommitRESTBranchOld(fromBranchName, replaceTag, toBranchName) {
     checkoutAndThenPullIfRemoteExists(toBranchName)
     if (MERGE_FROM_MASTER == 'true') {
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
@@ -372,6 +372,35 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
 
     commitBranch(toBranchName)
 }
+
+
+void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
+    reportList.add("updateAndCommitRestBranch: fromBranchName: ${fromBranchName},replaceTag: {replaceTag},toBranchName: {toBranchName}")
+    checkoutAndThenPullIfRemoteExists(toBranchName)
+    if (MERGE_FROM_MASTER == 'true') {
+        echo "Now merging from ${fromBranchName}"
+        reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
+        sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
+        sh "git checkout ${fromBranchName} -- ."
+
+    }
+
+    def filesToReplace = [
+'custom-admin.dockerfile',
+'Dockerfile'
+]
+    updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
+    updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
+    //updateImagesReferencesVersion('Dockerfile', '', replaceTag, toBranchName)
+    //updateImagesReferencesVersion('custom-admin.dockerfile', '', replaceTag, toBranchName)
+
+    commitBranch(toBranchName)
+}
+
+
+
+
+
 
 void checkoutAndThenPullIfRemoteExists(toBranchName) {
     if (remoteBranchExists(toBranchName)) {
