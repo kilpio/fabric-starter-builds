@@ -339,24 +339,21 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
-        sh "ls -la ./"
-        echo fileExists('./.env')
-        //echo "Class type:"
-        //def a=fileExists('./.env')
-        //echo a.getClass()
-        if (fileExists('./.env') == 'true') {
-            echo ".env exists"
-            reportList.add(".env exists")} else {
-                echo ".env does not exist"
-                reportList.add(".env does not exist")}
-//.env block
-        sh "git checkout ${MASTER_BRANCH} -- .env"
-        envAppendVersionVars(toBranchName, FABRIC_VERSION)
-        envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
-//
-    }
 
-    updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
+            if (fileExists('./.env') == 'true') {
+                    echo ".env exists"
+                } else {
+                    echo ".env does not exist"
+                }
+//.env block
+            if (fileExists('./.env') == 'true') {
+                    sh "git checkout ${MASTER_BRANCH} -- .env"
+                    envAppendVersionVars(toBranchName, FABRIC_VERSION)
+                    envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
+            }
+        }
+//
+    if (fileExists('./.env') == 'true') { updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName) }
 
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
     updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
@@ -374,7 +371,7 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName, filesTo
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
         sh "ls -la ./"
-        echo fileExists('./.env')         
+        //echo fileExists('./.env')
         if (fileExists('./.env') == 'true') {reportList.add(".env exists")} else {reportList.add(".env does not exist")}
     }
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
