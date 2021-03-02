@@ -367,7 +367,6 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName, filesTo
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
         sh "ls -la ./"
-        echo fileExists('./.env
         echo fileExists('./.env')         
         if (fileExists('./.env') == 'true') {reportList.add(".env exists")} else {reportList.add(".env does not exist")}
     }
