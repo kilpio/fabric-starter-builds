@@ -378,25 +378,8 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName) {
 
     updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
 
-    // filesToReplace = ['docker-compose.yaml',
-    //                     'docker-compose-clean.yaml',
-    //                     'docker-compose-orderer.yaml',
-    //                     'docker-compose-listener.yaml',
-    //                     'docker-compose-deploy.yaml',
-    //                     'network-create-base.sh',
-    //                     'peer-start.sh',
-    //                     'raft-start-docker-machine.sh',
-    //                     'https/docker-compose-generate-tls-certs.yaml',
-    //                     'extra/docker-registry-local/start-docker-registry-local.sh',
-    //                     'deploy.sh',
-    //                     'build-fabric-tools-extended.sh',
-    //                     'docker-compose-open-net.yaml',
-    //                     'fabric-tools-extended/Dockerfile',
-    //                     'main_old.sh',
-    //                     'main.sh',
-    //                     'lib/backup-point.sh',
-    //                     'lib/restore-point.sh'
-    //                     ]
+
+
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplaceForFabricStarter)
     updateComposeFilesWithVersions(filesToReplaceForFabricStarter, FABRIC_VERSION, replaceTag, toBranchName)
 
@@ -419,6 +402,7 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
 //'custom-admin.dockerfile',
 //'Dockerfile'
 //]
+
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplaceForFabricStarterRest)
     updateComposeFilesWithVersions(filesToReplaceForFabricStarterRest, FABRIC_VERSION, replaceTag, toBranchName)
 
