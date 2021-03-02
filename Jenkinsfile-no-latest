@@ -475,6 +475,8 @@ def remoteBranchExists(branchName) {
 def fileExists(fileName) {
     //def fileToCheck = new File(fileName)
     //fileToCheck.exists()
+    sh "pwd"
+    sh "ls -la"
     sh returnStdout: true, script: "test -f ${fileName} && echo true || echo false"
     }
 
