@@ -89,41 +89,15 @@ node {
                 
                         gitSetUser(GIT_REPO_OWNER)
 
-                        //sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
-                        //sh "git config user.name  ${GIT_REPO_OWNER}"
-                        // LATEST_FABRIC_VERSION will be replaced with FABRIC_VERSION
-                        // filesToReplace = ['docker-compose.yaml',
-                        // 'docker-compose-clean.yaml',
-                        // 'docker-compose-orderer.yaml',
-                        // 'docker-compose-listener.yaml',
-                        // 'docker-compose-deploy.yaml',
-                        // 'network-create-base.sh',
-                        // 'peer-start.sh',
-                        // 'raft-start-docker-machine.sh',
-                        // 'https/docker-compose-generate-tls-certs.yaml',
-                        // 'extra/docker-registry-local/start-docker-registry-local.sh',
-                        // 'deploy.sh',
-                        // 'build-fabric-tools-extended.sh',
-                        // 'docker-compose-open-net.yaml',
-                        // 'fabric-tools-extended/Dockerfile',
-                        // 'main_old.sh',
-                        // 'main.sh',
-                        // 'lib/backup-point.sh',
-                        // 'lib/restore-point.sh'
-                        // ]
-
-
-
                         updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}",filesToReplaceForFabricStarter)
                         if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                            updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}", filesToReplaceForFabricStarter)
+                                updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}", filesToReplaceForFabricStarter)
                         }
                 }
 
-            
             wrappedStage('Fabric-Starter-merge-stable-to-snapshot', CCYAN, "Merge from ${BUILD_BRANCH} and commit ${newFabricStarterTag}", './fabric-starter' ) {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                                                                updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag, filesToReplaceForFabricStarter)
+                        updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag, filesToReplaceForFabricStarter)
                     } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
                 }
             
@@ -262,19 +236,19 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
 }
 
 //Temporaly rename this function as evaluateNextSnapshotGitTag to generate snapshot in new format '1.4.4-snapshot-0.12'
-def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
-    echo "Evaluate next snapshot name for ${repositoryTitle}"
-    def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
-    echo "Current latest snapshot: ${lastSnapshot}"
-    def (branchPrefix,fabricVersion,version) = lastSnapshot.tokenize('-')
-    def (majorVer,minorVer) = fabricVersion.tokenize('.')
-    int minorVersion = (minorVer as int)
-    def cleanBranchPrefix = branchPrefix.split('/')[1]
-    def newGitTag = "${FABRIC_VERSION}-${cleanBranchPrefix}-${majorVer}.${minorVersion + 1}"
-    echo "New Tag for ${repositoryTitle}: ${newGitTag}"
-    reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
-    newGitTag
-}
+// def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
+//     echo "Evaluate next snapshot name for ${repositoryTitle}"
+//     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
+//     echo "Current latest snapshot: ${lastSnapshot}"
+//     def (branchPrefix,fabricVersion,version) = lastSnapshot.tokenize('-')
+//     def (majorVer,minorVer) = fabricVersion.tokenize('.')
+//     int minorVersion = (minorVer as int)
+//     def cleanBranchPrefix = branchPrefix.split('/')[1]
+//     def newGitTag = "${FABRIC_VERSION}-${cleanBranchPrefix}-${majorVer}.${minorVersion + 1}"
+//     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
+//     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
+//     newGitTag
+// }
 
 def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
@@ -302,7 +276,6 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     CRED = '\033[1;31m'
 
     echo "${CUNDERLINED}Building ${imageName} with tag ${tag} from branch ${branchToBuildImageFrom}${CNOTUNDERLINED}"
-    //sh 'id'
     if (BE_VERBOSE) { sh 'docker image ls' }
 
     sh "git checkout ${branchToBuildImageFrom}"
@@ -318,7 +291,6 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     if (BE_VERBOSE) {
             echo CUNDERLINED
             sh 'docker image ls'
-//            echo CRED
             echo CNOTUNDERLINED
     }
 }
@@ -367,15 +339,15 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
+        if (fileExists(.env)) {reportList.add(".env exists")} else {reportList.add(".env does not exist")}
+//.env block
         sh "git checkout ${MASTER_BRANCH} -- .env"
-
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
+//
     }
 
     updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
-
-
 
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
     updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
@@ -392,24 +364,13 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName, filesTo
         reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
-
+        if (fileExists(.env)) {reportList.add(".env exists")} else {reportList.add(".env does not exist")}
     }
-
-//    def filesToReplace = [
-//'custom-admin.dockerfile',
-//'Dockerfile'
-//]
-
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
     updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
 
     commitBranch(toBranchName)
 }
-
-
-
-
-
 
 void checkoutAndThenPullIfRemoteExists(toBranchName) {
     if (remoteBranchExists(toBranchName)) {
@@ -510,6 +471,11 @@ def remoteBranchExists(branchName) {
     def whetherExists = checkRemoteBranch.isInteger() ? checkRemoteBranch.toInteger() : 0
     return (whetherExists > 0)
 }
+
+def fileExists(fileName) {
+    def fileToCheck = new File(fileName)
+    file.exists()
+    }
 
 def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
     stage(name) {
