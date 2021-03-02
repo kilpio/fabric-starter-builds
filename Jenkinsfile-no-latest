@@ -158,7 +158,7 @@ node {
 
             wrappedStage('Farbric-Starter-Rest-copy-stable-to-snapshot', CYELLOW, 'Take updates from master (pretend as from stable) to snapshot, commit snapshot ', './fabric-starter-rest') {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                                            updateAndCommitRESTBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag,filesToReplaceForFabricStarter)
+                                            updateAndCommitRESTBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag, filesToReplaceForFabricStarterRest)
                     } else {
                             reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }")
                     }
