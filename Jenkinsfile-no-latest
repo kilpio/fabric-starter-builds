@@ -478,6 +478,7 @@ def fileExists(fileName) {
     sh "pwd"
     sh "ls -la"
     def result = sh returnStdout: true, script: "test -f ${fileName} && echo true || echo false"
+    reportList.add("${result}")
     if (result == 'true') {return true} else {return false}
     }
 
