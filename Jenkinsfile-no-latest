@@ -133,7 +133,7 @@ node {
                     tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     }
                 }
-s
+
 //? ========================================== DOCKER PUSH==============================================
 
             wrappedStage('Fabic-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
@@ -287,7 +287,7 @@ void pushDockerImage(imageName, tag) {
 usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD']]) {
         sh 'docker logout'
         sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
-        sh (returnStdout: BE_VERBOSE, script: "docker push ${USERNAME}/${imageName}:${tag} 2>&1")
+        sh "docker push ${USERNAME}/${imageName}:${tag} 2>&1 1>/dev/null"
         sh 'docker logout'
         reportList.add("pushDockerImage: docker push ${USERNAME}/${imageName}:${tag}")
 }
