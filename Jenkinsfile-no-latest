@@ -344,7 +344,11 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         //echo "Class type:"
         //def a=fileExists('./.env')
         //echo a.getClass()
-        if (fileExists('./.env') == 'true') {reportList.add(".env exists")} else {reportList.add(".env does not exist")}
+        if (fileExists('./.env') == 'true') {
+            echo ".env exists"
+            reportList.add(".env exists")} else {
+                echo ".env does not exist"
+                reportList.add(".env does not exist")}
 //.env block
         sh "git checkout ${MASTER_BRANCH} -- .env"
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
