@@ -61,8 +61,10 @@ node {
 
             wrappedStage('Fabric-Starter-merge-master-to-stable', CMAGENTA, "Merge from ${MASTER_BRANCH} and commit ${STABLE_BRANCH_NAME}", './fabric-starter') { //BUILD_NUMBER
                 
-                        sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
-                        sh "git config user.name  ${GIT_REPO_OWNER}"
+                        gitSetUser(GIT_REPO_OWNER)
+
+                        //sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
+                        //sh "git config user.name  ${GIT_REPO_OWNER}"
                         // LATEST_FABRIC_VERSION will be replaced with FABRIC_VERSION
                         updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                         if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
@@ -98,8 +100,10 @@ node {
 
             wrappedStage('Farbric-Starter-Rest-update-and-commit', CCYAN, 'Update and commit fabric-starter-rest branches', './fabric-starter-rest') {
                 
-                    sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
-                    sh "git config user.name  ${GIT_REPO_OWNER}"
+                    //sh "git config user.email ${GIT_REPO_OWNER}@jenkins"
+                    //sh "git config user.name  ${GIT_REPO_OWNER}"
+                    gitSetUser(GIT_REPO_OWNER)
+                    
                     updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}")  {
                                                                 updateAndCommitRESTBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}")
@@ -129,7 +133,7 @@ node {
                     tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     }
                 }
-
+s
 //? ========================================== DOCKER PUSH==============================================
 
             wrappedStage('Fabic-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
@@ -239,6 +243,12 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
     newGitTag
 }
+
+def gitSetUser(gitRepoOwner) {
+    sh "git config user.email ${gitRepoOwner}@jenkins"
+    sh "git config user.name  ${gitRepoOwner}"
+}
+
 
 void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     CUNDERLINED = '\033[4m'
