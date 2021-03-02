@@ -477,7 +477,7 @@ def fileExists(fileName) {
     //fileToCheck.exists()
     sh "pwd"
     sh "ls -la"
-    sh returnStdout: true, script: "test -f ${fileName} && echo true || echo false"
+    sh returnStdout: true, script: "test -f ${fileName} "// && echo true || echo false"
     }
 
 def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
