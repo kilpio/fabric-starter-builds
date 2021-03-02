@@ -129,7 +129,7 @@ node {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                 tagDockerImage('fabric-starter-rest', FABRIC_VERSION, newFabricStarterTag)
                                 tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}")
-                    }
+                        }
                     tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     }
                 }
@@ -375,7 +375,7 @@ void updateAndCommitRESTBranchOld(fromBranchName, replaceTag, toBranchName) {
 
 
 void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName) {
-    reportList.add("updateAndCommitRestBranch: fromBranchName: ${fromBranchName},replaceTag: {replaceTag},toBranchName: {toBranchName}")
+    reportList.add("updateAndCommitRestBranch: fromBranchName: ${fromBranchName},replaceTag: ${replaceTag}, toBranchName: ${toBranchName}")
     checkoutAndThenPullIfRemoteExists(toBranchName)
     if (MERGE_FROM_MASTER == 'true') {
         echo "Now merging from ${fromBranchName}"
