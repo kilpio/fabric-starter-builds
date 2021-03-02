@@ -253,21 +253,23 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
 def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse -t '-' -k 2 | head -1").trim()
+    
     echo "Current latest snapshot: ${lastSnapshot}"
     def (fabricVersion,branchPrefix,version) = lastSnapshot.tokenize('-')
     def cleanFabricVersion = fabricVersion.split('/')[1]
     def (majorVer,minorVer) = version.tokenize('.')
     int minorVersion = (minorVer as int)
     def newGitTag = "${FABRIC_VERSION}-${branchPrefix}-${majorVer}.${minorVersion + 1}"
+    
     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
     newGitTag
-}
+    }
 
 def gitSetUser(gitRepoOwner) {
     sh "git config user.email ${gitRepoOwner}@jenkins"
     sh "git config user.name  ${gitRepoOwner}"
-}
+    }
 
 
 void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
@@ -308,15 +310,15 @@ usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD']]) {
         sh "docker push ${USERNAME}/${imageName}:${tag} 2>&1 1>/dev/null"
         sh 'docker logout'
         reportList.add("pushDockerImage: docker push ${USERNAME}/${imageName}:${tag}")
-}
-}
+        }
+    }
 
 void commitBranch(branchName) {
     echo "void commitBranch ${branchName}"
     sh "git checkout ${branchName}"
     sh "git commit -m ${branchName} || true"
     reportList.add("commitBranch: git commit -m ${branchName}")
-}
+    }
 
 void gitPushToBranch(branchName, repoName) {
     echo GITHUB_SSH_CREDENTIALS_ID
@@ -327,8 +329,8 @@ void gitPushToBranch(branchName, repoName) {
         sh("git push -u origin ${branchName}")
         reportList.add("git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git")
         reportList.add("gitPushToBranch: git push -u origin ${branchName}")
+        }
     }
-}
 // master:      LATEST_FABRIC_VERSION   ->   stable
 // stable:      LATEST_FABRIC_VERSION   ->   snapshot
 void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToReplace) {
@@ -340,44 +342,46 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
 
-            if (fileExists('./.env') == 'true') {
-                    echo ".env exists"
-                } else {
-                    echo ".env does not exist"
-                }
-//.env block
-            if (fileExists('./.env') == 'true') {
-                    sh "git checkout ${MASTER_BRANCH} -- .env"
-                    envAppendVersionVars(toBranchName, FABRIC_VERSION)
-                    envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
+    if (fileExists('./.env') == 'true') {
+        echo "Modifing ./env file"
+        sh "git checkout ${MASTER_BRANCH} -- .env"
+        
+        envAppendVersionVars(toBranchName, FABRIC_VERSION)
+        envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
             }
         }
-//
-    if (fileExists('./.env') == 'true') { updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName) }
 
-    updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
-    updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
+        if (fileExists('./.env') == 'true') {
+            echo "Modifing ./env file"
+            updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName) 
+            }
 
-    commitBranch(toBranchName)
-}
+        updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
+        updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
 
-
-void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName, filesToReplace) {
-    reportList.add("updateAndCommitRestBranch: fromBranchName: ${fromBranchName},replaceTag: ${replaceTag}, toBranchName: ${toBranchName}")
-    checkoutAndThenPullIfRemoteExists(toBranchName)
-    if (MERGE_FROM_MASTER == 'true') {
-        echo "Now merging from ${fromBranchName}"
-        reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
-        sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
-        sh "git checkout ${fromBranchName} -- ."
-        //echo fileExists('./.env')
-        if (fileExists('./.env') == 'true') {reportList.add(".env exists")} else {reportList.add(".env does not exist")}
+        commitBranch(toBranchName)
     }
-    updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
-    updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
 
-    commitBranch(toBranchName)
-}
+
+// void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName, filesToReplace) {
+//     reportList.add("updateAndCommitRestBranch: fromBranchName: ${fromBranchName},replaceTag: ${replaceTag}, toBranchName: ${toBranchName}")
+//     checkoutAndThenPullIfRemoteExists(toBranchName)
+//     if (MERGE_FROM_MASTER == 'true') {
+//         echo "Now merging from ${fromBranchName}"
+//         reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
+//         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
+//         sh "git checkout ${fromBranchName} -- ."
+
+//         if (fileExists('./.env') == 'true') {
+//             reportList.add(".env exists")} else {reportList.add(".env does not exist")
+//             }
+//         }
+    
+//     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
+//     updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
+
+//     commitBranch(toBranchName)
+// }
 
 void checkoutAndThenPullIfRemoteExists(toBranchName) {
     if (remoteBranchExists(toBranchName)) {
@@ -385,125 +389,119 @@ void checkoutAndThenPullIfRemoteExists(toBranchName) {
             reportList.add("checkoutAndThenPullIfRemoteExists: git checkout ${toBranchName}")
             sh "git checkout ${toBranchName}"
             sh 'git pull'
+            }
+        } else {
+            sh "git checkout -B ${toBranchName}"
         }
-} else {
-        sh "git checkout -B ${toBranchName}"
     }
-}
 
 void envAppendVersionVars(currentBranchName, fabricVersion) {
-    def fileContent = readFile '.env'
-    writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}"
-    reportList.add("envAppendVersionVars: writeFile file: '.env',text: ${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}")
-    sh 'git add .env'
-}
+        def fileContent = readFile '.env'
+        
+        writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}"
+        reportList.add("envAppendVersionVars: writeFile file: '.env',text: ${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}")
+        sh 'git add .env'
+    }
 
 void envAppendRepoVar(currentRepoName) {
-    def fileContent = readFile '.env'
-    writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}"
-    reportList.add("envAppendRepoVar: writeFile file: '.env',text: ${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}")
-    sh 'git add .env'
-}
+        def fileContent = readFile '.env'
+        
+        writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}"
+        reportList.add("envAppendRepoVar: writeFile file: '.env',text: ${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}")
+        sh 'git add .env'
+    }
 
-                    // master:      LATEST_FABRIC_VERSION   ->    stable
-                    // stable:      LATEST_FABRIC_VERSION   ->    snapshot
+                            // master:      LATEST_FABRIC_VERSION   ->    stable
+                            // stable:      LATEST_FABRIC_VERSION   ->    snapshot
 void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
-    updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
-}
+        updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
+    }
 
 def updateComposeFilesWithVersions(filesToReplace, fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
-    filesToReplace.each { updateImagesReferencesVersion(it, fabricVersion, replaceTag, currentBranch) }
-}
+        filesToReplace.each { updateImagesReferencesVersion(it, fabricVersion, replaceTag, currentBranch) }
+    }
 
 def updateComposeFilesFabricStarterVersionFromLatest(filesToReplace) { //mergeBranch -> currenBranch
-    filesToReplace.each { updateImagesReferencesVersionFromlatestToKnown(it) }
-}
+        filesToReplace.each { updateImagesReferencesVersionFromlatestToKnown(it) }
+    }
 
 def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
-    fileContent = readFile fileToProcess
-    reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess}")
-    def replaceTag = 'latest'
-    def currentBranch = LATEST_FABRIC_VERSION
+        fileContent = readFile fileToProcess
+        reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess}")
+        
+        def replaceTag = 'latest'
+        def currentBranch = LATEST_FABRIC_VERSION
 
-    replacementRules = [
-                        ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       ("\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}'),
-                        ("\${FABRIC_STARTER_VERSION:-" + "\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\"" + '}'),
-                        ('FABRIC_STARTER_VERSION=' + "${replaceTag}")               :       ('FABRIC_STARTER_VERSION=' + "${currentBranch}"),
-                        ('FABRIC_STARTER_VERSION=' + "\"${replaceTag}\"")           :       ('FABRIC_STARTER_VERSION=' + "\"${currentBranch}\""),
-                        ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       ('FABRIC_STARTER_VERSION:=' + "${currentBranch}"),
-                        ('FABRIC_STARTER_VERSION:=' + "\"${replaceTag}\"")          :       ('FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\""),
-                        ("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}")                 :       ("{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
-                        ]
+        replacementRules = [
+                            ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       ("\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}'),
+                            ("\${FABRIC_STARTER_VERSION:-" + "\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\"" + '}'),
+                            ('FABRIC_STARTER_VERSION=' + "${replaceTag}")               :       ('FABRIC_STARTER_VERSION=' + "${currentBranch}"),
+                            ('FABRIC_STARTER_VERSION=' + "\"${replaceTag}\"")           :       ('FABRIC_STARTER_VERSION=' + "\"${currentBranch}\""),
+                            ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       ('FABRIC_STARTER_VERSION:=' + "${currentBranch}"),
+                            ('FABRIC_STARTER_VERSION:=' + "\"${replaceTag}\"")          :       ('FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\""),
+                            ("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}")                 :       ("{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
+                            ]
 
-    replacementRules.keySet().each {
-        fileContent = fileContent.replace(it, replacementRules.get(it))
+        replacementRules.keySet().each {
+            fileContent = fileContent.replace(it, replacementRules.get(it))
+            }
+
+        writeFile file: fileToProcess, text: fileContent
+        if (BE_VERBOSE) {echo "Content for ${fileToProcess}: ${fileContent}"}
+        sh "git add ${fileToProcess}"
     }
-    writeFile file: fileToProcess, text: fileContent
-    if (BE_VERBOSE) echo "Content for ${fileToProcess}: ${fileContent}"
-    sh "git add ${fileToProcess}"
-}
 
 def updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch) {
-    fileContent = readFile fileToProcess
-    reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess},fabricVersion: ${fabricVersion},replaceTag: ${replaceTag} currentBranch: ${currentBranch}")
-    replacementRules = [
-                        ("\${FABRIC_VERSION:-" + "${replaceTag}" + '}')             :       ("\${FABRIC_VERSION:-" + "${fabricVersion}" + '}'),
-                        ("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}')         :       ("\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}'),
-                        ('FABRIC_VERSION='  + "${replaceTag}")                      :       ('FABRIC_VERSION=' + "${fabricVersion}"),
-                        ('FABRIC_VERSION='  + "\"${replaceTag}\"")                  :       ('FABRIC_VERSION=' + "\"${fabricVersion}\""),
-                        ('FABRIC_VERSION:=' + "${replaceTag}")                      :       ('FABRIC_VERSION:=' + "${fabricVersion}"),
-                        ('FABRIC_VERSION:=' + "\"${replaceTag}\"")                  :       ('FABRIC_VERSION:=' + "\"${fabricVersion}\""),
-                        ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       ("\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}'),
-                        ("\${FABRIC_STARTER_VERSION:-" + "\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\"" + '}'),
-                        ('FABRIC_STARTER_VERSION=' + "${replaceTag}")               :       ('FABRIC_STARTER_VERSION=' + "${currentBranch}"),
-                        ('FABRIC_STARTER_VERSION=' + "\"${replaceTag}\"")           :       ('FABRIC_STARTER_VERSION=' + "\"${currentBranch}\""),
-                        ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       ('FABRIC_STARTER_VERSION:=' + "${currentBranch}"),
-                        ('FABRIC_STARTER_VERSION:=' + "\"${replaceTag}\"")          :       ('FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\""),
-                        ("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}")                 :       ("{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
-                        ]
+        fileContent = readFile fileToProcess
+        reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess},fabricVersion: ${fabricVersion},replaceTag: ${replaceTag} currentBranch: ${currentBranch}")
+        replacementRules = [
+                            ("\${FABRIC_VERSION:-" + "${replaceTag}" + '}')             :       ("\${FABRIC_VERSION:-" + "${fabricVersion}" + '}'),
+                            ("\${FABRIC_VERSION:-" + "\"${replaceTag}\"" + '}')         :       ("\${FABRIC_VERSION:-" + "\"${fabricVersion}\"" + '}'),
+                            ('FABRIC_VERSION='  + "${replaceTag}")                      :       ('FABRIC_VERSION=' + "${fabricVersion}"),
+                            ('FABRIC_VERSION='  + "\"${replaceTag}\"")                  :       ('FABRIC_VERSION=' + "\"${fabricVersion}\""),
+                            ('FABRIC_VERSION:=' + "${replaceTag}")                      :       ('FABRIC_VERSION:=' + "${fabricVersion}"),
+                            ('FABRIC_VERSION:=' + "\"${replaceTag}\"")                  :       ('FABRIC_VERSION:=' + "\"${fabricVersion}\""),
+                            ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       ("\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}'),
+                            ("\${FABRIC_STARTER_VERSION:-" + "\"${replaceTag}\"" + '}') :       ("\${FABRIC_STARTER_VERSION:-" + "\"${currentBranch}\"" + '}'),
+                            ('FABRIC_STARTER_VERSION=' + "${replaceTag}")               :       ('FABRIC_STARTER_VERSION=' + "${currentBranch}"),
+                            ('FABRIC_STARTER_VERSION=' + "\"${replaceTag}\"")           :       ('FABRIC_STARTER_VERSION=' + "\"${currentBranch}\""),
+                            ('FABRIC_STARTER_VERSION:=' + "${replaceTag}")              :       ('FABRIC_STARTER_VERSION:=' + "${currentBranch}"),
+                            ('FABRIC_STARTER_VERSION:=' + "\"${replaceTag}\"")          :       ('FABRIC_STARTER_VERSION:='  + "\"${currentBranch}\""),
+                            ("\\{FABRIC_STARTER_REPOSITORY:\\-[a-z]*}")                 :       ("{FABRIC_STARTER_REPOSITORY:-$FABRIC_STARTER_REPOSITORY}")
+                            ]
 
-    replacementRules.keySet().each {
-        fileContent = fileContent.replace(it, replacementRules.get(it))
+        replacementRules.keySet().each {
+            fileContent = fileContent.replace(it, replacementRules.get(it))
+        }
+
+        writeFile file: fileToProcess, text: fileContent
+
+        if (BE_VERBOSE) { echo "Content for ${fileToProcess}: ${fileContent}" }
+
+        sh "git add ${fileToProcess}"
     }
 
-    writeFile file: fileToProcess, text: fileContent
-
-    if (BE_VERBOSE) { echo "Content for ${fileToProcess}: ${fileContent}" }
-
-    sh "git add ${fileToProcess}"
-}
-
 def remoteBranchExists(branchName) {
-    def checkRemoteBranch = sh(script: "git branch --list -r origin/${branchName} | wc -l", returnStdout: true).toString().trim()
-    def whetherExists = checkRemoteBranch.isInteger() ? checkRemoteBranch.toInteger() : 0
-    return (whetherExists > 0)
-}
+        def checkRemoteBranch = sh(script: "git branch --list -r origin/${branchName} | wc -l", returnStdout: true).toString().trim()
+        def whetherExists = checkRemoteBranch.isInteger() ? checkRemoteBranch.toInteger() : 0
+        return (whetherExists > 0)
+    }
 
 def fileExists(fileName) {
-    //def fileToCheck = new File(fileName)
-    //fileToCheck.exists()
-    //sh "pwd"
-    //sh "ls -la"
-    //def result = 
-    result = sh(returnStdout: true, script: "test -f ${fileName} && echo true || echo false").toString().trim()
-    return result
-    //reportList.add("${result}")
-    //if (result == 'true') {return true} else {return false}
+        sh(returnStdout: true, script: "test -f ${fileName} && echo true || echo false").toString().trim()
     }
 
 def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
-    stage(name) {
-        dir(currentDir) {
-            if (description) { echo "${CRED}${CUNDERLINED}${description}${CNOTUNDERLINED}" }
-//            if (description) { echo "${description}" }
+        stage(name) {
+            dir(currentDir) {
+                if (description) { echo "${CRED}${CUNDERLINED}${description}${CNOTUNDERLINED}" }
 
-            echo color
-            reportList.add("STAGE: ${STAGE_NAME}")
-// Run stage
-            def result = closure.call()
-//            
-            echo CNORMAL
-            return result
+                echo color
+                reportList.add("STAGE: ${STAGE_NAME}")
+                def result = closure.call()
+                echo CNORMAL
+                return result
+            }
         }
     }
-}
+    
