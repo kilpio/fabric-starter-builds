@@ -339,6 +339,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
+        echo fileExists('./.env')
         if (fileExists('./.env') == 'true') {reportList.add(".env exists")} else {reportList.add(".env does not exist")}
 //.env block
         sh "git checkout ${MASTER_BRANCH} -- .env"
@@ -364,6 +365,7 @@ void updateAndCommitRESTBranch(fromBranchName, replaceTag, toBranchName, filesTo
         reportList.add("updateAndCommitBranch: git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\"")
         sh "git merge --strategy-option=theirs ${fromBranchName} -m \"merge ${fromBranchName} into ${toBranchName}\""
         sh "git checkout ${fromBranchName} -- ."
+        echo fileExists('./.env')         
         if (fileExists('./.env') == 'true') {reportList.add(".env exists")} else {reportList.add(".env does not exist")}
     }
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
