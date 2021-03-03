@@ -333,8 +333,12 @@ void gitPushToBranch(branchName, repoName) {
 // stable:      LATEST_FABRIC_VERSION   ->   snapshot
 void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToReplace) {
     reportList.add("updateAndCommitBranch: fromBranchName: ${fromBranchName},replaceTag: ${replaceTag}, toBranchName: ${toBranchName}")
-    checkoutAndThenPullIfRemoteExists(toBranchName)
 
+sh "ls -la"
+sh "cat .env"
+    checkoutAndThenPullIfRemoteExists(toBranchName)
+sh "ls -la"
+sh "cat .env"
         oldFabricStarterVersion = getFabricStarterVersionFromEnv()
         oldFabricVersion = getFabricVersionFromEnv()
         reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
