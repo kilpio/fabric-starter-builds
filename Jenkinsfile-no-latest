@@ -89,7 +89,7 @@ node {
                 
                         gitSetUser(GIT_REPO_OWNER)
 
-                        updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}",filesToReplaceForFabricStarter)
+                        updateAndCommitBranch("origin/$MASTER_BRANCH", LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}",filesToReplaceForFabricStarter)
                         // if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                         //         updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}", filesToReplaceForFabricStarter)
                         // }
