@@ -228,7 +228,8 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
         sh 'ls -la'
         sh "git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
         dir(repositoryName) {
-            sh "git checkout ${MASTER_BRANCH}"
+            //sh "git checkout ${MASTER_BRANCH}"
+            sh "git checkout $branch"
             sh 'git pull'
         }
         reportList.add("checkoutFromGithubToSubfolder: git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git; git checkout ${MASTER_BRANCH}; git pull")
