@@ -352,7 +352,7 @@ if (fileExists('./.env') == 'true') { sh "cat .env"}
 
     if (fileExists('./.env') == 'true') {
         echo "Modifing ./env file"
-        sh "git checkout ${MASTER_BRANCH} -- .env"
+        sh "git checkout origin/${MASTER_BRANCH} -- .env"
         
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
