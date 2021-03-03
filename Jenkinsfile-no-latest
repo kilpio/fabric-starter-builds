@@ -80,14 +80,15 @@ node {
             wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/fabric-starter") {
                         checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                         dir ('fabric-starter') {
-                        sh "pwd"
-                        sh "git branch"
-                        sh "ls -la"
-                        sh "cat ./.env"
+                                oldFabricStarterVersion = getFabricStarterVersionFromEnv()
+                                oldFabricVersion = getFabricVersionFromEnv()
+                                reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
+                                echo("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
                         }
                 }
 
             wrappedStage('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
+            echoEvaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
                         newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
                 }
 
@@ -346,9 +347,7 @@ if (fileExists('./.env') == 'true') { sh "cat .env"}
     checkoutAndThenPullIfRemoteExists(toBranchName)
 sh "ls -la"
 if (fileExists('./.env') == 'true') { sh "cat .env"}
-        oldFabricStarterVersion = getFabricStarterVersionFromEnv()
-        oldFabricVersion = getFabricVersionFromEnv()
-        reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
+        
 
     if (MERGE_FROM_MASTER == 'true') {
         echo "Now merging from ${fromBranchName}"
