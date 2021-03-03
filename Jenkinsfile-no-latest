@@ -156,7 +156,7 @@ node {
 
 //? ========================================== DOCKER PUSH==============================================
 
-            wrappedStage('Fabric-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
+            wrappedStage('Fabric-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} image to Dockerhub") {
                     if (SKIP_DOCKER_PUSH == 'false') {
                         if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                                                 pushDockerImage('fabric-starter-rest', newFabricStarterTag)
@@ -166,7 +166,7 @@ node {
                     }
             }
 
-            wrappedStage('Fabric-Starter-push-docker-images', CCYAN, "Push fabric-starter ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
+            wrappedStage('Fabric-Starter-push-docker-images', CCYAN, "Push fabric-starter ${newFabricStarterTag} image to Dockerhub") {
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false') ) {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                     pushDockerImage('fabric-tools-extended', newFabricStarterTag)
@@ -178,18 +178,18 @@ node {
 
             //? ==================================== GIT PUSH==========================================
 
-            wrappedStage('Fabric-Starter-Rest-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github", './fabric-starter-rest') {
+            wrappedStage('Fabric-Starter-Rest-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} branch to github", './fabric-starter-rest') {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                             gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
                             // gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
                     }
                 }
 
-            wrappedStage('Fabric-Starter-Rest-git-push-stable', CGREEN, 'push fabric-starter-rest to github', './fabric-starter-rest') {
+            wrappedStage('Fabric-Starter-Rest-git-push-stable', CGREEN, "push fabric-starter-rest ${FABRIC_VERSION}-${BUILD_BRANCH} to github', './fabric-starter-rest") {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter-rest')
                 }
 
-            wrappedStage ('Fabric-Starter-git-push-snapshot', CMAGENTA, "push fabric-starter ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github", './fabric-starter') {
+            wrappedStage ('Fabric-Starter-git-push-snapshot', CMAGENTA, "push fabric-starter ${newFabricStarterTag} branch to github", './fabric-starter') {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                             gitPushToBranch(newFabricStarterTag, 'fabric-starter')
                             // gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
@@ -343,7 +343,9 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
     if (fileExists('./.env') == 'true') {
         echo "Modifing ./env file"
         sh "git checkout ${MASTER_BRANCH} -- .env"
-
+        def oldFabricStarterVersion = getFabricStarterVersionFromEnv()
+        def oldFabricVersion = getFabricVersionFromEnv()
+        reportList.add(" oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
             }
@@ -491,6 +493,19 @@ def remoteBranchExists(branchName) {
 def fileExists(fileName) {
         sh(returnStdout: true, script: "test -f ${fileName} && echo true || echo false").toString().trim()
     }
+
+def getFabricVersionFromEnv() {
+        if (fileExists('./.env') == 'true') {
+            sh(returnStdout: true, script: " cat './.env' | grep -E \"^FABRIC_VERSION=\" | cut -d '=' -f 2").toString().trim()
+        }
+    }
+
+def getFabricStarterVersionFromEnv() {
+        if (fileExists('./.env') == 'true') {
+            sh(returnStdout: true, script: " cat './.env' | grep -E \"^FABRIC_STARTER_VERSION=\" | cut -d '=' -f 2").toString().trim()
+        }
+    }
+
 
 def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
         stage(name) {
