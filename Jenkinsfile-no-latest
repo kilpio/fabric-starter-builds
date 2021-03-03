@@ -80,10 +80,10 @@ node {
             wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/fabric-starter") {
                         checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                         dir ('fabric-starter') {
-                                oldFabricStarterVersion = getFabricStarterVersionFromEnv()
-                                oldFabricVersion = getFabricVersionFromEnv()
-                                reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
-                                echo "oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}"
+                                // oldFabricStarterVersion = getFabricStarterVersionFromEnv()
+                                // oldFabricVersion = getFabricVersionFromEnv()
+                                // reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
+                                // echo "oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}"
                                 }
                 }
 
