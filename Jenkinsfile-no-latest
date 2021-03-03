@@ -83,7 +83,7 @@ node {
                                 oldFabricStarterVersion = getFabricStarterVersionFromEnv()
                                 oldFabricVersion = getFabricVersionFromEnv()
                                 reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
-                                echo("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
+                                echo "oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}" 
                         }
                 }
 
