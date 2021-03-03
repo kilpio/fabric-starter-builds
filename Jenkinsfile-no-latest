@@ -144,7 +144,7 @@ node {
                     }
                 }
 
-            wrappedStage('Fabric-Starter-Rest-build-docker-images', CGREEN, "Build snapshot, stable and ${FABRIC_VERSION} fabric-starter-rest images", './fabric-starter-rest') {
+            wrappedStage('Fabric-Starter-Rest-build-docker-images', CGREEN, "Build snapshot, stable fabric-starter-rest images", './fabric-starter-rest') {
                 if (SKIP_FS_REST_BUILD == 'false') {
                     buildDockerImage(
                                         'fabric-starter-rest',
@@ -347,6 +347,7 @@ if (fileExists('./.env') == 'true') { sh "cat .env"}
 sh "ls -la"
 if (fileExists('./.env') == 'true') { sh "cat .env"}
         
+        
 
     if (MERGE_FROM_MASTER == 'true') {
         echo "Now merging from ${fromBranchName}"
@@ -371,7 +372,16 @@ if (fileExists('./.env') == 'true') { sh "cat .env"}
         updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
         echo CUNDERLINED
         echo "updateComposeFilesWithVersions(filesToReplace: ${filesToReplace}, FABRIC_VERSION: ${FABRIC_VERSION}, replaceTag: ${replaceTag}, toBranchName: ${toBranchName})"
+        
+        if (fromBranchName == STABLE_BRANCH_NAME) {
+            updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, oldFabricVersion, toBranchName)
+            updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, oldFabricStarterVersion, toBranchName)
+        } else {
+        
         updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
+                }
+        
+        
         echo CNOTUNDERLINED
 
         commitBranch(toBranchName)
