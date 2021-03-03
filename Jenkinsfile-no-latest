@@ -158,8 +158,8 @@ node {
 
             wrappedStage('Fabric-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
                     if (SKIP_DOCKER_PUSH == 'false') {
-                        if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") { 
-                                    pushDockerImage('fabric-starter-rest', newFabricStarterTag)
+                        if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
+                                                                pushDockerImage('fabric-starter-rest', newFabricStarterTag)
                                     pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")
                             }
                         pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
@@ -253,14 +253,12 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
 def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Evaluate next snapshot name for ${repositoryTitle}"
     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse -t '-' -k 2 | head -1").trim()
-    
     echo "Current latest snapshot: ${lastSnapshot}"
     def (fabricVersion,branchPrefix,version) = lastSnapshot.tokenize('-')
     def cleanFabricVersion = fabricVersion.split('/')[1]
     def (majorVer,minorVer) = version.tokenize('.')
     int minorVersion = (minorVer as int)
     def newGitTag = "${FABRIC_VERSION}-${branchPrefix}-${majorVer}.${minorVersion + 1}"
-    
     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
     reportList.add("evaluateNextSnapshotGitTag: New Tag for ${repositoryTitle}: ${newGitTag}")
     newGitTag
@@ -504,4 +502,3 @@ def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir="
             }
         }
     }
-    
