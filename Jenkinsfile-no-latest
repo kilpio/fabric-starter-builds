@@ -343,7 +343,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
     if (fileExists('./.env') == 'true') {
         echo "Modifing ./env file"
         sh "git checkout ${MASTER_BRANCH} -- .env"
-        
+
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
             }
@@ -353,9 +353,11 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
             echo "Modifing ./env file"
             updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName) 
             }
-
+        //updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch)
         updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
+        echo CUNDERLINED
         updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
+        echo CNOTUNDERLINED
 
         commitBranch(toBranchName)
     }
