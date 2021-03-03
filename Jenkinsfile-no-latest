@@ -185,7 +185,7 @@ node {
                     }
                 }
 
-            wrappedStage('Fabric-Starter-Rest-git-push-stable', CGREEN, "push fabric-starter-rest ${FABRIC_VERSION}-${BUILD_BRANCH} to github', './fabric-starter-rest") {
+            wrappedStage('Fabric-Starter-Rest-git-push-stable', CGREEN, "push fabric-starter-rest ${FABRIC_VERSION}-${BUILD_BRANCH} to github", './fabric-starter-rest') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter-rest')
                 }
 
@@ -343,9 +343,9 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
     if (fileExists('./.env') == 'true') {
         echo "Modifing ./env file"
         sh "git checkout ${MASTER_BRANCH} -- .env"
-        //def oldFabricStarterVersion = getFabricStarterVersionFromEnv()
-        //def oldFabricVersion = getFabricVersionFromEnv()
-        //reportList.add(" oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
+        def oldFabricStarterVersion = getFabricStarterVersionFromEnv()
+        def oldFabricVersion = getFabricVersionFromEnv()
+        reportList.add(" oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
             }
