@@ -511,7 +511,7 @@ def getFabricVersionFromEnv()  {
         if (fileExists('./.env') == 'true') {
            def result = sh(returnStdout: true, script: "cat './.env' | grep -E \"^FABRIC_VERSION=\" | cut -d '=' -f 2").toString().trim()
            echo "getFabricVersionFromEnv: ${result}"
-           return "${result}
+           return "${result}"
         }
     }
 
@@ -519,7 +519,7 @@ def getFabricStarterVersionFromEnv() {
         if (fileExists('./.env') == 'true') {
             def result = sh(returnStdout: true, script:  "cat './.env' | grep -E \"^FABRIC_STARTER_VERSION=\" | cut -d '=' -f 2").toString().trim()
             echo "getFabricStarterVersionFromEnv: ${result}"
-            return "${result}
+            return "${result}"
         }
     }
 
