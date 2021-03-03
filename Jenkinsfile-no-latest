@@ -77,18 +77,18 @@ node {
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
 
-            // wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/fabric-starter") {
-            //             checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
-            //             // dir ('fabric-starter') {
-            //             //          oldFabricStarterVersion = getFabricStarterVersionFromEnv()
-            //             //          oldFabricVersion = getFabricVersionFromEnv()
-            //             //          reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
-            //             //          echo "oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}"
-            //             //         }
-            //     }
+            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/fabric-starter") {
+                        checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
+                        dir ('fabric-starter') {
+                                 oldFabricStarterVersion = getFabricStarterVersionFromEnv()
+                                 oldFabricVersion = getFabricVersionFromEnv()
+                                 reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
+                                 echo "oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}"
+                                }
+                }
 
             wrappedStage('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
-            echoEvaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
+            reportList.add('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
                         newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
                 }
 
