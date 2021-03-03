@@ -345,7 +345,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         sh "git checkout ${MASTER_BRANCH} -- .env"
         def oldFabricStarterVersion = getFabricStarterVersionFromEnv()
         def oldFabricVersion = getFabricVersionFromEnv()
-        reportList.add(" oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
+        reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
             }
@@ -353,7 +353,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
 
         if (fileExists('./.env') == 'true') {
             echo "Modifing ./env file"
-            updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName) 
+            updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
             }
         //updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch)
         updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
@@ -496,13 +496,17 @@ def fileExists(fileName) {
 
 def getFabricVersionFromEnv() {
         if (fileExists('./.env') == 'true') {
-            sh(returnStdout: true, script: " cat './.env' | grep -E \"^FABRIC_VERSION=\" | cut -d '=' -f 2").toString().trim()
+           def result = sh(returnStdout: true, script: " cat './.env' | grep -E \"^FABRIC_VERSION=\" | cut -d '=' -f 2").toString().trim()
+           echo "getFabricVersionFromEnv: ${result}"
+           echo result
         }
     }
 
 def getFabricStarterVersionFromEnv() {
         if (fileExists('./.env') == 'true') {
-            sh(returnStdout: true, script: " cat './.env' | grep -E \"^FABRIC_STARTER_VERSION=\" | cut -d '=' -f 2").toString().trim()
+            def result = sh(returnStdout: true, script: " cat './.env' | grep -E \"^FABRIC_STARTER_VERSION=\" | cut -d '=' -f 2").toString().trim()
+            echo "getFabricStarterVersionFromEnv: ${result}"
+            echo result
         }
     }
 
