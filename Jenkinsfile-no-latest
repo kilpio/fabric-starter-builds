@@ -88,7 +88,6 @@ node {
                 }
 
             wrappedStage('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
-            reportList.add('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
                         newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
                 }
 
@@ -127,7 +126,7 @@ node {
                             checkoutFromGithubToSubfolder('fabric-starter-rest')
                 }
 
-            wrappedStage('Farbric-Starter-Rest-update-and-commit', CCYAN, 'Update and commit fabric-starter-rest branches', './fabric-starter-rest') {
+                       wrappedStage('Farbric-Starter-Rest-update-and-commit', CCYAN, 'Update and commit fabric-starter-rest branches', './fabric-starter-rest') {
                 
                     gitSetUser(GIT_REPO_OWNER)
                     
@@ -135,7 +134,7 @@ node {
                     // if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}")  {
                     //                                             updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}", filesToReplaceForFabricStarterRest)
                     // }
-                }
+                }    
 
             wrappedStage('Farbric-Starter-Rest-copy-stable-to-snapshot', CYELLOW, 'Take updates from master (pretend as from stable) to snapshot, commit snapshot ', './fabric-starter-rest') {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
@@ -316,7 +315,8 @@ usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD']]) {
         sh "docker push ${USERNAME}/${imageName}:${tag} 2>&1 1>/dev/null"
         sh 'docker logout'
         reportList.add("pushDockerImage: docker push ${USERNAME}/${imageName}:${tag}")
-        }
+        }extSnapshotGitTag('Fabric-starter')
+                }
     }
 
 void commitBranch(branchName) {
@@ -361,8 +361,8 @@ if (fileExists('./.env') == 'true') { sh "cat .env"}
         
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
+                }
             }
-        }
 
         if (fileExists('./.env') == 'true') {
             echo "Modifing ./env file"
@@ -413,7 +413,7 @@ void checkoutAndThenPullIfRemoteExists(toBranchName) {
 
 void envAppendVersionVars(currentBranchName, fabricVersion) {
         def fileContent = readFile '.env'
-        
+                
         writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}"
         reportList.add("envAppendVersionVars: writeFile file: '.env',text: ${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}")
         sh 'git add .env'
@@ -507,7 +507,8 @@ def fileExists(fileName) {
         sh(returnStdout: true, script: "test -f ${fileName} && echo true || echo false").toString().trim()
     }
 
-def getFabricVersionFromEnv() {
+def getFabricVersionFromEnv()  {
+                
         if (fileExists('./.env') == 'true') {
            def result = sh(returnStdout: true, script: "cat './.env'")// | grep -E \"^FABRIC_VERSION=\"") // | cut -d '=' -f 2").toString().trim()
            echo "getFabricVersionFromEnv: ${result}"
