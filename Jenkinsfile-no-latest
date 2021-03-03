@@ -77,10 +77,14 @@ node {
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
 
-            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/fabric-starter",'./fabric-starter') {
+            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/fabric-starter") {
                         checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
+                        dir ('fabric-starter') {
+                        sh "pwd"
+                        sh "git branch"
                         sh "ls -la"
                         sh "cat ./env"
+                        }
                 }
 
             wrappedStage('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
