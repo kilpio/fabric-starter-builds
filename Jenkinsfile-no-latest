@@ -83,8 +83,8 @@ node {
                                 oldFabricStarterVersion = getFabricStarterVersionFromEnv()
                                 oldFabricVersion = getFabricVersionFromEnv()
                                 reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
-                                echo "oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}" 
-                        }
+                                echo "oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}"
+                                }
                 }
 
             wrappedStage('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
