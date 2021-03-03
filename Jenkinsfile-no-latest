@@ -335,10 +335,10 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
     reportList.add("updateAndCommitBranch: fromBranchName: ${fromBranchName},replaceTag: ${replaceTag}, toBranchName: ${toBranchName}")
 
 sh "ls -la"
-sh "cat .env"
+if (fileExists('./.env') == 'true') { sh "cat .env"}
     checkoutAndThenPullIfRemoteExists(toBranchName)
 sh "ls -la"
-sh "cat .env"
+if (fileExists('./.env') == 'true') { sh "cat .env"}
         oldFabricStarterVersion = getFabricStarterVersionFromEnv()
         oldFabricVersion = getFabricVersionFromEnv()
         reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
