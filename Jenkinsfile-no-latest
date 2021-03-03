@@ -16,7 +16,7 @@ CNORMAL = '\033[0m'
 STABLE_BRANCH_NAME='stable'
 FABRIC_TOOLS_NAME = 'fabric-tools'
 FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
-BE_VERBOSE = false
+BE_VERBOSE = true
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
 filesToReplaceForFabricStarter = ['docker-compose.yaml',
