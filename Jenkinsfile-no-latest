@@ -83,7 +83,7 @@ node {
                         sh "pwd"
                         sh "git branch"
                         sh "ls -la"
-                        sh "cat ./env"
+                        sh "cat ./.env"
                         }
                 }
 
