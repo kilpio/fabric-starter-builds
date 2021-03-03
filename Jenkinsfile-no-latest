@@ -138,7 +138,7 @@ node {
                     }
                 }
 
-            wrappedStage('Fabic-Starter-Rest-build-docker-images', CGREEN, "Build snapshot, stable and ${FABRIC_VERSION} fabric-starter-rest images", './fabric-starter-rest') {
+            wrappedStage('Fabric-Starter-Rest-build-docker-images', CGREEN, "Build snapshot, stable and ${FABRIC_VERSION} fabric-starter-rest images", './fabric-starter-rest') {
                 if (SKIP_FS_REST_BUILD == 'false') {
                     buildDockerImage(
                                         'fabric-starter-rest',
@@ -156,7 +156,7 @@ node {
 
 //? ========================================== DOCKER PUSH==============================================
 
-            wrappedStage('Fabic-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
+            wrappedStage('Fabric-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
                     if (SKIP_DOCKER_PUSH == 'false') {
                         if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") { 
                                     pushDockerImage('fabric-starter-rest', newFabricStarterTag)
@@ -166,7 +166,7 @@ node {
                     }
             }
 
-            wrappedStage('Fabic-Starter-push-docker-images', CCYAN, "Push fabric-starter ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
+            wrappedStage('Fabric-Starter-push-docker-images', CCYAN, "Push fabric-starter ${newFabricStarterTag} and ${FABRIC_VERSION} images to Dockerhub") {
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false') ) {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                     pushDockerImage('fabric-tools-extended', newFabricStarterTag)
@@ -178,25 +178,25 @@ node {
 
             //? ==================================== GIT PUSH==========================================
 
-            wrappedStage('Fabic-Starter-Rest-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github", './fabric-starter-rest') {
+            wrappedStage('Fabric-Starter-Rest-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github", './fabric-starter-rest') {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                             gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
                             gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
                     }
                 }
 
-            wrappedStage('Fabic-Starter-Rest-git-push-stable', CGREEN, 'push fabric-starter-rest to github', './fabric-starter-rest') {
+            wrappedStage('Fabric-Starter-Rest-git-push-stable', CGREEN, 'push fabric-starter-rest to github', './fabric-starter-rest') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter-rest')
                 }
 
-            wrappedStage ('Fabic-Starter-git-push-snapshot', CMAGENTA, "push fabric-starter ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github", './fabric-starter') {
+            wrappedStage ('Fabric-Starter-git-push-snapshot', CMAGENTA, "push fabric-starter ${newFabricStarterTag} and ${FABRIC_VERSION} branches to github", './fabric-starter') {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                             gitPushToBranch(newFabricStarterTag, 'fabric-starter')
                             gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
                     }
                 }
 
-            wrappedStage ('Fabic-Starter-git-push-stable', CBLUE, "push fabric-starter ${FABRIC_VERSION}-${BUILD_BRANCH} branch to github", './fabric-starter') {
+            wrappedStage ('Fabric-Starter-git-push-stable', CBLUE, "push fabric-starter ${FABRIC_VERSION}-${BUILD_BRANCH} branch to github", './fabric-starter') {
                     gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter')
                 }
 
@@ -417,11 +417,11 @@ void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
         updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
     }
 
-def updateComposeFilesWithVersions(filesToReplace, fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currenBranch
+def updateComposeFilesWithVersions(filesToReplace, fabricVersion, replaceTag, currentBranch) { //mergeBranch -> currentBranch
         filesToReplace.each { updateImagesReferencesVersion(it, fabricVersion, replaceTag, currentBranch) }
     }
 
-def updateComposeFilesFabricStarterVersionFromLatest(filesToReplace) { //mergeBranch -> currenBranch
+def updateComposeFilesFabricStarterVersionFromLatest(filesToReplace) { //mergeBranch -> currentBranch
         filesToReplace.each { updateImagesReferencesVersionFromlatestToKnown(it) }
     }
 
