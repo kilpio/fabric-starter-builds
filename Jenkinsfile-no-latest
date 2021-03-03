@@ -427,7 +427,7 @@ def updateComposeFilesFabricStarterVersionFromLatest(filesToReplace) { //mergeBr
 
 def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
         fileContent = readFile fileToProcess
-        reportList.add("updateImagesReferencesVersion: fileToProcess: ${fileToProcess}")
+        reportList.add("updateImagesReferencesVersionFromlatestToKnown: fileToProcess: ${fileToProcess}")
         
         def replaceTag = 'latest'
         def currentBranch = LATEST_FABRIC_VERSION
