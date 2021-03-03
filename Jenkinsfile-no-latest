@@ -509,7 +509,7 @@ def fileExists(fileName) {
 def getFabricVersionFromEnv()  {
                 
         if (fileExists('./.env') == 'true') {
-           def result = sh(returnStdout: true, script: "cat './.env'" | grep -E \"^FABRIC_VERSION=\" | cut -d '=' -f 2").toString().trim()
+           def result = sh(returnStdout: true, script: "cat './.env' | grep -E \"^FABRIC_VERSION=\" | cut -d '=' -f 2").toString().trim()
            echo "getFabricVersionFromEnv: ${result}"
            echo result
         }
