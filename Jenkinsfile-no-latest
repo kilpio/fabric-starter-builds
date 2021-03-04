@@ -17,8 +17,9 @@ STABLE_BRANCH_NAME='stable'
 FABRIC_TOOLS_NAME = 'fabric-tools'
 FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 
-BE_VERBOSE = false
 DBG_STDOUTPUT = '2>&1 1>/dev/null'
+BE_VERBOSE = false
+if (DEBUG == 'true') {BE_VEROSE = true}
 if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
 
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
@@ -223,8 +224,8 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
     echo 'If login fails here with right credentials,please add github.com to known hosts for jenkins user (ssh-keyscan -H github.com >> .ssh/known_hosts)'
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
-        sh 'pwd'
-        sh 'ls -la'
+        //sh 'pwd'
+        //sh 'ls -la'
         sh "git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
         dir(repositoryName) {
             //sh "git checkout ${MASTER_BRANCH}"
@@ -365,7 +366,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
                 }
  
         commitBranch(toBranchName)
-    }
+    m}
 
 void checkoutAndThenPullIfRemoteExists(toBranchName) {
     if (remoteBranchExists(toBranchName)) {
