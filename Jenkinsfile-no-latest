@@ -16,7 +16,10 @@ CNORMAL = '\033[0m'
 STABLE_BRANCH_NAME='stable'
 FABRIC_TOOLS_NAME = 'fabric-tools'
 FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
+
 BE_VERBOSE = true
+dbgdbgStdoutput= '2>&1 1>/dev/null'
+if (BE_VERBOSE) { dbgdbgStdoutput = '' }
 
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
@@ -107,7 +110,7 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                                         FABRIC_TOOLS_EXTENDED_NAME,
                                         FABRIC_VERSION,
                                         MASTER_BRANCH,
-                                        "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile . 2>&1 1>/dev/null"
+                                        "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile . ${dbgStdoutput}"
                                     )
                     tagDockerImage(FABRIC_TOOLS_EXTENDED_NAME, FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")    // e.g. stable
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}")  {
@@ -139,7 +142,7 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                                         'fabric-starter-rest',
                                         FABRIC_VERSION,
                                         MASTER_BRANCH,
-                                        "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile . 2>&1 1>/dev/null"
+                                        "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile . ${dbgStdoutput}"
                                     )
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                 tagDockerImage('fabric-starter-rest', FABRIC_VERSION, newFabricStarterTag)
@@ -196,21 +199,22 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
 
             //? ====================================== REPORT =====================================
             wrappedStage('Print-report',CGREEN, 'print report') {
-                def report
-
-                reportList.eachWithIndex {
-                    if (it != null) {
-                        line = it.replaceFirst('^', "${CCYAN}")
-                        line = line.replaceFirst(': ', ":${CGREEN} ")
-                        line = line.replaceFirst('STAGE:', "${CRED}-- STAGE:${CBLUE}")
-                        line = line.replaceFirst('$', "${CNORMAL}")
-                        report += line + '\n'
+                if (BE_VERBOSE) {
+                    def report
+                    reportList.eachWithIndex {
+                        if (it != null) {
+                            line = it.replaceFirst('^', "${CCYAN}")
+                            line = line.replaceFirst(': ', ":${CGREEN} ")
+                            line = line.replaceFirst('STAGE:', "${CRED}-- STAGE:${CBLUE}")
+                            line = line.replaceFirst('$', "${CNORMAL}")
+                            report += line + '\n'
+                        }
                     }
+                    echo report
                 }
-                echo report
             }
-        } //AnsiColor
-    } //Fabric-Starter-Packages-snapshot
+        } // wrappedStage 'Fabric-Starter-snapshot'
+    } //AnsiColor
 }//node
 
 //! ======================================== FUNCTIONS ===========================================
@@ -280,13 +284,11 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 
     arguments = "-t ${DOCKER_REPO}/${imageName}:${tag} --label \"jenkins_job_build=${BUILD_NUMBER}\" --label \"jenkins_job_name=${JOB_NAME}\" ${args}"
     echo "docker build args: $arguments"
-
-    sh(returnStdout:BE_VERBOSE, script: "docker image build ${arguments} 2>&1")
+    
+    sh(returnStdout:BE_VERBOSE, script: "docker image build ${arguments} ${dbgStdoutput}")
     reportList.add("buildDockerImage: docker image build ${arguments}")
     if (BE_VERBOSE) {
-            echo CUNDERLINED
             sh 'docker image ls'
-            echo CNOTUNDERLINED
     }
 }
 
@@ -300,7 +302,7 @@ void pushDockerImage(imageName, tag) {
 usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD']]) {
         sh 'docker logout'
         sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
-        sh "docker push ${USERNAME}/${imageName}:${tag} 2>&1 1>/dev/null"
+        sh "docker push ${USERNAME}/${imageName}:${tag} ${stdputput}"
         sh 'docker logout'
         reportList.add("pushDockerImage: docker push ${USERNAME}/${imageName}:${tag}")
                 }
@@ -340,7 +342,6 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
     if (fileExists('./.env') == 'true') {
         echo "Modifing ./env file"
         sh "git checkout origin/${MASTER_BRANCH} -- .env"
-        
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
                 }
