@@ -19,7 +19,7 @@ FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 
 DBG_STDOUTPUT = '2>&1 1>/dev/null'
 BE_VERBOSE = false
-if (DEBUG == 'true') {BE_VEROSE = true}
+if (DEBUG == 'true') {BE_VERBOSE = true}
 if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
 
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
