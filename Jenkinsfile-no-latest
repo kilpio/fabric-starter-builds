@@ -106,7 +106,7 @@ node {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                         updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag, filesToReplaceForFabricStarter)
                     } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
-                }
+                } 
 
 wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabric-tools-extended images for BUILD_BRANCH and snapshot", './fabric-starter') {
                     buildDockerImage(
@@ -153,6 +153,13 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                     tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     }
                 }
+//? ========================================== PREPARE ARCHIVES FOR TESTS ==============================================
+            wrappedStage('Fabric-Starter-make-archive', CCYAN, "compress current fabric-starter from WORKDIR", WORKSPACE) {
+                sh "pwd"
+                sh "ls -la"
+                sh "docker images --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${BUILD_NUMBER}\""
+            }
+
 
 //? ========================================== DOCKER PUSH==============================================
 
