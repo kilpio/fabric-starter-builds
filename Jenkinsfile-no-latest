@@ -14,6 +14,7 @@ CNORMAL = '\033[0m'
 // https://en.wikipedia.org/wiki/ANSI_escape_code
 
 STABLE_BRANCH_NAME='stable'
+OLD_LATEST_FS_VERSION_NAME='latest'
 FABRIC_TOOLS_NAME = 'fabric-tools'
 FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 
@@ -98,7 +99,7 @@ node {
 
                         gitSetUser(GIT_REPO_OWNER)
 
-                        updateAndCommitBranch("origin/$MASTER_BRANCH", LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}",filesToReplaceForFabricStarter)
+                        updateAndCommitBranch("origin/$MASTER_BRANCH", PREVIOUS_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}",filesToReplaceForFabricStarter)
                 }
 
             wrappedStage('Fabric-Starter-merge-stable-to-snapshot', CCYAN, "Merge from ${BUILD_BRANCH} and commit ${newFabricStarterTag}", './fabric-starter' ) {
@@ -127,7 +128,7 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
 
             wrappedStage('Farbric-Starter-Rest-update-and-commit', CCYAN, 'Update and commit fabric-starter-rest branches', './fabric-starter-rest') {
                     gitSetUser(GIT_REPO_OWNER)
-                    updateAndCommitBranch(MASTER_BRANCH, LATEST_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}", filesToReplaceForFabricStarterRest)
+                    updateAndCommitBranch(MASTER_BRANCH, PREVIOUS_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}", filesToReplaceForFabricStarterRest)
                 }
 
             wrappedStage('Farbric-Starter-Rest-copy-stable-to-snapshot', CYELLOW, 'Take updates from master (pretend as from stable) to snapshot, commit snapshot ', './fabric-starter-rest') {
@@ -328,8 +329,8 @@ void gitPushToBranch(branchName, repoName) {
         reportList.add("gitPushToBranch: git push -u origin ${branchName}")
         }
     }
-// master:      LATEST_FABRIC_VERSION   ->   stable
-// stable:      LATEST_FABRIC_VERSION   ->   snapshot
+// master:      PREVIOUS_FABRIC_VERSION   ->   stable
+// stable:      PREVIOUS_FABRIC_VERSION   ->   snapshot
 void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToReplace) {
     reportList.add("updateAndCommitBranch: fromBranchName: ${fromBranchName},replaceTag: ${replaceTag}, toBranchName: ${toBranchName}")
 
@@ -353,7 +354,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
             echo "Modifing ./env file"
             updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
             }
-        //updateImagesReferencesVersion(fileToProcess, fabricVersion, replaceTag, currentBranch)
+        //get rid of 'latest' FABRIC_STARTR_VERSION in compose yamsl
         updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
         echo "updateComposeFilesWithVersions(filesToReplace: ${filesToReplace}, FABRIC_VERSION: ${FABRIC_VERSION}, replaceTag: ${replaceTag}, toBranchName: ${toBranchName})"
         
@@ -364,7 +365,6 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         
         updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
                 }
- 
         commitBranch(toBranchName)
     }
 
@@ -396,8 +396,8 @@ void envAppendRepoVar(currentRepoName) {
         sh 'git add .env'
     }
 
-                            // master:      LATEST_FABRIC_VERSION   ->    stable
-                            // stable:      LATEST_FABRIC_VERSION   ->    snapshot
+                            // master:      PREVIOUS_FABRIC_VERSION   ->    stable
+                            // stable:      PREVIOUS_FABRIC_VERSION   ->    snapshot
 void updateEnvFileWithVersions(fabricVersion, replaceTag, currentBranch) {
         updateImagesReferencesVersion('.env', fabricVersion, replaceTag, currentBranch)
     }
@@ -414,8 +414,8 @@ def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
         fileContent = readFile fileToProcess
         reportList.add("updateImagesReferencesVersionFromlatestToKnown: fileToProcess: ${fileToProcess}")
         
-        def replaceTag = 'latest'
-        def currentBranch = LATEST_FABRIC_VERSION
+        def replaceTag = OLD_LATEST_FS_VERSION_NAME
+        def currentBranch = PREVIOUS_FABRIC_VERSION
 
         replacementRules = [
                             ("\${FABRIC_STARTER_VERSION:-" + "${replaceTag}" + '}')     :       ("\${FABRIC_STARTER_VERSION:-" + "${currentBranch}" + '}'),
