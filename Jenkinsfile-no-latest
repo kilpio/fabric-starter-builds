@@ -302,7 +302,7 @@ void pushDockerImage(imageName, tag) {
 usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD']]) {
         sh 'docker logout'
         sh "docker login -u $USERNAME -p $PASSWORD ${DOCKER_REGISTRY}"
-        sh "docker push ${USERNAME}/${imageName}:${tag} ${stdputput}"
+        sh "docker push ${USERNAME}/${imageName}:${tag} ${DBG_STDOUTPUT}"
         sh 'docker logout'
         reportList.add("pushDockerImage: docker push ${USERNAME}/${imageName}:${tag}")
                 }
