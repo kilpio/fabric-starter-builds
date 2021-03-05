@@ -169,7 +169,8 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                     currentImages.split('\n').each {String image ->
                         if (image.contains('snapshot') || image.contains(BUILD_BRANCH))  { 
                             echo "Saving image ${image}"
-                            sh "docker save ${image} | gzip > /tmp/${JOB_NAME}/${BUILD_NUMBER}/${image}.tgz"
+                            def imageFileName=image.replace('/','__')
+                            sh "docker save ${image} | gzip > ${imageFileName}.tgz"
                             sh "ls -la"
                             }
                     }
