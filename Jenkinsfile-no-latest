@@ -165,8 +165,11 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                 dir ("/tmp/${JOB_NAME}/${BUILD_NUMBER}") {
                     sh "mkdir fabric-starter"
                     sh "cp -R ${WORKSPACE}/fabric-starter/ ."
-                    sh "tar czvf fabric-starter.tgz fabric-starter/."
-                    currentImages.split('\n').each {String image -> echo image }
+                    sh "tar czf fabric-starter.tgz fabric-starter/."
+                    currentImages.split('\n').each {String image -> 
+                    
+                    if (image.contains('snapshot') || image.contains($BUILD_BRANCH))  { echo image}
+                    
                 }
             }
 
