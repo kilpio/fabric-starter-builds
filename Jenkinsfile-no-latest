@@ -170,10 +170,10 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                     sh "scp fabric-starter.tgz test@172.18.0.3:${JOB_NAME}/${BUILD_NUMBER}/"
                     currentImages.split('\n').each {String image ->
                         if (image.contains('snapshot') || image.contains(BUILD_BRANCH))  { 
-                            def imageFileName=image.replace('/','__')
+                            def imageFileName=image.replace('/','[[slash]]')
                             echo "Saving image ${image} as ${imageFileName}.tgz"
                             sh "docker save ${image} > ${imageFileName}.tar"
-                            sh "scp \"${imageFileName}.tar\" test@172.18.0.3:${JOB_NAME}/${BUILD_NUMBER}/"
+                            sh "scp \"${imageFileName.replace(':','[[colon]]')}.tar\" test@172.18.0.3:${JOB_NAME}/${BUILD_NUMBER}/"
                             sh "ls -la"
                             }
                     }
