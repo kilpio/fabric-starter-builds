@@ -157,7 +157,7 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
             wrappedStage('Fabric-Starter-make-archives', CCYAN, "compress current fabric-starter from WORKDIR", WORKSPACE) {
                 sh "pwd"
                 sh "ls -la"
-                currentImages = sh (returnStdout: true, script: 
+                currentImages = sh (returnStdout: true, script:
                 "docker images --format \"{{.Repository}}:{{.Tag}}\" --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${BUILD_NUMBER}\""
                 )
 
@@ -173,7 +173,7 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                             def imageFileName=image.replace('/','__')
                             echo "Saving image ${image} as ${imageFileName}.tgz"
                             sh "docker save ${image} > ${imageFileName}.tar"
-                            sh "scp ${imageFileName}.tar test@172.18.0.3:${JOB_NAME}/${BUILD_NUMBER}/"
+                            sh "scp \"${imageFileName}.tar\" test@172.18.0.3:${JOB_NAME}/${BUILD_NUMBER}/"
                             sh "ls -la"
                             }
                     }
