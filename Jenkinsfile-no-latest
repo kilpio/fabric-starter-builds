@@ -168,9 +168,9 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                     sh "tar czf fabric-starter.tgz fabric-starter/."
                     currentImages.split('\n').each {String image ->
                         if (image.contains('snapshot') || image.contains(BUILD_BRANCH))  { 
-                            echo "Saving image ${image}"
                             def imageFileName=image.replace('/','__')
-                            sh "docker save ${image} | gzip > ${imageFileName}.tgz"
+                            echo "Saving image ${image} as ${imageFileName}.tgz"
+                            sh "docker save ${image} > ${imageFileName}.tar"
                             sh "ls -la"
                             }
                     }
