@@ -157,7 +157,11 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
             wrappedStage('Fabric-Starter-make-archives', CCYAN, "compress current fabric-starter from WORKDIR", WORKSPACE) {
                 sh "pwd"
                 sh "ls -la"
-                currentImages = sh (returnStdout: true, script: "docker images --format \"{{.ID}}\t{{.Repository}}\t{{.Tag}}\t{{.Digest}}\" --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${BUILD_NUMBER}\"")
+                currentImages = sh (returnStdout: true, script: 
+                "docker images --format \"{{.Repository}}:{{.Tag}}\" --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${BUILD_NUMBER}\""
+                )
+
+
                 dir ("/tmp/${JOB_NAME}/${BUILD_NUMBER}") {
                     sh "mkdir fabric-starter"
                     sh "cp -R ${WORKSPACE}/fabric-starter/ ."
