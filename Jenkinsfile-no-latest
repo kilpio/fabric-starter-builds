@@ -166,7 +166,7 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                     sh "mkdir fabric-starter"
                     sh "cp -R ${WORKSPACE}/fabric-starter/ ."
                     sh "tar czvf fabric-starter.tgz fabric-starter/."
-                    echo currentImages
+                    currentImages.eachLine { image -> echo image}
                 }
             }
 
