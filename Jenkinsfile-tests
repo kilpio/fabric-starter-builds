@@ -35,7 +35,7 @@ node {
             wrappedStage('Delete-previous-results', CBLUE, "Pruning all previous job images") {
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
-                    sh "ssh test@172.18.0.3 \"uname -a; export TESTVAR=123; echo $TESTVAR\""
+                    sh "ssh test@172.18.0.3 \"uname -a; export TESTVAR=123; env\""
                     sh "ssh test@172.18.0.3 \"echo \$TESTVAR\""
                 }
             }
