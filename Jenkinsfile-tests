@@ -37,9 +37,11 @@ node {
 
                 }
 
-            }
+            
 
-                        //? ====================================== REPORT =====================================
+
+
+//? ======================================================= REPORT =====================================
             wrappedStage('Print-report',CGREEN, 'print report') {
                 if (BE_VERBOSE) {
                     def report
@@ -54,7 +56,7 @@ node {
                     }
                     echo report
                 }
-
+            }
 
         } // wrappedStage 'Fabric-Starter-snapshot'
     } //AnsiColor
