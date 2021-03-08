@@ -288,7 +288,7 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Current latest snapshot: ${lastSnapshot}"
     def (fabricVersion,branchPrefix,version) = lastSnapshot.tokenize('-')
     def cleanFabricVersion = fabricVersion.split('/')[1]
-    def (majorVer,minorVer) = version.tokenize('.')
+    def (majorVer,minorVer) = version.tokenize('.')sshagent
     int minorVersion = (minorVer as int)
     def newGitTag = "${FABRIC_VERSION}-${branchPrefix}-${majorVer}.${minorVersion + 1}"
     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
