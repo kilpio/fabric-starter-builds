@@ -37,7 +37,7 @@ node {
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                     sh "ssh test@172.18.0.3 \"uname -a; ifconfig\""
                 }
-
+            }
             
 
 
