@@ -19,9 +19,9 @@ FABRIC_TOOLS_NAME = 'fabric-tools'
 FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 
 DBG_STDOUTPUT = '2>&1 1>/dev/null'
-BE_VERBOSE = false
-if (DEBUG == 'true') {BE_VERBOSE = true}
-if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
+//BE_VERBOSE = false
+//if (DEBUG == 'true') {BE_VERBOSE = true}
+//if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
 
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
@@ -29,24 +29,38 @@ reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORM
 
 node {
         ansiColor('xterm') {
-            wrappedStage('Fabric-Starter-snapshot',,'START THE JOB') {
+            wrappedStage('Fabric-Starter-snapshot test',,'START THE JOB') {
             def newFabricStarterTag
 
             wrappedStage('Delete-previous-results', CRED, "Pruning all previous job images") {
-                    int previousJobNo = BUILD_NUMBER as Integer
-                    previousJobNo -= 1
-                    previousBuildNumber = previousJobNo.toString()
-                    echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
-                    def debug = " | grep 'Total reclaimed space'"
-                    sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${previousBuildNumber}\" ${debug}"
+                
+
                 }
 
             }
+
+                        //? ====================================== REPORT =====================================
+            wrappedStage('Print-report',CGREEN, 'print report') {
+                if (BE_VERBOSE) {
+                    def report
+                    reportList.eachWithIndex {
+                        if (it != null) {
+                            line = it.replaceFirst('^', "${CCYAN}")
+                            line = line.replaceFirst(': ', ":${CGREEN} ")
+                            line = line.replaceFirst('STAGE:', "${CRED}-- STAGE:${CBLUE}")
+                            line = line.replaceFirst('$', "${CNORMAL}")
+                            report += line + '\n'
+                        }
+                    }
+                    echo report
+                }
+
+
         } // wrappedStage 'Fabric-Starter-snapshot'
     } //AnsiColor
 }//node
 
-
+//!========================================== FUNCTIONS =================================================
 
 def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
         stage(name) {
