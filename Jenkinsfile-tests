@@ -37,9 +37,10 @@ node {
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                     sh '''
                     ssh test@172.18.0.3 bash -c "'
-                    uname -a 
+                    uname -a
                     export TESTVAR=123
                     env
+                    echo ${TESTVAR}
                                                     '"
                     '''
                     sh "ssh test@172.18.0.3 \"env\""
