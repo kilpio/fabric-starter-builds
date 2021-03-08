@@ -40,7 +40,7 @@ node {
                     uname -a
                     export TESTVAR=123
                     env
-                    echo ${TESTVAR}
+                    echo \"${TESTVAR}\"
                                                     '"
                     '''
                     sh "ssh test@172.18.0.3 \"env\""
