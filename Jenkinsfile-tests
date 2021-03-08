@@ -1,0 +1,63 @@
+/* groovylint-disable LineLength */
+CRED = '\033[1;31m'
+CGREEN = '\033[1;32m'
+CYELLOW = '\033[1;33m'
+CBLUE = '\033[1;34m'
+CMAGENTA = '\033[1;35m'
+CCYAN = '\033[1;36m'
+CWHITE = '\033[1;37m'
+CFRAMED = '\033[51m'
+CNOTFRAMED = '\033[54m'
+CUNDERLINED = '\033[4m'
+CNOTUNDERLINED = '\033[24m'
+CNORMAL = '\033[0m'
+// https://en.wikipedia.org/wiki/ANSI_escape_code
+
+STABLE_BRANCH_NAME='stable'
+OLD_LATEST_FS_VERSION_NAME='latest'
+FABRIC_TOOLS_NAME = 'fabric-tools'
+FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
+
+DBG_STDOUTPUT = '2>&1 1>/dev/null'
+BE_VERBOSE = false
+if (DEBUG == 'true') {BE_VERBOSE = true}
+if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
+
+reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
+
+
+
+node {
+        ansiColor('xterm') {
+            wrappedStage('Fabric-Starter-snapshot',,'START THE JOB') {
+            def newFabricStarterTag
+
+            wrappedStage('Delete-previous-results', CRED, "Pruning all previous job images") {
+                    int previousJobNo = BUILD_NUMBER as Integer
+                    previousJobNo -= 1
+                    previousBuildNumber = previousJobNo.toString()
+                    echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
+                    def debug = " | grep 'Total reclaimed space'"
+                    sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${previousBuildNumber}\" ${debug}"
+                }
+
+            }
+        } // wrappedStage 'Fabric-Starter-snapshot'
+    } //AnsiColor
+}//node
+
+
+
+def wrappedStage(name, def color=CNORMAL, def description=null, def currentDir=".", Closure closure) {
+        stage(name) {
+            dir(currentDir) {
+                if (description) { echo "${CRED}${CUNDERLINED}${description}${CNOTUNDERLINED}" }
+
+                echo color
+                reportList.add("STAGE: ${STAGE_NAME}")
+                def result = closure.call()
+                echo CNORMAL
+                return result
+            }
+        }
+    }
