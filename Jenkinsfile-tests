@@ -40,9 +40,10 @@ node {
 
             def test = sh returnStdout:true, script: """
                     #!/bin/bash -l
-                    id
+                    uname -a
                     ls -la
                     """
+            echo "${test}"
             test="${test}".tokenize().last()                    
             echo "${test}"
 
