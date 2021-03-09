@@ -78,17 +78,16 @@ ENDSSH
                 //def myscript="id\nuname -a\nls -la"    
                 def myscript = '''#!/usr/bin/env bash
                 SANDBOX_DIR='/home/test/sandbox'
-                docker stop `docker ps -qa`.
-                docker rm `docker ps -qa`.
+                docker stop `docker ps -qa`
+                docker rm `docker ps -qa`
                 docker rmi -f `docker images -qa`
                 docker volume rm $(docker volume ls -q)
-
                 rm -rf "${SANDBOX_DIR}"
                 mkdir -p "${SANDBOX_DIR}"
                 docker image ls
                 '''
 
-                def result=runShell("ssh -C ${SSH_USER}@${SSH_MACHINE}  ${myscript}" )
+                sh returnStdout:true, script: "ssh -C ${SSH_USER}@${SSH_MACHINE}  ${myscript}"
                 echo ">>>> The output is ${result} <<<<"
                 }
 
