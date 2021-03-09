@@ -51,9 +51,9 @@ node {
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                 //def tester=''
-                tester=sh(returnStdout:true, script: """#!/bin/bash
-                    declare sshoutput;
-                    ssh -C ${SSH_USER}@${SSH_MACHINE} bash -t -t  -s << 'ENDSSH'
+                tester=sh(returnStdout:true, script: """
+                    
+                    ssh ${SSH_USER}@${SSH_MACHINE} bash -t -t  -s << 'ENDSSH'
                     SANDBOX_DIR='/home/test/sandbox'
                     docker stop `docker ps -qa`
                     docker rm `docker ps -qa`
