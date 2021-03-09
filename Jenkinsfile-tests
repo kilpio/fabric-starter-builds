@@ -62,6 +62,7 @@ node {
                     sh -c ./test.sh > a.txt
                     cat a.txt
 ENDSSH'
+                    echo "a.txt"
                     """
                     tester="${tester}".tokenize("\n").last()
                     echo "${tester}"
