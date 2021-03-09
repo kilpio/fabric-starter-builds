@@ -43,11 +43,11 @@ node {
                     uname -a
                     export TESTVAR=1234
                     env
-                    echo \"\${TESTVAR} is the var value\"
+                    echo \"\${XDG_SESSION_ID} is the var value\"
                     ls
 ENDSSH'
                     """
-                    sh "ssh test@172.18.0.3 \"env\""
+                    //sh "ssh test@172.18.0.3 \"env\""
                 }
             }
             
