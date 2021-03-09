@@ -52,7 +52,7 @@ node {
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                 //def tester=''
 
-                sh returnStdout:true, script: """#!/bin/bash -l
+                sh returnStdout:true, script: """
                     ssh -C "${SSH_USER}@${SSH_MACHINE}" "bash -t -t -t -s" << 'ENDSSH'
                     OFS=''
                     id
