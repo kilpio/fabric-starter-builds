@@ -38,14 +38,14 @@ node {
 
             wrappedStage('Delete-previous-results', CBLUE, "Pruning all previous job images") {
 
-            def test = sh returnStdout:true, script: """
-                    #!/bin/bash -l
-                    uname -a
-                    ls -la
-                    """
-            echo "${test}"
-            test="${test}".tokenize("\n").last()
-            echo "${test}"
+            // def test = sh returnStdout:true, script: """
+            //         #!/bin/bash -l
+            //         uname -a
+            //         ls -la
+            //         """
+            // echo "${test}"
+            // test="${test}".tokenize("\n").last()
+            // echo "${test}"
 
 
                 
@@ -63,7 +63,8 @@ node {
 ENDSSH'
                     """
                     
-                    //echo "${CRED} ${test} ${CNORMAL}" //".tokenize().last()"
+                    echo "${tester}" 
+                    //".tokenize().last()"
                 }
             }
             
