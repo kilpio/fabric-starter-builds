@@ -41,9 +41,9 @@ node {
                     sh """
                     ssh -C "${SSH_USER}@${SSH_MACHINE}" 'bash -s << 'ENDSSH'
                     uname -a
-                    export TESTVAR=1234
+                    TESTVAR=1234
                     env
-                    echo \"\${XDG_SESSION_ID} is the var value\"
+                    echo \"\${SSH_CLIENT} is the var value\"
                     ls
 ENDSSH'
                     """
