@@ -42,8 +42,8 @@ node {
                     #!/bin/bash -l
                     export VAULT_ADDR=http://ourVault.de:8100 
                     export VAULT_SKIP_VERIFY=true
-                    vault auth ${VAULT_TOKEN}
-                    echo "\$(vault read -field=value emea/test/hockey/ios/${RELEASE2}/appID)" """
+                    vault auth \${VAULT_TOKEN}
+                    echo "\$(vault read -field=value emea/test/hockey/ios/\${RELEASE2}/appID)" """
             echo ${test}
 
 
