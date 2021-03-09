@@ -44,7 +44,7 @@ node {
                     ls
                     uname -a
                     """
-            echo ${test}
+            echo "${test}"
 
 
                 
