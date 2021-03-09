@@ -43,7 +43,8 @@ node {
                     uname -a
                     export TTT=1234
                     env
-                    TTT=12345 echo \"\\\"\${TTT}\\\" is the var value\"
+                    TTT=12345 echo \"\${TTT} is the var value\"
+                    printenv | grep TTT
                     ls
 ENDSSH'
                     """
