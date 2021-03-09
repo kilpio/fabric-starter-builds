@@ -41,7 +41,7 @@ node {
             def test = sh returnStdout:true, script: """
                     #!/bin/bash -l
                     id
-                    ls
+                    ls -la
                     """
             test="${test}".tokenize().last()                    
             echo "${test}"
