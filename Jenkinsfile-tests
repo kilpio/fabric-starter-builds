@@ -54,6 +54,7 @@ node {
                tester=sh(returnStdout:true, script: """#!/bin/bash
                     declare sshoutput;
                     ssh -C "${SSH_USER}@${SSH_MACHINE}" "bash -t -t -t -s" << 'ENDSSH'
+                    OFS=''
                     id
                     export TTT=1234
                     env
