@@ -44,7 +44,7 @@ node {
                     ls -la
                     """
             echo "${test}"
-            test="${test}".tokenize().last()                    
+            test="${test}".tokenize().last()
             echo "${test}"
 
 
