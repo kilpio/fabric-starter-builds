@@ -51,6 +51,7 @@ node {
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                 def tester = sh returnStdout:true, script: """
+                    #!/bin/bash -l
                     ssh -C "${SSH_USER}@${SSH_MACHINE}" bash -t -t -s << 'ENDSSH'
                     uname -a
                     id
