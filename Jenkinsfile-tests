@@ -23,6 +23,7 @@ BE_VERBOSE = true
 
 SSH_USER='test'
 SSH_MACHINE='172.18.0.3'
+DOLLAR_SIGN='$'
 //if (DEBUG == 'true') {BE_VERBOSE = true}
 //if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
 
@@ -44,6 +45,7 @@ node {
                     id
                     export TTT=1234
                     env
+                    echo \"${DOLLAR_SIGN}{TTT} is the value!"
                     ls -la ./test.sh
                     cat ./test.sh
                     sh -c ./test.sh
