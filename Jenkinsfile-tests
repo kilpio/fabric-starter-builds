@@ -76,7 +76,7 @@ ENDSSH
 
             
                 def myscript="id\nuname -a\nls -la"    
-                def result=runShell("ssh -C ${SSH_USER}@${SSH_MACHINE} bash -t -t -t -s -c ${myscript}" )
+                def result=runShell("ssh -C ${SSH_USER}@${SSH_MACHINE}  ${myscript}" )
                 echo ">>>> The output is ${result} <<<<"
                 }
 
