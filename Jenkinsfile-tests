@@ -40,7 +40,7 @@ node {
                     uname -a
                     export TESTVAR=123
                     env
-                    echo \\"This is my \\${XDG_RUNTIME_DIR}\\"
+                    echo \\"This is my \\${TESTVAR}\\"
                                                     '"
                     '''
                     sh "ssh test@172.18.0.3 \"env\""
