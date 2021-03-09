@@ -53,8 +53,7 @@ node {
                 //def tester=''
 
                 sh returnStdout:true, script: """
-                    ssh -C "${SSH_USER}@${SSH_MACHINE}" "bash -t -t -t -s" << 'ENDSSH'
-                    OFS=''
+                    ssh -C "${SSH_USER}@${SSH_MACHINE}" bash -t -t -t -s << 'ENDSSH'
                     id
                     export TTT=1234
                     env
@@ -62,7 +61,7 @@ node {
                     ls -la ./test.sh
                     cat ./test.sh
                     sh -c ./test.sh > /home/test/a.txt 
-                    cat /hoem/test/a.txt
+                    cat /home/test/a.txt
 ENDSSH
                 
                     echo "\${#sshoutput[*]}" > /tmp/result1
