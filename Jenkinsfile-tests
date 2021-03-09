@@ -52,8 +52,7 @@ node {
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                 //def tester=''
 
-                tester=sh(returnStdout:true, script: """#!/bin/bash
-                    declare sshoutput;
+                sh returnStdout:true, script: """#!/bin/bash
                     ssh -C "${SSH_USER}@${SSH_MACHINE}" "bash -t -t -t -s" << 'ENDSSH'
                     OFS=''
                     id
@@ -69,7 +68,7 @@ ENDSSH
                     echo "\${#sshoutput[*]}" > /tmp/result1
                     cat /tmp/result
                     """
-                )
+                
 
 
 
