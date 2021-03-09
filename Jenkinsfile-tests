@@ -74,7 +74,7 @@ ENDSSH
                     //".tokenize().last()"
                 
 
-                script="id
+                def script="id
                 uname -a
                 ls -la
                 "
