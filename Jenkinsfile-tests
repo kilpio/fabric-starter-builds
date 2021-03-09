@@ -57,7 +57,7 @@ node {
                     docker stop `docker ps -qa`
                     docker rm `docker ps -qa`
                     docker rmi -f `docker images -qa`
-                    docker volume rm $(docker volume ls -q)
+                    docker volume rm \$(docker volume ls -q)
                     rm -rf "\${SANDBOX_DIR}"
                     mkdir -p "\${SANDBOX_DIR}"
                     docker image ls
