@@ -39,7 +39,7 @@ node {
             wrappedStage('Delete-previous-results', CBLUE, "Pruning all previous job images") {
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
-                def test = sh (returnStdout:true, script: """
+                def test = sh returnStdout:true, script: """
                     ssh -C "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
                     uname -a
                     id
@@ -51,7 +51,7 @@ node {
                     sh -c ./test.sh
 ENDSSH'
                     """
-                    )
+                    
                     echo "${CRED} ${test} ${CNORMAL}" //".tokenize().last()"
                 }
             }
