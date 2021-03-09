@@ -61,7 +61,7 @@ node {
                     cat ./test.sh >> /tmp/result
                     sh -c ./test.sh > a.txt >> /tmp/result
                     cat a.txt >> /tmp/result
-ENDSSH'
+ENDSSH
                     echo "a.txt" >> /tmp/result
                     cat /tmp/result
                     """
