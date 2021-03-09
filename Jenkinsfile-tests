@@ -43,7 +43,7 @@ node {
                     uname -a
                     export TESTVAR=123
                     env
-                    echo \\"This is my \\${TESTVAR}\\ set for ${SSH_USER} on ${SSH_MACHINE}\\"
+                    echo \\"This is my \\${TESTVAR}\\ set for \${SSH_USER} on \${SSH_MACHINE}\\"
                                                     '"
                     '''
                     sh "ssh test@172.18.0.3 \"env\""
