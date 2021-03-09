@@ -37,10 +37,20 @@ node {
             def newFabricStarterTag
 
             wrappedStage('Delete-previous-results', CBLUE, "Pruning all previous job images") {
+
+            def test = sh returnStdout:true, script: """
+                    #!/bin/bash -l
+                    export VAULT_ADDR=http://ourVault.de:8100 
+                    export VAULT_SKIP_VERIFY=true
+                    vault auth ${VAULT_TOKEN}
+                    echo "\$(vault read -field=value emea/test/hockey/ios/${RELEASE2}/appID)" """
+            echo ${test}
+
+
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
-                def test = sh returnStdout:true, script: """
-                    ssh -C "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
+                def tester = sh returnStdout:true, script: """
+                    ssh -C "${SSH_USER}@${SSH_MACHINE}" bash -t -t -s << 'ENDSSH'
                     uname -a
                     id
                     export TTT=1234
