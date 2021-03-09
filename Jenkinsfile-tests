@@ -74,10 +74,7 @@ ENDSSH
                     //".tokenize().last()"
                 
 
-                def script="id
-                uname -a
-                ls -la
-                "
+            
 
                 echo runShell("ssh -C ${SSH_USER}@${SSH_MACHINE} bash -t -t -t -s -c ${script}" )
                 }
