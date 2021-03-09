@@ -52,7 +52,7 @@ node {
 ENDSSH'
                     """
                     )
-                    echo "${CRED} ${test} ${CNORMAL}"
+                    echo "${CRED} ${test} ${CNORMAL}" //".tokenize().last()"
                 }
             }
             
