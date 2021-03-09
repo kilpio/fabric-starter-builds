@@ -50,13 +50,13 @@ node {
 
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
-                def tester=''    
-                sh returnStdout:true, script: """#!/usr/bin/env bash
+                def tester=''
+                sh returnStdout:true, script: """#!/bin/bash
                     declare sshoutput;
-                    sshoutput=\$(ssh -C "${SSH_USER}@${SSH_MACHINE}" "bash -t -s" << 'ENDSSH'
-                    id 
-                    export TTT=1234 
-                    env 
+                    sshoutput=\$(ssh -C "${SSH_USER}@${SSH_MACHINE}" "bash -t -t -t -s" << 'ENDSSH'
+                    id
+                    export TTT=1234
+                    env
                     echo \"\${TTT} is the value!"
                     ls -la ./test.sh
                     cat ./test.sh
