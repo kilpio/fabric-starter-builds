@@ -63,7 +63,7 @@ node {
                     cat a.txt
 ENDSSH
                 )
-                    echo "\${sshoutput[*]}" > /tmp/result
+                    echo "\${#sshoutput[*]}" > /tmp/result
                     cat /tmp/result
                     """
                     )
