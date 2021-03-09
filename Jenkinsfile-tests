@@ -41,7 +41,9 @@ node {
                     sh """
                     ssh "${SSH_USER}@${SSH_MACHINE}" bash -c "'
                     uname -a
+                    export TESTVAR=1234
                     env
+
                                                     '"
                     """
                     sh "ssh test@172.18.0.3 \"env\""
