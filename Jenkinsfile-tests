@@ -51,7 +51,7 @@ node {
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                 def tester = sh (returnStdout:true, script: """
-                    sshoutput=\$(IFS='|' ssh -C "${SSH_USER}@${SSH_MACHINE}" "bash -t -s" << 'ENDSSH'
+                    declare sshoutput=\$(IFS='|' ssh -C "${SSH_USER}@${SSH_MACHINE}" "bash -t -s" << 'ENDSSH'
                     id 
                     export TTT=1234 
                     env 
