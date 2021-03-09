@@ -65,8 +65,8 @@ node {
 ENDSSH'
                     echo "a.txt"
                     """
-                    tester="${tester}".tokenize("\n").last()
-                    echo "${tester}"
+                    //tester="${tester}".tokenize("\n").last()
+                    echo "Tis is the return result ${tester}"
                     //".tokenize().last()"
                 }
             }
