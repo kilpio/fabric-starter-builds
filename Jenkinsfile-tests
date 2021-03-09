@@ -61,8 +61,8 @@ node {
                     echo \"\${TTT} is the value!"
                     ls -la ./test.sh
                     cat ./test.sh
-                    sh -c ./test.sh > a.txt 
-                    cat a.txt
+                    sh -c ./test.sh > /home/test/a.txt 
+                    cat /hoem/test/a.txt
 ENDSSH
                 
                     echo "\${#sshoutput[*]}" > /tmp/result1
