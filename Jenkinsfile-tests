@@ -20,6 +20,9 @@ FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 
 DBG_STDOUTPUT = '2>&1 1>/dev/null'
 BE_VERBOSE = true
+
+SSH_USER='test'
+SSH_MACHINE='172.18.0.3'
 //if (DEBUG == 'true') {BE_VERBOSE = true}
 //if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
 
@@ -36,11 +39,11 @@ node {
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                     sh '''
-                    ssh test@172.18.0.3 bash -c "'
+                    ssh ${SSH_USER}@${SSH_MACHINE} bash -c "'
                     uname -a
                     export TESTVAR=123
                     env
-                    echo \\"This is my \\${TESTVAR}\\"
+                    echo \\"This is my \\${TESTVAR}\\ set for ${SSH_USER} on ${SSH_MACHINE}"
                                                     '"
                     '''
                     sh "ssh test@172.18.0.3 \"env\""
