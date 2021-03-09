@@ -54,17 +54,17 @@ node {
                     #!/bin/bash -l
                     ssh -C "${SSH_USER}@${SSH_MACHINE}" bash -t -t -s << 'ENDSSH'
                     uname -a >> /tmp/result
-                    id >> /tmp/result
-                    export TTT=1234 >> /tmp/result
-                    env >> /tmp/result
-                    echo \"\${TTT} is the value!" >> /tmp/result
-                    ls -la ./test.sh >> /tmp/result
-                    cat ./test.sh >> /tmp/result
-                    sh -c ./test.sh > a.txt >> /tmp/result
-                    cat a.txt >> /tmp/result
+                    id >> /tmp/result1
+                    export TTT=1234 >> /tmp/result2
+                    env >> /tmp/result3
+                    echo \"\${TTT} is the value!" >> /tmp/result4
+                    ls -la ./test.sh >> /tmp/result5
+                    cat ./test.sh >> /tmp/result6
+                    sh -c ./test.sh > a.txt >> /tmp/result7
+                    cat a.txt >> /tmp/result8
 ENDSSH'
-                    echo "a.txt" >> /tmp/result
-                    cat /tmp/result
+                    echo "a.txt" >> /tmp/result9
+                    cat /tmp/result9
                     """
                     //tester="${tester}".tokenize("\n").last()
                     echo "Tis is the return result ${tester}"
