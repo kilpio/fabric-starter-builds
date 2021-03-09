@@ -62,7 +62,7 @@ node {
                     ls -la ./test.sh \
                     cat ./test.sh \
                     sh -c ./test.sh > a.txt \
-                    cat a.txt \
+                    cat a.txt 
 ENDSSH
                 
                     #echo "\${#sshoutput[*]}" > /tmp/result1
