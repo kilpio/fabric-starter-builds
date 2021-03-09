@@ -41,9 +41,9 @@ node {
                     sh """
                     ssh -C "${SSH_USER}@${SSH_MACHINE}" 'bash -s << 'ENDSSH'
                     uname -a
-                    TESTVAR=1234
+                    export TESTVAR=1234
                     env
-                    echo \"\${SSH_CLIENT} is the var value\"
+                    TESTVAR=12345 echo \"\${TESTVAR} is the var value\"
                     ls
 ENDSSH'
                     """
