@@ -42,7 +42,6 @@ node {
                     #!/bin/bash -l
                     id
                     ls
-                    uname -a
                     """
             echo "${test}"
 
