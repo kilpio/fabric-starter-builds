@@ -73,7 +73,7 @@ ENDSSH
                     //".tokenize().last()"
                 
 
-                echo runShell("ssh -C ${SSH_USER}@${SSH_MACHINE} bash -t -t -t -s id" )
+                echo runShell("ssh -C ${SSH_USER}@${SSH_MACHINE} bash -t -t -t -s -c 'id'" )
                 }
 
             }
