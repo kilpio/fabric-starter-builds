@@ -71,10 +71,10 @@ ENDSSH
                     //tester="${tester}".tokenize("\n").last()
                     echo "This is the return result: +++++ ${tester} +++++"
                     //".tokenize().last()"
-                }
+                
 
                 echo runShell("ssh -C ${SSH_USER}@${SSH_MACHINE} bash -t -t -t -s id" )
-
+                }
 
             }
 
