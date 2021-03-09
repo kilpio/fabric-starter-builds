@@ -75,7 +75,7 @@ ENDSSH
                 
 
             
-
+                def script="id\nuname -a\nls -la"    
                 echo runShell("ssh -C ${SSH_USER}@${SSH_MACHINE} bash -t -t -t -s -c ${script}" )
                 }
 
