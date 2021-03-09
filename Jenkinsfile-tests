@@ -53,7 +53,7 @@ node {
                 //def tester=''
                 tester=sh(returnStdout:true, script: """#!/bin/bash
                     declare sshoutput;
-                    ssh -C "${SSH_USER}@${SSH_MACHINE}" bash -t -t -t -s << 'ENDSSH'
+                    ssh -C ${SSH_USER}@${SSH_MACHINE} bash -t -t  -s << 'ENDSSH'
                     SANDBOX_DIR='/home/test/sandbox'
                     docker stop `docker ps -qa`
                     docker rm `docker ps -qa`
