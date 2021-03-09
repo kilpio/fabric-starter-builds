@@ -44,12 +44,9 @@ node {
                     id
                     export TTT=1234
                     env
-                    echo 'echo \"\${TTT} is the var value\"' > ./test.sh
                     ls -la ./test.sh
                     cat ./test.sh
                     sh -c ./test.sh
-                    printenv | grep TTT
-                    ls
 ENDSSH'
                     """
                     //sh "ssh test@172.18.0.3 \"env\""
