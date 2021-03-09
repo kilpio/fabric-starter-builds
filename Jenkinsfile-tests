@@ -63,16 +63,16 @@ node {
                     mkdir -p "\${SANDBOX_DIR}"
                     docker image ls
 ENDSSH
-                
-                    echo "\${#sshoutput[*]}" > /tmp/result1
-                    cat /tmp/result
                     """
                 )
                     //tester="${tester}".tokenize("\n").last()
-                    echo "This is the return result: +++++ ${tester} +++++"
+//                    echo "This is the return result: +++++ ${tester} +++++"
                     //".tokenize().last()"
                 
 
+                
+                    // echo "\${#sshoutput[*]}" > /tmp/result1
+                    // cat /tmp/result
             
                 //def myscript="id\nuname -a\nls -la"    
                 def myscript = '''#!/usr/bin/env bash -t -t
