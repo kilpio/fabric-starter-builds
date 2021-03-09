@@ -36,7 +36,7 @@ node {
             wrappedStage('Fabric-Starter-snapshot test',,'START THE JOB') {
             def newFabricStarterTag
 
-            wrappedStage('Delete-previous-results', CBLUE, "Pruning all previous job images") {
+            wrappedStage('Delete-previous-results', CBLUE, "Pruning all docker stuff") {
 
             // def test = sh returnStdout:true, script: """
             //         #!/bin/bash -l
@@ -51,8 +51,7 @@ node {
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                 //def tester=''
-                tester=sh(returnStdout:true, script: """
-                    
+                sh returnStdout:true, script: """
                     ssh ${SSH_USER}@${SSH_MACHINE} bash -t -t  -s << 'ENDSSH'
                     SANDBOX_DIR='/home/test/sandbox'
                     docker stop `docker ps -qa`
@@ -64,7 +63,7 @@ node {
                     docker image ls
 ENDSSH
                     """
-                )
+                
                     //tester="${tester}".tokenize("\n").last()
 //                    echo "This is the return result: +++++ ${tester} +++++"
                     //".tokenize().last()"
@@ -75,19 +74,19 @@ ENDSSH
                     // cat /tmp/result
             
                 //def myscript="id\nuname -a\nls -la"    
-                def myscript = '''#!/usr/bin/env bash -t -t
-                SANDBOX_DIR='/home/test/sandbox'
-                docker stop `docker ps -qa`
-                docker rm `docker ps -qa`
-                docker rmi -f `docker images -qa`
-                docker volume rm $(docker volume ls -q)
-                rm -rf "\${SANDBOX_DIR}"
-                mkdir -p "\${SANDBOX_DIR}"
-                docker image ls
-                '''
+                // def myscript = '''#!/usr/bin/env bash -t -t
+                // SANDBOX_DIR='/home/test/sandbox'
+                // docker stop `docker ps -qa`
+                // docker rm `docker ps -qa`
+                // docker rmi -f `docker images -qa`
+                // docker volume rm $(docker volume ls -q)
+                // rm -rf "\${SANDBOX_DIR}"
+                // mkdir -p "\${SANDBOX_DIR}"
+                // docker image ls
+                // '''
 
-                //sh returnStdout:true, script: "ssh -C ${SSH_USER}@${SSH_MACHINE}  ${myscript}"
-                echo ">>>> The output is ${result} <<<<"
+                // //sh returnStdout:true, script: "ssh -C ${SSH_USER}@${SSH_MACHINE}  ${myscript}"
+                // echo ">>>> The output is ${result} <<<<"
                 }
 
             }
