@@ -40,7 +40,7 @@ node {
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                     sh """
-                    ssh -C "${SSH_USER}@${SSH_MACHINE}" 'bash -s << 'ENDSSH'
+                    ssh -C "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
                     uname -a
                     id
                     export TTT=1234
