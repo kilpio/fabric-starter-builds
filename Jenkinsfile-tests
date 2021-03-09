@@ -43,7 +43,7 @@ node {
                     id
                     ls
                     """
-            test=$test.tokenize().last()                    
+            test=${test}.tokenize().last()                    
             echo "${test}"
 
 
