@@ -50,7 +50,7 @@ node {
 
                 
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
-                def tester = sh returnStdout:true, script: """
+                def tester = sh (returnStdout:true, script: """
                     ssh -C "${SSH_USER}@${SSH_MACHINE}" bash -t -s << 'ENDSSH'
                     uname -a >> /tmp/result
                     id >> /tmp/result
@@ -65,6 +65,7 @@ ENDSSH
                     echo "a.txt" >> /tmp/result
                     cat /tmp/result
                     """
+                    )
                     //tester="${tester}".tokenize("\n").last()
                     echo "This is the return result ${tester}"
                     //".tokenize().last()"
