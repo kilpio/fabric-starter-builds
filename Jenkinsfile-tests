@@ -54,13 +54,15 @@ node {
 
                 sh """
                     ssh "${SSH_USER}@${SSH_MACHINE}" bash -t -t -t -s << 'ENDSSH'
+                    touch test.a
+                    touch test.b
                     id
                     export TTT=1234
                     env
                     echo \"\${TTT} is the value!"
                     ls -la ./test.sh
                     cat ./test.sh
-                    sh -c ./test.sh > /home/test/a.txt 
+                    sh -c ./test.sh > /home/test/a.txt
                     cat /home/test/a.txt
 ENDSSH'
                 
