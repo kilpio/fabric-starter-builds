@@ -43,7 +43,7 @@ node {
                                 docker volume rm \$(docker volume ls -q)
                                 rm -rf "\${SANDBOX_DIR}"
                                 mkdir -p "\${SANDBOX_DIR}"
-                                docker image ls
+                                docker image ls || true
                             """
                 def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                 echo "Output: ${output}"
