@@ -67,6 +67,7 @@ node {
 wrappedStage('Yesy-stable-branch', CGREEN, "Testig stable branch") {
                     def script = """
                         BRANCH='1.4.4-stable'
+                        SANDBOX_DIR='/home/test/sandbox'    
                         TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
                         cd "\${TEST_DIR}"
                         git checkout "\${BRANCH}"
