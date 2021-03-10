@@ -52,7 +52,7 @@ node {
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                 //def tester=''
 
-                sh (returnStdout:true, script: """
+          def result= sh (returnStdout:true, script: """
                     ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
                     touch test.a 
                     touch test.b
@@ -63,15 +63,15 @@ node {
                     ls -la ./test.sh
                     cat ./test.sh
                     sh -c ./test.sh > /home/test/a.txt
-                    cat /home/test/a.txt
                     touch test.c
+                    cat /home/test/a.txt
 ENDSSH
                 
                     echo "\${#sshoutput[*]}" > /tmp/result
                     cat /tmp/result
                     """
                 )
-                
+                echo "Result: ${result}"
 
 
 
