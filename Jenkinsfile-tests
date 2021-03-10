@@ -66,7 +66,7 @@ ENDSSH
                         jobNo='344'
                         ARCHIVE_DIR="\${jobDir}/\${jobNo}"
                         tar xzf "\${ARCHIVE_DIR}/fabric-starter.tgz" --directory "\${SANDBOX_DIR}"
-                        find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \;.
+                        find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \\;
                         docker image ls
 ENDSSH
                         """
