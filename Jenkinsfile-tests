@@ -61,7 +61,13 @@ ENDSSH
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                         def result= sh (returnStdout:true, script: """
                         ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
-
+                        SANDBOX_DIR='/home/test/sandbox'
+                        jobDir='/home/test/Fabric-Starter-Snapshot-Build-NL'
+                        jobNo='344'
+                        ARCHIVE_DIR="\${jobDir}/\${jobNo}"
+                        tar xzf "\${ARCHIVE_DIR}/fabric-starter.tgz" --directory "\${SANDBOX_DIR}"
+                        find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \;.
+                        docker image ls
 ENDSSH
                         """
                         )
