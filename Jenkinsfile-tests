@@ -52,7 +52,7 @@ node {
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
                 //def tester=''
 
-                sh """
+                sh returnStdout:true, script: """
                     ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
                     touch test.a 
                     touch test.b
