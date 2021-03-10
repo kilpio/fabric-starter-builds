@@ -74,7 +74,17 @@ ENDSSH
 //                         )
 //                         echo "Result: ${result}"
 //                     }
-                    runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,'uname -a')
+                    def script = """
+                        SANDBOX_DIR='/home/test/sandbox'
+                        jobDir='/home/test/Fabric-Starter-Snapshot-Build-NL'
+                        jobNo='344'
+                        ARCHIVE_DIR="\${jobDir}/\${jobNo}"
+                        tar xzf "\${ARCHIVE_DIR}/fabric-starter.tgz" --directory "\${SANDBOX_DIR}"
+                        ls -la "\${SANDBOX_DIR}"
+                        find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \\;
+                        docker image ls
+                    """
+                    runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                 }
 
                 //   # touch test.a
