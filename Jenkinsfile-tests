@@ -54,7 +54,7 @@ node {
 
                 sh """
                     ssh "${SSH_USER}@${SSH_MACHINE}" bash -t -t -t -s << 'ENDSSH'
-                    touch test.a
+                    touch test.a && \
                     touch test.b
                     id
                     export TTT=1234
