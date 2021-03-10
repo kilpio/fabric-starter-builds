@@ -64,6 +64,24 @@ node {
                     echo "Output: ${output}"
                 }
 
+wrappedStage('Yesy-stable-branch', CGREEN, "Testig stable branch") {
+                    def script = """
+                        BRANCH='1.4.4-stable'
+                        TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
+                        cd "\${TEST_DIR}"
+                        git checkout "\${BRANCH}"
+                        pwd
+                        source \${TEST_DIR}/local-test-env.sh example.com
+                        scenarios/01-fabric-starter-acceptance-test/create-test-network.sh org1 org2
+                        scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2
+                        scenarios/02-basic-functionality-test/run-scenario.sh cli org1 org2
+                        scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2
+                    """
+                    def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
+                    echo "Output: ${output}"
+                }   
+
+
             //? ======================================================= REPORT =====================================
             wrappedStage('Print-report',CGREEN, 'print report') {
                 if (BE_VERBOSE) {

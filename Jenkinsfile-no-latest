@@ -106,7 +106,7 @@ node {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                         updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag, filesToReplaceForFabricStarter)
                     } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
-                } 
+                }
 
 wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabric-tools-extended images for BUILD_BRANCH and snapshot", './fabric-starter') {
                     buildDockerImage(
@@ -153,36 +153,6 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                     tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     }
                 }
-//? ========================================== PREPARE ARCHIVES FOR TESTS ==============================================
-            wrappedStage('Fabric-Starter-make-archives', CCYAN, "compress current fabric-starter from WORKDIR", WORKSPACE) {
-                sh "pwd"
-                sh "ls -la"
-                currentImages = sh (returnStdout: true, script:
-                "docker images --format \"{{.Repository}}:{{.Tag}}\" --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${BUILD_NUMBER}\""
-                )
-
-
-                dir ("/tmp/${JOB_NAME}/${BUILD_NUMBER}") {
-                    sh "mkdir fabric-starter"
-                    sh "cp -R ${WORKSPACE}/fabric-starter/ ."
-                    sh "tar czf fabric-starter.tgz fabric-starter/."
-                    sh "ssh test@172.18.0.3 \"mkdir -p ${JOB_NAME}/${BUILD_NUMBER}\""
-                    sh "scp fabric-starter.tgz test@172.18.0.3:${JOB_NAME}/${BUILD_NUMBER}/"
-                    currentImages.split('\n').each {String image ->
-                        if (image.contains('snapshot') || image.contains(BUILD_BRANCH))  { 
-                            def imageFileName=image.replace('/','[[slash]]')
-                            imageFileName=imageFileName.replace(':','[[colon]]')
-
-                            echo "Saving image ${image} as ${imageFileName}.tgz"
-                            sh "docker save ${image} > ${imageFileName}.tar"
-                            echo "copy ${image} to the test server"
-                            sh "scp \"${imageFileName}.tar\" test@172.18.0.3:${JOB_NAME}/${BUILD_NUMBER}/"
-                            sh "ls -la"
-                            }
-                    }
-                }
-            }
-
 
 //? ========================================== DOCKER PUSH==============================================
 
@@ -288,7 +258,7 @@ def evaluateNextSnapshotGitTag(repositoryTitle) {
     echo "Current latest snapshot: ${lastSnapshot}"
     def (fabricVersion,branchPrefix,version) = lastSnapshot.tokenize('-')
     def cleanFabricVersion = fabricVersion.split('/')[1]
-    def (majorVer,minorVer) = version.tokenize('.')sshagent
+    def (majorVer,minorVer) = version.tokenize('.')
     int minorVersion = (minorVer as int)
     def newGitTag = "${FABRIC_VERSION}-${branchPrefix}-${majorVer}.${minorVersion + 1}"
     echo "New Tag for ${repositoryTitle}: ${newGitTag}"
@@ -317,7 +287,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
 
     arguments = "-t ${DOCKER_REPO}/${imageName}:${tag} --label \"jenkins_job_build=${BUILD_NUMBER}\" --label \"jenkins_job_name=${JOB_NAME}\" ${args}"
     echo "docker build args: $arguments"
-    
+
     sh(returnStdout:BE_VERBOSE, script: "docker image build ${arguments} ${DBG_STDOUTPUT}")
     reportList.add("buildDockerImage: docker image build ${arguments}")
     if (BE_VERBOSE) {
@@ -387,12 +357,12 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         //get rid of 'latest' FABRIC_STARTR_VERSION in compose yamsl
         updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
         echo "updateComposeFilesWithVersions(filesToReplace: ${filesToReplace}, FABRIC_VERSION: ${FABRIC_VERSION}, replaceTag: ${replaceTag}, toBranchName: ${toBranchName})"
-        
+
         if (fromBranchName == STABLE_BRANCH_NAME) {
             updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, oldFabricVersion, toBranchName)
             updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, oldFabricStarterVersion, toBranchName)
         } else {
-        
+
         updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
                 }
         commitBranch(toBranchName)
@@ -412,7 +382,7 @@ void checkoutAndThenPullIfRemoteExists(toBranchName) {
 
 void envAppendVersionVars(currentBranchName, fabricVersion) {
         def fileContent = readFile '.env'
-                
+
         writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}"
         reportList.add("envAppendVersionVars: writeFile file: '.env',text: ${fileContent}\nFABRIC_STARTER_VERSION=${currentBranchName}\nFABRIC_VERSION=${fabricVersion}")
         sh 'git add .env'
@@ -420,7 +390,7 @@ void envAppendVersionVars(currentBranchName, fabricVersion) {
 
 void envAppendRepoVar(currentRepoName) {
         def fileContent = readFile '.env'
-        
+
         writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}"
         reportList.add("envAppendRepoVar: writeFile file: '.env',text: ${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}")
         sh 'git add .env'
@@ -443,7 +413,7 @@ def updateComposeFilesFabricStarterVersionFromLatest(filesToReplace) { //mergeBr
 def updateImagesReferencesVersionFromlatestToKnown(fileToProcess) {
         fileContent = readFile fileToProcess
         reportList.add("updateImagesReferencesVersionFromlatestToKnown: fileToProcess: ${fileToProcess}")
-        
+
         def replaceTag = OLD_LATEST_FS_VERSION_NAME
         def currentBranch = PREVIOUS_FABRIC_VERSION
 
@@ -507,7 +477,7 @@ def fileExists(fileName) {
     }
 
 def getFabricVersionFromEnv()  {
-                
+
         if (fileExists('./.env') == 'true') {
             def result = sh(returnStdout: true, script: "cat './.env' | grep -E \"^FABRIC_VERSION=\" | cut -d '=' -f 2").toString().trim()
             echo "getFabricVersionFromEnv: ${result}"
