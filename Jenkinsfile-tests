@@ -118,7 +118,7 @@ def runSSH(user, machine, credentials, script){  //Please, keep last ENDSSH on f
                         def result= sh (returnStdout:true, script: """
                         ssh "${user}@${machine}" bash -s << 'ENDSSH'
                                 $script
-ENDSSH &> tmp.txt
+ENDSSH
                                 """ 
                             ) 
                         //def output =  readFile(file: "tmp.txt")
