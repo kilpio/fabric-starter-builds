@@ -125,10 +125,10 @@ def runSSH(user, machine, credentials, script){  //Please, keep last ENDSSH on f
     sshagent(credentials: [credentials]) {
                         def result= sh (returnStdout:true, script: """
                         ssh "${user}@${machine}" bash -s << 'ENDSSH'
-                        $script
+                                $script
 ENDSSH
-                        """
-                        )
+                                """ 
+                            ) &> tmp.txt
                         return result
     }
 }
