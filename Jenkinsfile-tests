@@ -64,7 +64,7 @@ node {
                     cat ./test.sh
                     sh -c ./test.sh > /home/test/a.txt
                     cat /home/test/a.txt
-ENDSSH'
+ENDSSH
                 
                     echo "\${#sshoutput[*]}" > /tmp/result1
                     cat /tmp/result
