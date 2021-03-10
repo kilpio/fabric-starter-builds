@@ -184,7 +184,7 @@ def runShell(String command){
 }
 
 def runSSH(user, machine, credentials, script){
-    sshagent(credentials: ['${credentials}']) {
+    sshagent(credentials: [credentials]) {
                         def result= sh (returnStdout:true, script: """
                         ssh "${user}@${machine}" bash -s << 'ENDSSH'
                         $script
