@@ -65,11 +65,14 @@ node {
                   # sh -c ./test.sh > /home/test/a.txt
                   # touch test.c
                   # cat /home/test/a.txt
+                    SANDBOX_DIR='/home/test/sandbox'
                     docker stop `docker ps -qa`
                     docker rm `docker ps -qa`
                     docker rmi -f `docker images -qa`
                     docker volume rm \$(docker volume ls -q)
-
+                    rm -rf "\${SANDBOX_DIR}"
+                    mkdir -p "\${SANDBOX_DIR}"
+                    docker image ls
 ENDSSH
                 
                     echo "\${#sshoutput[*]}" > /tmp/result
@@ -88,9 +91,7 @@ ENDSSH
 //                     docker rm `docker ps -qa`
 //                     docker rmi -f `docker images -qa`
 //                     docker volume rm \$(docker volume ls -q)
-//                     rm -rf "\${SANDBOX_DIR}"
-//                     mkdir -p "\${SANDBOX_DIR}"
-//                     docker image ls
+                    
 // ENDSSH
 //                     """
                 
