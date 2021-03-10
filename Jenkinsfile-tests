@@ -35,26 +35,18 @@ node {
             def newFabricStarterTag
 
             wrappedStage('Prune-docker-in-test-container', CRED, "Pruning all docker stuff in test container") {
-                sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
-
-                        def result= sh (returnStdout:true, script: """
-                        ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
-                        SANDBOX_DIR='/home/test/sandbox'
-                        docker stop `docker ps -qa`
-                        docker rm `docker ps -qa`
-                        docker rmi -f `docker images -qa`
-                        docker volume rm \$(docker volume ls -q)
-                        rm -rf "\${SANDBOX_DIR}"
-                        mkdir -p "\${SANDBOX_DIR}"
-                        docker image ls
-ENDSSH
-
-                        #echo "\${#sshoutput[*]}" > /tmp/result
-                        #cat /tmp/result
-                        """
-                    )
-                    echo "Result: ${result}"
-                }
+                def script= """
+                                SANDBOX_DIR='/home/test/sandbox'
+                                docker stop `docker ps -qa`
+                                docker rm `docker ps -qa`
+                                docker rmi -f `docker images -qa`
+                                docker volume rm \$(docker volume ls -q)
+                                rm -rf "\${SANDBOX_DIR}"
+                                mkdir -p "\${SANDBOX_DIR}"
+                                docker image ls
+                            """
+                def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
+                echo "Output: ${output}"
             }
 
             wrappedStage('Unpack-and-load-artifcacts', CGREEN, "Unpacking fabric-starter and loading built archived docker images") {
