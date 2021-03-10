@@ -63,6 +63,7 @@ ENDSSH
                         ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
 
 ENDSSH
+                        """
                         )
                         echo "Result: ${result}"
                     }
