@@ -68,7 +68,7 @@ wrappedStage('Test-stable-branch', CGREEN, "Testig stable branch") {
                     def script = """
                         export TERM='dumb'
                         mkdir -p /home/test/tmp
-                        export TEMPDIR='/home/test/tmp'
+                        export TMPDIR='/home/test/tmp'
                         BRANCH='1.4.4-stable'
                         SANDBOX_DIR='/home/test/sandbox'    
                         TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
