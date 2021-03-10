@@ -84,7 +84,7 @@ wrappedStage('Test-stable-branch-create-network', CGREEN, "Deploy network") {
                     def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                     echo "Output: ${output}"
                 }   
-wrappedStage('Test-stable-branch-check-containers', CBLUE, "Test network") {
+wrappedStage('Test-stable-branch-check-containers', CBLUE, "Test network containers") {
                     def script = """
                         export TERM='dumb'
                         mkdir -p /home/test/tmp
@@ -102,7 +102,7 @@ wrappedStage('Test-stable-branch-check-containers', CBLUE, "Test network") {
                     echo "Output: ${output}"
                 }   
 
-wrappedStage('Test-stable-branch-test-network-cli', CYELLOW, "Test network") {
+wrappedStage('Test-stable-branch-test-network-cli', CYELLOW, "Test network cli") {
                     def script = """
                         export TERM='dumb'
                         mkdir -p /home/test/tmp
@@ -120,7 +120,7 @@ wrappedStage('Test-stable-branch-test-network-cli', CYELLOW, "Test network") {
                     echo "Output: ${output}"
                 }   
 
-wrappedStage('Test-stable-branch-test-network-api', CGREEN, "Test network") {
+wrappedStage('Test-stable-branch-test-network-api', CGREEN, "Test network api") {
                     def script = """
                         export TERM='dumb'
                         mkdir -p /home/test/tmp
