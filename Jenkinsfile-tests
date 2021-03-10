@@ -129,6 +129,6 @@ def runSSH(user, machine, credentials, script){  //Please, keep last ENDSSH on f
 ENDSSH
                         """
                         )
-                        echo "${result}"
+                        return result
     }
 }
