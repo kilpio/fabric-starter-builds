@@ -54,26 +54,10 @@ ENDSSH
                         """
                     )
                     echo "Result: ${result}"
-                    }
                 }
+            }
 
             wrappedStage('Unpack-and-load-artifcacts', CGREEN, "Unpacking fabric-starter and loading built archived docker images") {
-//                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
-//                         def result= sh (returnStdout:true, script: """
-//                         ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
-//                         SANDBOX_DIR='/home/test/sandbox'
-//                         jobDir='/home/test/Fabric-Starter-Snapshot-Build-NL'
-//                         jobNo='344'
-//                         ARCHIVE_DIR="\${jobDir}/\${jobNo}"
-//                         tar xzf "\${ARCHIVE_DIR}/fabric-starter.tgz" --directory "\${SANDBOX_DIR}"
-//                         ls -la "\${SANDBOX_DIR}"
-//                         find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \\;
-//                         docker image ls
-// ENDSSH
-//                         """
-//                         )
-//                         echo "Result: ${result}"
-//                     }
                     def script = """
                         SANDBOX_DIR='/home/test/sandbox'
                         jobDir='/home/test/Fabric-Starter-Snapshot-Build-NL'
@@ -84,65 +68,9 @@ ENDSSH
                         find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \\;
                         docker image ls
                     """
-                    runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
+                    def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
+                    echo "Output: ${output}"
                 }
-
-                //   # touch test.a
-                //   # touch test.b
-                //   # id
-                //   # export TTT=1234
-                //   # env
-                //   # echo \"\${TTT} is the value!"
-                //   # ls -la ./test.sh
-                //   # cat ./test.sh
-                //   # sh -c ./test.sh > /home/test/a.txt
-                //   # touch test.c
-                //   # cat /home/test/a.txt
-
-            // def test = sh returnStdout:true, script: """
-            //         #!/bin/bash -l
-            //         uname -a
-            //         ls -la
-            //         """
-            // echo "${test}"
-            // test="${test}".tokenize("\n").last()
-            // echo "${test}"
-
-//                 sh returnStdout:true, script: """
-//                     ssh "\${SSH_USER}@\${SSH_MACHINE}" "bash -t -t -s" << 'ENDSSH'
-//                     SANDBOX_DIR='/home/test/sandbox'
-//                     docker stop `docker ps -qa`
-//                     docker rm `docker ps -qa`
-//                     docker rmi -f `docker images -qa`
-//                     docker volume rm \$(docker volume ls -q)
-
-// ENDSSH
-//                     """
-
-                    //tester="${tester}".tokenize("\n").last()
-//                    echo "This is the return result: +++++ ${tester} +++++"
-                    //".tokenize().last()"
-
-                    // echo "\${#sshoutput[*]}" > /tmp/result1
-                    // cat /tmp/result
-
-                //def myscript="id\nuname -a\nls -la"
-                // def myscript = '''#!/usr/bin/env bash -t -t
-                // SANDBOX_DIR='/home/test/sandbox'
-                // docker stop `docker ps -qa`
-                // docker rm `docker ps -qa`
-                // docker rmi -f `docker images -qa`
-                // docker volume rm $(docker volume ls -q)
-                // rm -rf "\${SANDBOX_DIR}"
-                // mkdir -p "\${SANDBOX_DIR}"
-                // docker image ls
-                // '''
-
-                // //sh returnStdout:true, script: "ssh -C ${SSH_USER}@${SSH_MACHINE}  ${myscript}"
-                // echo ">>>> The output is ${result} <<<<"
-                // }
-
-            // }
 
             //? ======================================================= REPORT =====================================
             wrappedStage('Print-report',CGREEN, 'print report') {
@@ -193,7 +121,7 @@ def runShell(String command){
     }
 }
 
-def runSSH(user, machine, credentials, script){
+def runSSH(user, machine, credentials, script){  //Please, keep last ENDSSH on first position, no comments after
     sshagent(credentials: [credentials]) {
                         def result= sh (returnStdout:true, script: """
                         ssh "${user}@${machine}" bash -s << 'ENDSSH'
@@ -201,6 +129,6 @@ def runSSH(user, machine, credentials, script){
 ENDSSH
                         """
                         )
-                        echo "Result: ${result}"
-                    }
+                        echo "${result}"
+    }
 }
