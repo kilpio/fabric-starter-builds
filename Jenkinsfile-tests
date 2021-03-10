@@ -58,22 +58,23 @@ ENDSSH
                 }
 
             wrappedStage('Unpack-and-load-artifcacts', CGREEN, "Unpacking fabric-starter and loading built archived docker images") {
-                sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
-                        def result= sh (returnStdout:true, script: """
-                        ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
-                        SANDBOX_DIR='/home/test/sandbox'
-                        jobDir='/home/test/Fabric-Starter-Snapshot-Build-NL'
-                        jobNo='344'
-                        ARCHIVE_DIR="\${jobDir}/\${jobNo}"
-                        tar xzf "\${ARCHIVE_DIR}/fabric-starter.tgz" --directory "\${SANDBOX_DIR}"
-                        ls -la "\${SANDBOX_DIR}"
-                        find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \\;
-                        docker image ls
-ENDSSH
-                        """
-                        )
-                        echo "Result: ${result}"
-                    }
+//                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
+//                         def result= sh (returnStdout:true, script: """
+//                         ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
+//                         SANDBOX_DIR='/home/test/sandbox'
+//                         jobDir='/home/test/Fabric-Starter-Snapshot-Build-NL'
+//                         jobNo='344'
+//                         ARCHIVE_DIR="\${jobDir}/\${jobNo}"
+//                         tar xzf "\${ARCHIVE_DIR}/fabric-starter.tgz" --directory "\${SANDBOX_DIR}"
+//                         ls -la "\${SANDBOX_DIR}"
+//                         find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \\;
+//                         docker image ls
+// ENDSSH
+//                         """
+//                         )
+//                         echo "Result: ${result}"
+//                     }
+                    runSSH(${SSH_USER},${SSH_MACHINE},${TEST_CONTAINER_CREDENTIALS},'uname -a')
                 }
 
                 //   # touch test.a
@@ -180,4 +181,16 @@ def runShell(String command){
     }else{
         return "${output}"
     }
+}
+
+def runSSH(user, machine, credentials, script){
+    sshagent(credentials: ['${credentials}']) {
+                        def result= sh (returnStdout:true, script: """
+                        ssh "${user}@${machine}" bash -s << 'ENDSSH'
+                        $script
+ENDSSH
+                        """
+                        )
+                        echo "Result: ${result}"
+                    }
 }
