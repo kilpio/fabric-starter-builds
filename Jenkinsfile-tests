@@ -34,7 +34,7 @@ node {
             wrappedStage('Fabric-Starter-snapshot test',,'START THE JOB') {
             def newFabricStarterTag
 
-            wrappedStage('Delete-previous-results', CRED, "Pruning all docker stuff in test container") {
+            wrappedStage('Prune-docker-in-test-container', CRED, "Pruning all docker stuff in test container") {
                 sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
 
                         def result= sh (returnStdout:true, script: """
@@ -53,7 +53,18 @@ ENDSSH
                         #cat /tmp/result
                         """
                     )
-                    //echo "Result: ${result}"
+                    echo "Result: ${result}"
+                    }
+                }
+
+            wrappedStage('Unpack-and-load-artifcacts', CGREEN, "Unpacking fabric-starter and loading built archived docker images") {
+                sshagent(credentials: ['${TEST_CONTAINER_CREDENTIALS}']) {
+                        def result= sh (returnStdout:true, script: """
+                        ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
+
+ENDSSH
+                        )
+                        echo "Result: ${result}"
                     }
                 }
 
