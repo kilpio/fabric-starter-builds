@@ -53,8 +53,8 @@ node {
                 //def tester=''
 
                 sh """
-                    ssh "${SSH_USER}@${SSH_MACHINE}" bash -t -t -t -s << 'ENDSSH'
-                    touch test.a && \
+                    ssh "${SSH_USER}@${SSH_MACHINE}" bash -s << 'ENDSSH'
+                    touch test.a 
                     touch test.b
                     id
                     export TTT=1234
