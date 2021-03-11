@@ -51,93 +51,42 @@ node {
 
             wrappedStage('Unpack-and-load-artifcacts', CGREEN, "Unpacking fabric-starter and loading built archived docker images") {
                     def script = """
-                        SANDBOX_DIR='/home/test/sandbox'
-                        jobDir='/home/test/Fabric-Starter-Snapshot-Build-NL'
-                        jobNo='344'
-                        ARCHIVE_DIR="\${jobDir}/\${jobNo}"
-                        tar xzf "\${ARCHIVE_DIR}/fabric-starter.tgz" --directory "\${SANDBOX_DIR}"
-                        ls -la "\${SANDBOX_DIR}"
-                        find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \\;
-                        docker image ls
-                    """
+                                SANDBOX_DIR='/home/test/sandbox'
+                                jobDir='/home/test/Fabric-Starter-Snapshot-Build-NL'
+                                jobNo='344'
+                                ARCHIVE_DIR="\${jobDir}/\${jobNo}"
+                                tar xzf "\${ARCHIVE_DIR}/fabric-starter.tgz" --directory "\${SANDBOX_DIR}"
+                                ls -la "\${SANDBOX_DIR}"
+                                find "\${ARCHIVE_DIR}" -type f -name '*.tar' -exec sh -c "cat {} | docker load" \\;
+                                docker image ls
+                            """
                     def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                     echo "Output: ${output}"
                 }
 
 wrappedStage('Test-stable-branch-create-network', CGREEN, "Deploy network") {
-                    // def script = """
-                    //     export TERM='dumb'
-                    //     mkdir -p /home/test/tmp
-                    //     export TMPDIR='/home/test/tmp'
-                    //     BRANCH='1.4.4-stable'
-                    //     SANDBOX_DIR='/home/test/sandbox'
-                    //     TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
-                    //     cd "\${TEST_DIR}"
-                    //     git checkout "\${BRANCH}"
-                    //     pwd
-                    //     source \${TEST_DIR}/local-test-env.sh example.com
-                    //     scenarios/01-fabric-starter-acceptance-test/create-test-network.sh org1 org2
-                    // """
                     def script=getTestScenarioScript('scenarios/01-fabric-starter-acceptance-test/create-test-network.sh org1 org2', '1.4.4-stable')
                     def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                     echo "Output: ${output}"
-                }   
+                }
+
 wrappedStage('Test-stable-branch-check-containers', CBLUE, "Test network containers") {
-                    // def script = """
-                    //     export TERM='dumb'
-                    //     mkdir -p /home/test/tmp
-                    //     export TMPDIR='/home/test/tmp'
-                    //     BRANCH='1.4.4-stable'
-                    //     SANDBOX_DIR='/home/test/sandbox'
-                    //     TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
-                    //     cd "\${TEST_DIR}"
-                    //     git checkout "\${BRANCH}"
-                    //     pwd
-                    //     source \${TEST_DIR}/local-test-env.sh example.com
-                    //     scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2
-                    // """
                     def script=getTestScenarioScript('scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2', '1.4.4-stable')
                     def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                     echo "Output: ${output}"
-                }   
+                }
 
 wrappedStage('Test-stable-branch-test-network-cli', CYELLOW, "Test network cli") {
-                    // def script = """
-                    //     export TERM='dumb'
-                    //     mkdir -p /home/test/tmp
-                    //     export TMPDIR='/home/test/tmp'
-                    //     BRANCH='1.4.4-stable'
-                    //     SANDBOX_DIR='/home/test/sandbox' 
-                    //     TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
-                    //     cd "\${TEST_DIR}"
-                    //     git checkout "\${BRANCH}"
-                    //     pwd
-                    //     source \${TEST_DIR}/local-test-env.sh example.com
-                    //     scenarios/02-basic-functionality-test/run-scenario.sh cli org1 org2
-                    // """
                     def script=getTestScenarioScript('scenarios/02-basic-functionality-test/run-scenario.sh cli org1 org2', '1.4.4-stable')
                     def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                     echo "Output: ${output}"
-                }   
+                }
 
 wrappedStage('Test-stable-branch-test-network-api', CGREEN, "Test network api") {
-                    // def script = """
-                    //     export TERM='dumb'
-                    //     mkdir -p /home/test/tmp
-                    //     export TMPDIR='/home/test/tmp'
-                    //     BRANCH='1.4.4-stable'
-                    //     SANDBOX_DIR='/home/test/sandbox'
-                    //     TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
-                    //     cd "\${TEST_DIR}"
-                    //     git checkout "\${BRANCH}"
-                    //     pwd
-                    //     source \${TEST_DIR}/local-test-env.sh example.com
-                    //     scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2
-                    // """
                     def script=getTestScenarioScript('scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2', '1.4.4-stable')
                     def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                     echo "Output: ${output}"
-                }   
+                }
 
 
             //? ======================================================= REPORT =====================================
@@ -189,16 +138,14 @@ def runShell(String command){
     }
 }
 
-def runSSH(user, machine, credentials, script){  //Please, keep last ENDSSH on first position, no comments after
+def runSSH(user, machine, credentials, script){  //Please, keep second ENDSSH on first position, no comments after
     sshagent(credentials: [credentials]) {
                         def result= sh (returnStdout:true, script: """
                         ssh "${user}@${machine}" bash -s << 'ENDSSH'
                                 $script
 ENDSSH
-                                """ 
-                            ) 
-                        //def output =  readFile(file: "tmp.txt")
-                        //echo ${output}
+                                """
+                            )
                         return result
     }
 }
