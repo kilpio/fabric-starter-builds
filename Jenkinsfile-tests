@@ -201,18 +201,17 @@ ENDSSH
 }
 
 def getTestScenarioScript(scenario, branch) {
-    def scenarioScript="""
-                        export TERM='dumb'
-                        mkdir -p /home/test/tmp
-                        export TMPDIR='/home/test/tmp'
-                        BRANCH='${branch}'
-                        SANDBOX_DIR='/home/test/sandbox'
-                        TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
-                        cd "\${TEST_DIR}"
-                        git checkout "\${BRANCH}"
-                        pwd
-                        source \${TEST_DIR}/local-test-env.sh example.com
-                        ${scenario}
+    def scenarioScript="""  export TERM='dumb'
+                            mkdir -p /home/test/tmp
+                            export TMPDIR='/home/test/tmp'
+                            BRANCH='${branch}'
+                            SANDBOX_DIR='/home/test/sandbox'
+                            TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
+                            cd "\${TEST_DIR}"
+                            git checkout "\${BRANCH}"
+                            pwd
+                            source \${TEST_DIR}/local-test-env.sh example.com
+                            ${scenario}
                         """
         echo "${scenarioScript}"
 }
