@@ -212,6 +212,6 @@ def getTestScenarioScript(scenario, branch) {
                             pwd
                             source \${TEST_DIR}/local-test-env.sh example.com
                             ${scenario}
-                        """
+                            """
         echo "${scenarioScript}"
 }
