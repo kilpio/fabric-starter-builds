@@ -83,55 +83,58 @@ wrappedStage('Test-stable-branch-create-network', CGREEN, "Deploy network") {
                     echo "Output: ${output}"
                 }   
 wrappedStage('Test-stable-branch-check-containers', CBLUE, "Test network containers") {
-                    def script = """
-                        export TERM='dumb'
-                        mkdir -p /home/test/tmp
-                        export TMPDIR='/home/test/tmp'
-                        BRANCH='1.4.4-stable'
-                        SANDBOX_DIR='/home/test/sandbox'
-                        TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
-                        cd "\${TEST_DIR}"
-                        git checkout "\${BRANCH}"
-                        pwd
-                        source \${TEST_DIR}/local-test-env.sh example.com
-                        scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2
-                    """
+                    // def script = """
+                    //     export TERM='dumb'
+                    //     mkdir -p /home/test/tmp
+                    //     export TMPDIR='/home/test/tmp'
+                    //     BRANCH='1.4.4-stable'
+                    //     SANDBOX_DIR='/home/test/sandbox'
+                    //     TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
+                    //     cd "\${TEST_DIR}"
+                    //     git checkout "\${BRANCH}"
+                    //     pwd
+                    //     source \${TEST_DIR}/local-test-env.sh example.com
+                    //     scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2
+                    // """
+                    def script=getTestScenarioScript('scenarios/01-fabric-starter-acceptance-test/run-scenario.sh cli org1 org2', '1.4.4-stable')
                     def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                     echo "Output: ${output}"
                 }   
 
 wrappedStage('Test-stable-branch-test-network-cli', CYELLOW, "Test network cli") {
-                    def script = """
-                        export TERM='dumb'
-                        mkdir -p /home/test/tmp
-                        export TMPDIR='/home/test/tmp'
-                        BRANCH='1.4.4-stable'
-                        SANDBOX_DIR='/home/test/sandbox' 
-                        TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
-                        cd "\${TEST_DIR}"
-                        git checkout "\${BRANCH}"
-                        pwd
-                        source \${TEST_DIR}/local-test-env.sh example.com
-                        scenarios/02-basic-functionality-test/run-scenario.sh cli org1 org2
-                    """
+                    // def script = """
+                    //     export TERM='dumb'
+                    //     mkdir -p /home/test/tmp
+                    //     export TMPDIR='/home/test/tmp'
+                    //     BRANCH='1.4.4-stable'
+                    //     SANDBOX_DIR='/home/test/sandbox' 
+                    //     TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
+                    //     cd "\${TEST_DIR}"
+                    //     git checkout "\${BRANCH}"
+                    //     pwd
+                    //     source \${TEST_DIR}/local-test-env.sh example.com
+                    //     scenarios/02-basic-functionality-test/run-scenario.sh cli org1 org2
+                    // """
+                    def script=getTestScenarioScript('scenarios/02-basic-functionality-test/run-scenario.sh cli org1 org2', '1.4.4-stable')
                     def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                     echo "Output: ${output}"
                 }   
 
 wrappedStage('Test-stable-branch-test-network-api', CGREEN, "Test network api") {
-                    def script = """
-                        export TERM='dumb'
-                        mkdir -p /home/test/tmp
-                        export TMPDIR='/home/test/tmp'
-                        BRANCH='1.4.4-stable'
-                        SANDBOX_DIR='/home/test/sandbox'
-                        TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
-                        cd "\${TEST_DIR}"
-                        git checkout "\${BRANCH}"
-                        pwd
-                        source \${TEST_DIR}/local-test-env.sh example.com
-                        scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2
-                    """
+                    // def script = """
+                    //     export TERM='dumb'
+                    //     mkdir -p /home/test/tmp
+                    //     export TMPDIR='/home/test/tmp'
+                    //     BRANCH='1.4.4-stable'
+                    //     SANDBOX_DIR='/home/test/sandbox'
+                    //     TEST_DIR="\${SANDBOX_DIR}/fabric-starter/test"
+                    //     cd "\${TEST_DIR}"
+                    //     git checkout "\${BRANCH}"
+                    //     pwd
+                    //     source \${TEST_DIR}/local-test-env.sh example.com
+                    //     scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2
+                    // """
+                    def script=getTestScenarioScript('scenarios/02-basic-functionality-test/run-scenario.sh api org1 org2', '1.4.4-stable')
                     def output=runSSH(SSH_USER,SSH_MACHINE,TEST_CONTAINER_CREDENTIALS,script)
                     echo "Output: ${output}"
                 }   
