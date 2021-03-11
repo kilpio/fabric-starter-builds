@@ -213,5 +213,5 @@ def getTestScenarioScript(scenario, branch) {
                             source \${TEST_DIR}/local-test-env.sh example.com
                             ${scenario}
                             """
-        echo "${scenarioScript}"
+        return "${scenarioScript}"
 }
