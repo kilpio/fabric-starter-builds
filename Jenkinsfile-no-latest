@@ -398,11 +398,13 @@ void envAppendRepoVar(currentRepoName) {
     }
 
 void replaceRepoVar(currentRepoName) {
-    def props = readProperties file: '.env'
-        props.keySet().each { 
-        value = props[it]
-        echo "${it} -> ${value}"
+    echo CRED
+    echo CUNDERLINED
+    def file = readFile '.env'
+    file.readLines().each {
+            echo "${it}"
         }
+    echo CNOTUNDERLINED
 
     //sh 'git add .env'
 }
