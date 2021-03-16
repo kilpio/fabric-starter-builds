@@ -403,20 +403,21 @@ void replaceVersionVars(currentFabricVersion, currentFabricStarterVersion) {
     def file = readFile '.env'
     def fileContent = ''
     file.readLines().each { line ->
-        def (key, value) = line.tokenize('=')
-        if (key.matches('^#')) {
-            fileContent = fileContent + line
-        } else {
-            if (key == 'FABRIC_STARTER_VERSION') {
-                fileContent = 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion + "\n"
-            } else if (key == 'FABRIC_VERSION') {
-                fileContent = 'FABRIC_VERSION' + '=' + currentFabricVersion + "\n"
-            } else {
+            def (key, value) = line.tokenize('=')
+            if (key.matches('^#')) {
                 fileContent = fileContent + line
+            } else {
+                if (key == 'FABRIC_STARTER_VERSION') {
+                    fileContent = 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion + "\n"
+                } else if (key == 'FABRIC_VERSION') {
+                    fileContent = 'FABRIC_VERSION' + '=' + currentFabricVersion + "\n"
+                } else {
+                    fileContent = fileContent + line
+                }
             }
         }
-        echo fileContent
-        echo CNOTUNDERLINED
+    echo fileContent
+    echo CNOTUNDERLINED
         //sh 'git add .env'
     }
 
