@@ -406,7 +406,7 @@ void replaceVersionVars(currentFabricVersion, currentFabricStarterVersion) {
             def (key, value) = line.tokenize('=')
             echo ("${key} -> ${value}")
             if (key.matches('^#')) {
-                fileContent = fileContent + line
+                fileContent = fileContent + line + "\n"
             } else {
                 if (key == 'FABRIC_STARTER_VERSION') {
                     fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion + "\n"
