@@ -404,13 +404,14 @@ void replaceVersionVars(currentFabricVersion, currentFabricStarterVersion) {
     def fileContent = ''
     file.readLines().each { line ->
             def (key, value) = line.tokenize('=')
+            echo ("${key} -> ${value}")
             if (key.matches('^#')) {
                 fileContent = fileContent + line
             } else {
                 if (key == 'FABRIC_STARTER_VERSION') {
-                    fileContent = 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion + "\n"
+                    fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion + "\n"
                 } else if (key == 'FABRIC_VERSION') {
-                    fileContent = 'FABRIC_VERSION' + '=' + currentFabricVersion + "\n"
+                    fileContent = fileContent + 'FABRIC_VERSION' + '=' + currentFabricVersion + "\n"
                 } else {
                     fileContent = fileContent + line
                 }
