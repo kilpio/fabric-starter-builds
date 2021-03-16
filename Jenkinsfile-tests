@@ -23,7 +23,7 @@ BE_VERBOSE = true
 
 SSH_USER='test'
 SSH_MACHINE='172.18.0.3'
-DOLLAR_SIGN='$'
+//DOLLAR_SIGN='$'
 //if (DEBUG == 'true') {BE_VERBOSE = true}
 //if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
 
@@ -34,7 +34,7 @@ node {
             wrappedStage('Fabric-Starter-snapshot test',,'START THE JOB') {
             def newFabricStarterTag
 
-            wrappedStage('Prune-docker-in-test-container', CRED, "Pruning all docker stuff in test container") {
+            wrappedStage('Prune-docker-in-test-container', CRED, "Pruning all docker stuff in the skypetest container") {
                 def script= """
                                 SANDBOX_DIR='/home/test/sandbox'
                                 docker stop `docker ps -qa`

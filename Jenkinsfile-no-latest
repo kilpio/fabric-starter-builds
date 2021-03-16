@@ -347,6 +347,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         sh "git checkout origin/${MASTER_BRANCH} -- .env"
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
+        replaceRepoVar(FABRIC_STARTER_REPOSITORY)
                 }
             }
 
@@ -395,6 +396,18 @@ void envAppendRepoVar(currentRepoName) {
         reportList.add("envAppendRepoVar: writeFile file: '.env',text: ${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}")
         sh 'git add .env'
     }
+
+void replaceRepoVar(currentRepoName) {
+    def props = readProperties file: .env
+    props.keySet().each {
+        key-> value = props[key]
+        echo "${key} -> ${value}"
+        }
+
+    //sh 'git add .env'
+}
+
+
 
                             // master:      PREVIOUS_FABRIC_VERSION   ->    stable
                             // stable:      PREVIOUS_FABRIC_VERSION   ->    snapshot
