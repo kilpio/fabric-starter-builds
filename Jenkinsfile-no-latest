@@ -347,7 +347,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         sh "git checkout origin/${MASTER_BRANCH} -- .env"
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
-        replaceVersionVars(FABRIC_VERSION,FABRIC_STARTER_VERSION)
+        replaceVersionVars(FABRIC_VERSION,toBranchName)
                 }
             }
 
