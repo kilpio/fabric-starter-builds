@@ -160,7 +160,7 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                     if (SKIP_DOCKER_PUSH == 'false') {
                         if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                                                 pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-                                    // pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")
+                                    pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")
                             }
                         pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     }
@@ -170,7 +170,7 @@ wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabr
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false') ) {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                                     pushDockerImage('fabric-tools-extended', newFabricStarterTag)
-                                    // pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
+                                    pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
                         }
                     pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-${BUILD_BRANCH}")
                     }
