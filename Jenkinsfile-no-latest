@@ -231,7 +231,7 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
         sh "git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
         dir(repositoryName) {
             //sh "git checkout ${MASTER_BRANCH}"
-        if (remoteBranchExists(branch)) {    
+        if (remoteBranchExists(branch)) {
             sh "git checkout $branch"
             sh 'git pull'
         } else {
@@ -362,6 +362,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
     if (fileExists('./.env') == 'true') {
         echo "Modifing ./env file"
         sh "git checkout origin/${MASTER_BRANCH} -- .env"
+        sh "cat .env"
         envAppendVersionVars(toBranchName, FABRIC_VERSION)
         envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
         replaceVersionVars(FABRIC_VERSION,toBranchName)
