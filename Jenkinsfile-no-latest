@@ -227,7 +227,7 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         //sh 'pwd'
         //sh 'ls -la'
-        sh "GIT_SSH_COMMAND="ssh -v" git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
+        sh "GIT_SSH_COMMAND='ssh -v' git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
         dir(repositoryName) {
             //sh "git checkout ${MASTER_BRANCH}"
             sh "git checkout $branch"
