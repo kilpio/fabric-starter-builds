@@ -32,17 +32,17 @@ filesToReplaceForFabricStarter = ['docker-compose.yaml',
                         'docker-compose-deploy.yaml',
                         'https/docker-compose-generate-tls-certs.yaml',
                         'docker-compose-open-net.yaml',
-                        'fabric-tools-extended/Dockerfile',
-                        'network-create-base.sh',
-                        'peer-start.sh',
-                        'raft-start-docker-machine.sh',
-                        'extra/docker-registry-local/start-docker-registry-local.sh',
-                        'deploy.sh',
-                        'build-fabric-tools-extended.sh',
-                        'main_old.sh',
-                        'main.sh',
-                        'lib/backup-point.sh',
-                        'lib/restore-point.sh'
+                        'fabric-tools-extended/Dockerfile'
+                        // 'network-create-base.sh',
+                        // 'peer-start.sh',
+                        // 'raft-start-docker-machine.sh',
+                        // 'extra/docker-registry-local/start-docker-registry-local.sh',
+                        // 'deploy.sh',
+                        // 'build-fabric-tools-extended.sh',
+                        // 'main_old.sh',
+                        // 'main.sh',
+                        // 'lib/backup-point.sh',
+                        // 'lib/restore-point.sh'
                         ]
 
 filesToReplaceForFabricStarterRest = [
