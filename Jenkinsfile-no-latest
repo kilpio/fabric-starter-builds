@@ -30,15 +30,15 @@ filesToReplaceForFabricStarter = ['docker-compose.yaml',
                         'docker-compose-orderer.yaml',
                         'docker-compose-listener.yaml',
                         'docker-compose-deploy.yaml',
+                        'https/docker-compose-generate-tls-certs.yaml',
+                        'docker-compose-open-net.yaml',
+                        'fabric-tools-extended/Dockerfile',
                         'network-create-base.sh',
                         'peer-start.sh',
                         'raft-start-docker-machine.sh',
-                        'https/docker-compose-generate-tls-certs.yaml',
                         'extra/docker-registry-local/start-docker-registry-local.sh',
                         'deploy.sh',
                         'build-fabric-tools-extended.sh',
-                        'docker-compose-open-net.yaml',
-                        'fabric-tools-extended/Dockerfile',
                         'main_old.sh',
                         'main.sh',
                         'lib/backup-point.sh',
@@ -238,7 +238,7 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
 }
 
 //Temporaly rename this function as evaluateNextSnapshotGitTag to generate snapshot in new format '1.4.4-snapshot-0.12'
-// def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
+// def evaluateNextSnapshotGitTagTransition (repositoryTitle) {
 //     echo "Evaluate next snapshot name for ${repositoryTitle}"
 //     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
 //     echo "Current latest snapshot: ${lastSnapshot}"
