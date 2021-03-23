@@ -373,7 +373,7 @@ void rewriteBranch(fromBranchName, toBranchName) {
     if (remoteBranchExists(toBranchName)) {
         git checkout ${toBranchName}
             newBranch=false
-    } else {"git checkout -B ${toBranchName}"
+    } else {sh "git checkout -B ${toBranchName}"
             newBranch=true}
         sh "git reset --hard origin/${fromBranchName}"
 }
