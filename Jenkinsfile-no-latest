@@ -412,13 +412,13 @@ void configureEnvVars(currentFabricVersion, currentFabricStarterVersion, current
         } else {
             if (key == 'FABRIC_STARTER_VERSION') {
                 fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion
-                contains_fsv = false
+                add_fsv = false
             } else if (key == 'FABRIC_VERSION') {
                 fileContent = fileContent + 'FABRIC_VERSION' + '=' + currentFabricVersion
-                contains_fv = false
+                add_fv = false
             } else if (key == 'FABRIC_STARTER_REPOSITORY') {
                 fileContent = fileContent + 'FABRIC_STARTER_REPOSITORY' + '=' + currentFabricStarterRepository
-                contains_fsr = false
+                add_fsr = false
             } else {
                 fileContent = fileContent + line
             }
