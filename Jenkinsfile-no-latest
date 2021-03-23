@@ -371,7 +371,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
 
 void rewriteBranch(fromBranchName, toBranchName) {
     if (remoteBranchExists(toBranchName)) {
-        git checkout ${toBranchName}
+        sh "git checkout ${toBranchName}"
             newBranch=false
     } else {sh "git checkout -B ${toBranchName}"
             newBranch=true}
