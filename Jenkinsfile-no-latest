@@ -1,4 +1,4 @@
--B/* groovylint-disable LineLength */
+/* groovylint-disable LineLength */
 CRED = '\033[1;31m'
 CGREEN = '\033[1;32m'
 CYELLOW = '\033[1;33m'
