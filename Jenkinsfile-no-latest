@@ -347,7 +347,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         sh "git checkout origin/${MASTER_BRANCH} -- .env"
         //envAppendVersionVars(toBranchName, FABRIC_VERSION)
         //envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
-        replaceVersionVars(FABRIC_VERSION,toBranchName)
+        replaceVersionVars(FABRIC_VERSION, toBranchName, FABRIC_STARTER_REPOSITORY)
                 }
             }
 
@@ -397,7 +397,7 @@ void envAppendRepoVar(currentRepoName) {
         sh 'git add .env'
     }
 
-void replaceVersionVars(currentFabricVersion, currentFabricStarterVersion) {
+void replaceVersionVars(currentFabricVersion, currentFabricStarterVersion, currentFabricStarterRepository) {
     echo CRED
     echo CUNDERLINED
     def file = readFile '.env'
@@ -411,6 +411,8 @@ void replaceVersionVars(currentFabricVersion, currentFabricStarterVersion) {
                 fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion
             } else if (key == 'FABRIC_VERSION') {
                 fileContent = fileContent + 'FABRIC_VERSION' + '=' + currentFabricVersion
+            } else if (key == 'FABRIC_STARTER_REPOSITORY') {
+                fileContent = fileContent + 'FABRIC_STARTER_REPOSITORY' + '=' + currentFabricStarterRepository
             } else {
                 fileContent = fileContent + line
             }
