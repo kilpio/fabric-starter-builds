@@ -105,11 +105,11 @@ node {
 
             wrappedStage('Fabric-Starter-merge-stable-to-snapshot', CCYAN, "Merge from ${BUILD_BRANCH} and commit ${newFabricStarterTag}", './fabric-starter' ) {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                        updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag, filesToReplaceForFabricStarter)
-                    } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH }") }
+                        updateAndCommitBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag, filesToReplaceForFabricStarter)
+                    } else { reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for "${FABRIC_VERSION}-${BUILD_BRANCH}") }
                 }
 
-wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabric-tools-extended images for BUILD_BRANCH and snapshot", './fabric-starter') {
+wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabric-tools-extended images for "${FABRIC_VERSION}-${BUILD_BRANCH}" and snapshot", './fabric-starter') {
                     buildDockerImage(
                                         FABRIC_TOOLS_EXTENDED_NAME,
                                         FABRIC_VERSION,
