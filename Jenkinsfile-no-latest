@@ -345,7 +345,7 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
     if (fileExists('./.env') == 'true') {
         echo "Modifing ./env file"
         sh "git checkout origin/${MASTER_BRANCH} -- .env"
-        envAppendVersionVars(toBranchName, FABRIC_VERSION)
+        //envAppendVersionVars(toBranchName, FABRIC_VERSION)
         //envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
         configureEnvVars(FABRIC_VERSION, toBranchName, FABRIC_STARTER_REPOSITORY)
                 }
@@ -434,9 +434,9 @@ void configureEnvVars(currentFabricVersion, currentFabricStarterVersion, current
             fileContent = fileContent + "\n"
         }
     }
-        if (add_fsv) {fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion + "\n"}
-        if (add_fv) {fileContent = fileContent + 'FABRIC_VERSION' + '=' + currentFabricVersion +"\n"}
-        if (add_fsr) {fileContent = fileContent + 'FABRIC_STARTER_REPOSITORY' + '=' + currentFabricStarterRepository + "\n"} 
+        if (add_fsv) {fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion + "----\n"}
+        if (add_fv) {fileContent = fileContent + 'FABRIC_VERSION' + '=' + currentFabricVersion +"-----\n"}
+        if (add_fsr) {fileContent = fileContent + 'FABRIC_STARTER_REPOSITORY' + '=' + currentFabricStarterRepository + "-----\n"} 
     writeFile file: '.env', text: "${fileContent}"
     sh 'git add .env'
 }
