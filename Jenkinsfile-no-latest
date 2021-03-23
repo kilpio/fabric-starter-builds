@@ -347,14 +347,14 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         sh "git checkout origin/${MASTER_BRANCH} -- .env"
         //envAppendVersionVars(toBranchName, FABRIC_VERSION)
         //envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
-        replaceVersionVars(FABRIC_VERSION, toBranchName, FABRIC_STARTER_REPOSITORY)
+        configureEnvVars(FABRIC_VERSION, toBranchName, FABRIC_STARTER_REPOSITORY)
                 }
             }
 
-        if (fileExists('./.env') == 'true') {
-            echo "Modifing ./env file"
-            updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
-            }
+        // if (fileExists('./.env') == 'true') {
+        //     echo "Modifing ./env file"
+        //     updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
+        //     }
         //get rid of 'latest' FABRIC_STARTR_VERSION in compose yamsl
         updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
         echo "updateComposeFilesWithVersions(filesToReplace: ${filesToReplace}, FABRIC_VERSION: ${FABRIC_VERSION}, replaceTag: ${replaceTag}, toBranchName: ${toBranchName})"
@@ -397,11 +397,14 @@ void envAppendRepoVar(currentRepoName) {
         sh 'git add .env'
     }
 
-void replaceVersionVars(currentFabricVersion, currentFabricStarterVersion, currentFabricStarterRepository) {
+void configureEnvVars(currentFabricVersion, currentFabricStarterVersion, currentFabricStarterRepository) {
     echo CRED
     echo CUNDERLINED
     def file = readFile '.env'
     def fileContent = ''
+    def add_fsv = true
+    def add_fv = true
+    def add_fsr = true
     file.readLines().each { line ->
         def (key, value) = line.tokenize('=')
         if (key.matches('#')) {
@@ -409,16 +412,22 @@ void replaceVersionVars(currentFabricVersion, currentFabricStarterVersion, curre
         } else {
             if (key == 'FABRIC_STARTER_VERSION') {
                 fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion
+                contains_fsv = false
             } else if (key == 'FABRIC_VERSION') {
                 fileContent = fileContent + 'FABRIC_VERSION' + '=' + currentFabricVersion
+                contains_fv = false
             } else if (key == 'FABRIC_STARTER_REPOSITORY') {
                 fileContent = fileContent + 'FABRIC_STARTER_REPOSITORY' + '=' + currentFabricStarterRepository
+                contains_fsr = false
             } else {
                 fileContent = fileContent + line
             }
             fileContent = fileContent + "\n"
         }
     }
+        if (add_fsv) {fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion + "\n"}
+        if (add_fv) {fileContent = fileContent + 'FABRIC_VERSION' + '=' + currentFabricVersion +"\n"}
+        if (add_fsr) {fileContent = fileContent + 'FABRIC_STARTER_REPOSITORY' + '=' + currentFabricStarterRepository + "\n"} 
     writeFile file: '.env', text: "${fileContent}"
     sh 'git add .env'
 }
