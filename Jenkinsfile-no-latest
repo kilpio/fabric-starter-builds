@@ -345,8 +345,8 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
     if (fileExists('./.env') == 'true') {
         echo "Modifing ./env file"
         sh "git checkout origin/${MASTER_BRANCH} -- .env"
-        //envAppendVersionVars(toBranchName, FABRIC_VERSION)
-        //envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
+        envAppendVersionVars(toBranchName, FABRIC_VERSION)
+        envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
         configureEnvVars(FABRIC_VERSION, toBranchName, FABRIC_STARTER_REPOSITORY)
                 }
             }
