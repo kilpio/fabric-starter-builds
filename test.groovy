@@ -1,4 +1,6 @@
 /* groovylint-disable LineLength */
+
+
 CRED = '\033[1;31m'
 CGREEN = '\033[1;32m'
 CYELLOW = '\033[1;33m'
@@ -18,14 +20,6 @@ OLD_LATEST_FS_VERSION_NAME = 'latest'
 FABRIC_TOOLS_NAME = 'fabric-tools'
 FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 
-DBG_STDOUTPUT = '2>&1 1>/dev/null'
-BE_VERBOSE = false
-if (DEBUG == 'true') {
-    BE_VERBOSE = true
-}
-if (BE_VERBOSE) {
-    DBG_STDOUTPUT = ''
-}
 
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
@@ -34,19 +28,9 @@ filesToReplaceForFabricStarter = ['docker-compose.yaml',
                                   'docker-compose-orderer.yaml',
                                   'docker-compose-listener.yaml',
                                   'docker-compose-deploy.yaml',
-                                  'network-create-base.sh',
-                                  'peer-start.sh',
-                                  'raft-start-docker-machine.sh',
                                   'https/docker-compose-generate-tls-certs.yaml',
-                                  'extra/docker-registry-local/start-docker-registry-local.sh',
-                                  'deploy.sh',
-                                  'build-fabric-tools-extended.sh',
                                   'docker-compose-open-net.yaml',
-                                  'fabric-tools-extended/Dockerfile',
-                                  'main_old.sh',
-                                  'main.sh',
-                                  'lib/backup-point.sh',
-                                  'lib/restore-point.sh'
+                                  'fabric-tools-extended/Dockerfile'
 ]
 
 filesToReplaceForFabricStarterRest = [
@@ -55,6 +39,37 @@ filesToReplaceForFabricStarterRest = [
 ]
 
 node {
+    properties([
+            //https://docs.openstack.org/infra/jenkins-job-builder/parameters.html
+            parameters([
+                    credentials(name: "GITHUB_SSH_CREDENTIALS_ID", description: "GitHub username with private key", defaultValue: '', type: "SSH Username with private key", required: true),
+                    credentials(name: "DOCKER_CREDENTIALS_ID", description: "Docker Hub username and password", defaultValue: '', type: "Username with password", required: true),
+                    stringParam(name: "DOCKER_REPO", defaultValue: "kilpio", description: "Owner of the docker repo to push the built images"),
+                    stringParam(name: "FABRIC_STARTER_REPOSITORY", defaultValue: "kilpio", description: "Owner of the git repo to get images to buils FS"),
+                    stringParam(name: "FABRIC_VERSION", defaultValue: "1.4.4", description: "Fabric version we use to build images"),
+                    stringParam(name: "BUILD_BRANCH", defaultValue: "stable", description: "What brunch we are building"),
+                    booleanParam(name: "DEBUG", defaultValue: false, description: "Print extended build output and a final report in the build log"),
+                    booleanParam(name: "MERGE_FROM_MASTER", defaultValue: true, description: "True if merge current \${MASTER_BRANCH} into \${BUILD_BRANCH}"),
+                    stringParam(name: "DOCKER_REGISTRY", defaultValue: "", description: "Docker registry we use"),
+                    stringParam(name: "MASTER_BRANCH", defaultValue: "master", description: "Branch to merge into \${BUILD_BRANCH}"),
+                    stringParam(name: "PREVIOUS_FABRIC_VERSION", defaultValue: "1.4.9", description: "The Fabric version used in master"),
+                    booleanParam(name: "SKIP_DOCKER_PUSH", defaultValue: false, description: "True if we do not want to push images to docker"),
+                    booleanParam(name: "SKIP_FS_REST_BUILD", defaultValue: false, description: "True if we do not want to build and push Fabric Starter REST"),
+            ])
+    ])
+
+    GIT_REPO_OWNER = FABRIC_STARTER_REPOSITORY
+
+    DBG_STDOUTPUT = '2>&1 1>/dev/null'
+    BE_VERBOSE = false
+    newBranch = false
+    if (DEBUG == 'true') {
+        BE_VERBOSE = true
+    }
+    if (BE_VERBOSE) {
+        DBG_STDOUTPUT = ''
+    }
+
     ansiColor('xterm') {
         wrappedStage('Fabric-Starter-snapshot', , 'START THE JOB') {
             def newFabricStarterTag
@@ -84,7 +99,7 @@ node {
 
             //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
 
-            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/fabric-starter") {
+            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${FABRIC_STARTER_REPOSITORY}/fabric-starter") {
                 echo "Debug output: ${DBG_STDOUTPUT}"
                 checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                 dir('fabric-starter') {
@@ -103,19 +118,19 @@ node {
                 //BUILD_NUMBER
 
                 gitSetUser(GIT_REPO_OWNER)
-
+                rewriteBranch(MASTER_BRANCH, "${FABRIC_VERSION}-${BUILD_BRANCH}")
                 updateAndCommitBranch("origin/$MASTER_BRANCH", PREVIOUS_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}", filesToReplaceForFabricStarter)
             }
 
             wrappedStage('Fabric-Starter-merge-stable-to-snapshot', CCYAN, "Merge from ${BUILD_BRANCH} and commit ${newFabricStarterTag}", './fabric-starter') {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                    updateAndCommitBranch(BUILD_BRANCH, BUILD_BRANCH, newFabricStarterTag, filesToReplaceForFabricStarter)
+                    updateAndCommitBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag, filesToReplaceForFabricStarter)
                 } else {
-                    reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH}")
+                    reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${FABRIC_VERSION}-${BUILD_BRANCH}")
                 }
             }
 
-            wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabric-tools-extended images for BUILD_BRANCH and snapshot", './fabric-starter') {
+            wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabric-tools-extended images for ${FABRIC_VERSION}-${BUILD_BRANCH} and snapshot", './fabric-starter') {
                 buildDockerImage(
                         FABRIC_TOOLS_EXTENDED_NAME,
                         FABRIC_VERSION,
@@ -153,7 +168,7 @@ node {
                             'fabric-starter-rest',
                             FABRIC_VERSION,
                             MASTER_BRANCH,
-                            "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --no-cache -f Dockerfile . ${DBG_STDOUTPUT}"
+                            "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --build-arg FABRIC_VERSION=${FABRIC_VERSION} --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --no-cache -f Dockerfile . ${DBG_STDOUTPUT}"
                     )
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                         tagDockerImage('fabric-starter-rest', FABRIC_VERSION, newFabricStarterTag)
@@ -168,7 +183,7 @@ node {
                 if (SKIP_DOCKER_PUSH == 'false') {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                         pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-                        // pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")
+                        pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")
                     }
                     pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
                 }
@@ -178,7 +193,7 @@ node {
                 if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false')) {
                     if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
                         pushDockerImage('fabric-tools-extended', newFabricStarterTag)
-                        // pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
+                        pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
                     }
                     pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-${BUILD_BRANCH}")
                 }
@@ -233,20 +248,19 @@ node {
 def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
     echo 'If login fails here with right credentials,please add github.com to known hosts for jenkins user (ssh-keyscan -H github.com >> .ssh/known_hosts)'
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
-        //sh 'pwd'
-        //sh 'ls -la'
-        sh "git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
+        //sh "GIT_SSH_COMMAND='ssh -vvvvv' git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
+        sh "git clone git@github.com:${FABRIC_STARTER_REPOSITORY}/${repositoryName}.git"
         dir(repositoryName) {
             //sh "git checkout ${MASTER_BRANCH}"
             sh "git checkout $branch"
             sh 'git pull'
         }
-        reportList.add("checkoutFromGithubToSubfolder: git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git; git checkout ${MASTER_BRANCH}; git pull")
+        reportList.add("checkoutFromGithubToSubfolder: git clone git@github.com:${FABRIC_STARTER_REPOSITORY}/${repositoryName}.git; git checkout ${MASTER_BRANCH}; git pull")
     }
 }
 
 //Temporaly rename this function as evaluateNextSnapshotGitTag to generate snapshot in new format '1.4.4-snapshot-0.12'
-// def evaluateNextSnapshotGitTagTransition(repositoryTitle) {
+// def evaluateNextSnapshotGitTagTransition (repositoryTitle) {
 //     echo "Evaluate next snapshot name for ${repositoryTitle}"
 //     def lastSnapshot = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
 //     echo "Current latest snapshot: ${lastSnapshot}"
@@ -305,31 +319,6 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     }
 }
 
-void replaceVersionVars(currentFabricVersion, currentFabricStarterVersion) {
-    echo CRED
-    echo CUNDERLINED
-    def file = readFile '.env'
-    def fileContent = ''
-    file.readLines().each { line ->
-        def (key, value) = line.tokenize('=')
-        if (key.matches('#')) {
-            fileContent = fileContent + line
-        } else {
-            if (key == 'FABRIC_STARTER_VERSION') {
-                fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion
-            } else if (key == 'FABRIC_VERSION') {
-                fileContent = fileContent + 'FABRIC_VERSION' + '=' + currentFabricVersion
-            } else {
-                fileContent = fileContent + line
-            }
-            fileContent = fileContent + "\n"
-        }
-    }
-    writeFile file: '.env', text: "${fileContent}"
-    sh 'git add .env'
-}
-
-
 void tagDockerImage(imageName, tag, newTag) {
     sh "docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}"
     reportList.add("tagDockerImage: docker tag ${DOCKER_REPO}/${imageName}:${tag} ${DOCKER_REPO}/${imageName}:${newTag}")
@@ -357,10 +346,10 @@ void gitPushToBranch(branchName, repoName) {
     echo GITHUB_SSH_CREDENTIALS_ID
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         sh "git config user.name ${GIT_REPO_OWNER}"
-        sh "git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git"
+        sh "git remote set-url origin git@github.com:${FABRIC_STARTER_REPOSITORY}/${repoName}.git"
         sh "git checkout ${branchName}"
         sh("git push -u origin ${branchName}")
-        reportList.add("git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git")
+        reportList.add("git remote set-url origin git@github.com:${FABRIC_STARTER_REPOSITORY}/${repoName}.git")
         reportList.add("gitPushToBranch: git push -u origin ${branchName}")
     }
 }
@@ -380,16 +369,10 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         if (fileExists('./.env') == 'true') {
             echo "Modifing ./env file"
             sh "git checkout origin/${MASTER_BRANCH} -- .env"
-            envAppendVersionVars(toBranchName, FABRIC_VERSION)
-            envAppendRepoVar(FABRIC_STARTER_REPOSITORY)
+            configureEnvVars(FABRIC_VERSION, toBranchName, FABRIC_STARTER_REPOSITORY)
         }
     }
 
-    if (fileExists('./.env') == 'true') {
-        echo "Modifing ./env file"
-        updateEnvFileWithVersions(FABRIC_VERSION, replaceTag, toBranchName)
-    }
-    //get rid of 'latest' FABRIC_STARTR_VERSION in compose yamsl
     updateComposeFilesFabricStarterVersionFromLatest(filesToReplace)
     echo "updateComposeFilesWithVersions(filesToReplace: ${filesToReplace}, FABRIC_VERSION: ${FABRIC_VERSION}, replaceTag: ${replaceTag}, toBranchName: ${toBranchName})"
 
@@ -401,6 +384,17 @@ void updateAndCommitBranch(fromBranchName, replaceTag, toBranchName, filesToRepl
         updateComposeFilesWithVersions(filesToReplace, FABRIC_VERSION, replaceTag, toBranchName)
     }
     commitBranch(toBranchName)
+}
+
+void rewriteBranch(fromBranchName, toBranchName) {
+    if (remoteBranchExists(toBranchName)) {
+        sh "git checkout ${toBranchName}"
+        newBranch = false
+    } else {
+        sh "git checkout -B ${toBranchName}"
+        newBranch = true
+    }
+    sh "git reset --hard origin/${fromBranchName}"
 }
 
 void checkoutAndThenPullIfRemoteExists(toBranchName) {
@@ -428,6 +422,33 @@ void envAppendRepoVar(currentRepoName) {
 
     writeFile file: '.env', text: "${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}"
     reportList.add("envAppendRepoVar: writeFile file: '.env',text: ${fileContent}\nFABRIC_STARTER_REPOSITORY=${currentRepoName}")
+    sh 'git add .env'
+}
+
+void configureEnvVars(currentFabricVersion, currentFabricStarterVersion, currentFabricStarterRepository) {
+    echo CRED
+    echo CUNDERLINED
+    def file = readFile '.env'
+    def fileContent = ''
+
+    file.readLines().each { line ->
+        def (key, value) = line.tokenize('=')
+        if (key.matches('#')) {
+            fileContent = fileContent + line
+        } else {
+            if (key == 'FABRIC_STARTER_VERSION') {
+                fileContent = fileContent + 'FABRIC_STARTER_VERSION' + '=' + currentFabricStarterVersion
+            } else if (key == 'FABRIC_VERSION') {
+                fileContent = fileContent + 'FABRIC_VERSION' + '=' + currentFabricVersion
+            } else if (key == 'FABRIC_STARTER_REPOSITORY') {
+                fileContent = fileContent + 'FABRIC_STARTER_REPOSITORY' + '=' + currentFabricStarterRepository
+            } else {
+                fileContent = fileContent + line
+            }
+            fileContent = fileContent + "\n"
+        }
+    }
+    writeFile file: '.env', text: "${fileContent}"
     sh 'git add .env'
 }
 
