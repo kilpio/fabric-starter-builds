@@ -1,4 +1,6 @@
 /* groovylint-disable LineLength */
+  
+    
 CRED = '\033[1;31m'
 CGREEN = '\033[1;32m'
 CYELLOW = '\033[1;33m'
@@ -18,11 +20,6 @@ OLD_LATEST_FS_VERSION_NAME='latest'
 FABRIC_TOOLS_NAME = 'fabric-tools'
 FABRIC_TOOLS_EXTENDED_NAME = 'fabric-tools-extended'
 
-DBG_STDOUTPUT = '2>&1 1>/dev/null'
-BE_VERBOSE = false
-newBranch = false
-if (DEBUG == 'true') {BE_VERBOSE = true}
-if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
 
 reportList = ["\n${CRED}======== MAIN OPERATIONS OF THE PIPELINE ========${CNORMAL}\n"]
 
@@ -52,6 +49,34 @@ filesToReplaceForFabricStarterRest = [
 ]
 
 node {
+properties([
+    //https://docs.openstack.org/infra/jenkins-job-builder/parameters.html
+        parameters([            
+            credentials(name: "GITHUB_SSH_CREDENTIALS_ID", description: "GitHub username with private key", defaultValue:'', type: "sshkey", required: true),
+            credentials(name: "DOCKER_CREDENTIALS_ID", description: "Docker Hub username and password", defaultValue:'',type: "Username with password", required: true ),
+            stringParam(name: "DOCKER_REPO", defaultValue: "kilpio", description: "Owner of the docker repo to push the built images"),
+            stringParam(name: "FABRIC_STARTER_REPOSITORY", defaultValue: "kilpio", description:  "Owner of the git repo to get images to buils FS"),
+            stringParam(name: "FABRIC_VERSION", defaultValue: "1.4.4", description: "Fabric version we use to build images"),
+            stringParam(name: "BUILD_BRANCH", defaultValue: "stable", description: "What brunch we are building"),
+//            stringParam(name: "GIT_REPO_OWNER", defaultValue: "kilpio", description: "Get sources from https://github.com/\${GIT_REPO_OWNER}/fabric-starter [fabric-starter-rest]"),
+            booleanParam(name: "DEBUG", defaultValue: false, description: "Print extended build output and a final report in the build log"),
+            booleanParam(name: "MERGE_FROM_MASTER", defaultValue: true, description: "True if merge current \${MASTER_BRANCH} into \${BUILD_BRANCH}"),
+            stringParam(name: "DOCKER_REGISTRY", defaultValue: "", description: "Docker registry we use"),
+            stringParam(name: "MASTER_BRANCH", defaultValue: "master", description: "Branch to merge into \${BUILD_BRANCH}"),
+            stringParam(name: "PREVIOUS_FABRIC_VERSION", defaultValue: "1.4.9", description: "The Fabric version used in master"),
+            booleanParam(name: "SKIP_DOCKER_PUSH", defaultValue: false, description: "True if we do not want to push images to docker"),
+            booleanParam(name: "SKIP_FS_REST_BUILD", defaultValue: false, description: "True if we do not want to build and push Fabric Starter REST"),
+                ])
+    ])
+
+GIT_REPO_OWNER=FABRIC_STARTER_REPOSITORY
+
+DBG_STDOUTPUT = '2>&1 1>/dev/null'
+BE_VERBOSE = false
+newBranch = false
+if (DEBUG == 'true') {BE_VERBOSE = true}
+if (BE_VERBOSE) { DBG_STDOUTPUT = '' }
+
         ansiColor('xterm') {
             wrappedStage('Fabric-Starter-snapshot',,'START THE JOB') {
             def newFabricStarterTag
@@ -81,7 +106,7 @@ node {
 
     //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
 
-            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${GIT_REPO_OWNER}/fabric-starter") {
+            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${FABRIC_STARTER_REPOSITORY}/fabric-starter") {
                         echo "Debug output: ${DBG_STDOUTPUT}"
                         checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
                         dir ('fabric-starter') {
@@ -227,13 +252,13 @@ def checkoutFromGithubToSubfolder(repositoryName, def branch = 'master') {
     echo 'If login fails here with right credentials,please add github.com to known hosts for jenkins user (ssh-keyscan -H github.com >> .ssh/known_hosts)'
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         //sh "GIT_SSH_COMMAND='ssh -vvvvv' git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
-        sh "git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git"
+        sh "git clone git@github.com:${FABRIC_STARTER_REPOSITORY}/${repositoryName}.git"
         dir(repositoryName) {
             //sh "git checkout ${MASTER_BRANCH}"
             sh "git checkout $branch"
             sh 'git pull'
         }
-        reportList.add("checkoutFromGithubToSubfolder: git clone git@github.com:${GIT_REPO_OWNER}/${repositoryName}.git; git checkout ${MASTER_BRANCH}; git pull")
+        reportList.add("checkoutFromGithubToSubfolder: git clone git@github.com:${FABRIC_STARTER_REPOSITORY}/${repositoryName}.git; git checkout ${MASTER_BRANCH}; git pull")
     }
 }
 
@@ -322,10 +347,10 @@ void gitPushToBranch(branchName, repoName) {
     echo GITHUB_SSH_CREDENTIALS_ID
     sshagent(credentials: ['${GITHUB_SSH_CREDENTIALS_ID}']) {
         sh "git config user.name ${GIT_REPO_OWNER}"
-        sh "git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git"
+        sh "git remote set-url origin git@github.com:${FABRIC_STARTER_REPOSITORY}/${repoName}.git"
         sh "git checkout ${branchName}"
         sh("git push -u origin ${branchName}")
-        reportList.add("git remote set-url origin git@github.com:${GIT_REPO_OWNER}/${repoName}.git")
+        reportList.add("git remote set-url origin git@github.com:${FABRIC_STARTER_REPOSITORY}/${repoName}.git")
         reportList.add("gitPushToBranch: git push -u origin ${branchName}")
         }
     }
