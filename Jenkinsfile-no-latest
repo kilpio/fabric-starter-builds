@@ -249,7 +249,7 @@ node {
                 }
                 echo report
             }
-            setBuildDescription("Built:\n${FABRIC_VERSION}\n${FABRIC_VERSION}-${BUILD_BRANCH}\n${newFabricStarterTag}")
+            setBuildDescription("Built images tags:\n${FABRIC_VERSION}\n${FABRIC_VERSION}-${BUILD_BRANCH}\n${newFabricStarterTag}")
         }
       } // wrappedStage 'Fabric-Starter-snapshot'
     } //AnsiColor
@@ -291,7 +291,7 @@ def result = 'none'
 def lastSnapshotOld = sh(returnStdout: true, script: "git branch -r --list 'origin/snapshot-*' --sort=-committerdate | sort --version-sort --reverse | head -1").trim()
 def lastSnapshotNew = sh(returnStdout: true, script: "git branch -r --list 'origin/*-snapshot-*' --sort=-committerdate | sort --version-sort --reverse -t '-' -k 2 | head -1").trim()
 def (firstArgOld, secondArgOld, thirdArgOld) = lastSnapshotOld.tokenize('-')
-def (firstArgNew, secondArgNew, thirdArgNew) = lastSnapshotOld.tokenize('-')
+def (firstArgNew, secondArgNew, thirdArgNew) = lastSnapshotNew.tokenize('-')
 if (firstArgOld == 'origin/snapshot') {
         result = 'old'
         echo "Old snapshot taging scheme"
