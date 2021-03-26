@@ -344,7 +344,9 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     arguments = "-t ${DOCKER_REPO}/${imageName}:${tag} --label \"jenkins_job_build=${BUILD_NUMBER}\" --label \"jenkins_job_name=${JOB_NAME}\" ${args}"
     echo "docker build args: $arguments"
 
-    sh(returnStdout: BE_VERBOSE, script: "docker image build ${arguments} ${DBG_STDOUTPUT}")
+ //   sh(returnStdout: BE_VERBOSE, script: "docker image build ${arguments} ${DBG_STDOUTPUT}")
+    sh(returnStdout: true, script: "docker image build ${arguments}")
+
     reportList.add("buildDockerImage: docker image build ${arguments}")
     if (BE_VERBOSE) {
         sh 'docker image ls'
