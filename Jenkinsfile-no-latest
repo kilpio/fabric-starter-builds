@@ -113,11 +113,11 @@ node {
         wrappedStage('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
 
             def snapshotTaggingSchema = checkSnapshotVersion();
-            if (snapshotTaggingSchema == 'new') {
-                newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
-             }
             if (snapshotTaggingSchema == 'old') {
                 newFabricStarterTag = evaluateNextSnapshotGitTagTransition('Fabric-starter')
+             }
+            if (snapshotTaggingSchema == 'new') {
+                newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
              }
             if (snapshotTaggingSchema == 'none') {
                 newFabricStarterTag="${FABRIC_VERSION}-snapshot-0.1"
