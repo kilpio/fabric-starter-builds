@@ -345,7 +345,7 @@ void buildDockerImage(imageName, tag, branchToBuildImageFrom, def args = '') {
     echo "docker build args: $arguments"
 
  //   sh(returnStdout: BE_VERBOSE, script: "docker image build ${arguments} ${DBG_STDOUTPUT}")
-    sh(returnStdout: true, script: "docker image build ${arguments}")
+    sh(returnStdout: true, script: "docker image build ${arguments} 2>&1")
 
     reportList.add("buildDockerImage: docker image build ${arguments}")
     if (BE_VERBOSE) {
