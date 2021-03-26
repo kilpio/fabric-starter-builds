@@ -123,7 +123,7 @@ node {
                 newFabricStarterTag="${FABRIC_VERSION}-snapshot-0.1"
                 }
             }
-                     }
+                     
 
         wrappedStage('Fabric-Starter-merge-master-to-stable', CMAGENTA, "Merge from ${MASTER_BRANCH} and commit ${STABLE_BRANCH_NAME}", './fabric-starter') {
             //BUILD_NUMBER
