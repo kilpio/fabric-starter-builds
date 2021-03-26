@@ -249,7 +249,7 @@ node {
                 }
                 echo report
             }
-            setBuildDescription("Built images tags:\n${FABRIC_VERSION}\n${FABRIC_VERSION}-${BUILD_BRANCH}\n${newFabricStarterTag}")
+            setBuildDescription("Built images tags for ${FABRIC_STARTER_REPOSITORY}:\n${FABRIC_VERSION}\n${FABRIC_VERSION}-${BUILD_BRANCH}\n${newFabricStarterTag}")
         }
       } // wrappedStage 'Fabric-Starter-snapshot'
     } //AnsiColor
