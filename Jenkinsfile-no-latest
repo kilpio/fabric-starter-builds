@@ -238,6 +238,7 @@ node {
                 }
                 echo report
             }
+            setBuildDescription("${FABRIC_VERSION}-${BUILD_BRANCH}\n${newFabricStarterTag} are built")
         }
 //        } // wrappedStage 'Fabric-Starter-snapshot'
     } //AnsiColor
@@ -580,4 +581,7 @@ def wrappedStage(name, def color = CNORMAL, def description = null, def currentD
             return result
         }
     }
+}
+def setBuildDescription (description) {
+    currentBuild.description = description
 }
