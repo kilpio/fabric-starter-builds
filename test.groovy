@@ -42,8 +42,8 @@ node {
     properties([
             //https://docs.openstack.org/infra/jenkins-job-builder/parameters.html
             parameters([
-                    credentials(name: "GITHUB_SSH_CREDENTIALS_ID", description: "GitHub username with private key", defaultValue: '', type: "SSH Username with private key", required: true),
-                    credentials(name: "DOCKER_CREDENTIALS_ID", description: "Docker Hub username and password", defaultValue: '', type: "Username with password", required: true),
+                    credentials(name: "GITHUB_SSH_CREDENTIALS_ID", description: "GitHub username with private key", defaultValue: '', credentialType: "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey", required: true),
+                    credentials(name: "DOCKER_CREDENTIALS_ID", description: "Docker Hub username and password", defaultValue: '', credentialType: "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl", required: true),
                     stringParam(name: "DOCKER_REPO", defaultValue: "kilpio", description: "Owner of the docker repo to push the built images"),
                     stringParam(name: "FABRIC_STARTER_REPOSITORY", defaultValue: "kilpio", description: "Owner of the git repo to get images to buils FS"),
                     stringParam(name: "FABRIC_VERSION", defaultValue: "1.4.4", description: "Fabric version we use to build images"),
@@ -71,175 +71,175 @@ node {
     }
 
     ansiColor('xterm') {
-        wrappedStage('Fabric-Starter-snapshot', , 'START THE JOB') {
-            def newFabricStarterTag
+//        wrappedStage('Fabric-Starter-snapshot', , 'START THE JOB') {
+        def newFabricStarterTag
 
-            wrappedStage('Delete-previous-results', CRED, "Pruning all previous job images") {
-                int previousJobNo = BUILD_NUMBER as Integer
-                previousJobNo -= 1
-                previousBuildNumber = previousJobNo.toString()
-                echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
-                def debug = " | grep 'Total reclaimed space'"
-                sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${previousBuildNumber}\" ${debug}"
-            }
+        wrappedStage('Delete-previous-results', CRED, "Pruning all previous job images") {
+            int previousJobNo = BUILD_NUMBER as Integer
+            previousJobNo -= 1
+            previousBuildNumber = previousJobNo.toString()
+            echo "Pruning results of build no. ${previousBuildNumber} of ${JOB_NAME}"
+            def debug = " | grep 'Total reclaimed space'"
+            sh "docker image prune --all --force --filter \"label=jenkins_job_name=${JOB_NAME}\" --filter \"label=jenkins_job_build=${previousBuildNumber}\" ${debug}"
+        }
 
-            wrappedStage('Cleaning-job-workspace', CMAGENTA, "Cleaning job workspace: ${WORKSPACE}") {
-                def isWorkspaceNotOK = !(WORKSPACE?.trim())
-                if (isWorkspaceNotOK) {
-                    echo 'Failure: WORKSPACE variable is undefined!'
-                    currentBuild.result = 'FAILURE'
-                    return
-                } else {
-                    dir(WORKSPACE) {
-                        deleteDir()
-                        sh 'ls -ld $(find .)'
-                    }
+        wrappedStage('Cleaning-job-workspace', CMAGENTA, "Cleaning job workspace: ${WORKSPACE}") {
+            def isWorkspaceNotOK = !(WORKSPACE?.trim())
+            if (isWorkspaceNotOK) {
+                echo 'Failure: WORKSPACE variable is undefined!'
+                currentBuild.result = 'FAILURE'
+                return
+            } else {
+                dir(WORKSPACE) {
+                    deleteDir()
+                    sh 'ls -ld $(find .)'
                 }
             }
+        }
 
-            //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
+        //? ======================================== BUILDING FABRIC-TOOLS-EXTENDED IMAGES =========================
 
-            wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${FABRIC_STARTER_REPOSITORY}/fabric-starter") {
-                echo "Debug output: ${DBG_STDOUTPUT}"
-                checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
-                dir('fabric-starter') {
-                    oldFabricStarterVersion = getFabricStarterVersionFromEnv()
-                    oldFabricVersion = getFabricVersionFromEnv()
-                    reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
-                    echo "oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}"
-                }
+        wrappedStage('Fabric-Starter-git-checkout', CBLUE, "Pull fabric-starter from ${FABRIC_STARTER_REPOSITORY}/fabric-starter") {
+            echo "Debug output: ${DBG_STDOUTPUT}"
+            checkoutFromGithubToSubfolder('fabric-starter', "${BUILD_BRANCH}")
+            dir('fabric-starter') {
+                oldFabricStarterVersion = getFabricStarterVersionFromEnv()
+                oldFabricVersion = getFabricVersionFromEnv()
+                reportList.add("oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}")
+                echo "oldFabricStarterVersion: ${oldFabricStarterVersion}, oldFabricVersion: ${oldFabricVersion}"
             }
+        }
 
-            wrappedStage('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
-                newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
+        wrappedStage('Evaluate-next-snapshot-git-tag', CGREEN, 'Get next snapshot tag', './fabric-starter') {
+            newFabricStarterTag = evaluateNextSnapshotGitTag('Fabric-starter')
+        }
+
+        wrappedStage('Fabric-Starter-merge-master-to-stable', CMAGENTA, "Merge from ${MASTER_BRANCH} and commit ${STABLE_BRANCH_NAME}", './fabric-starter') {
+            //BUILD_NUMBER
+
+            gitSetUser(GIT_REPO_OWNER)
+            rewriteBranch(MASTER_BRANCH, "${FABRIC_VERSION}-${BUILD_BRANCH}")
+            updateAndCommitBranch("origin/$MASTER_BRANCH", PREVIOUS_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}", filesToReplaceForFabricStarter)
+        }
+
+        wrappedStage('Fabric-Starter-merge-stable-to-snapshot', CCYAN, "Merge from ${BUILD_BRANCH} and commit ${newFabricStarterTag}", './fabric-starter') {
+            if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
+                updateAndCommitBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag, filesToReplaceForFabricStarter)
+            } else {
+                reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${FABRIC_VERSION}-${BUILD_BRANCH}")
             }
+        }
 
-            wrappedStage('Fabric-Starter-merge-master-to-stable', CMAGENTA, "Merge from ${MASTER_BRANCH} and commit ${STABLE_BRANCH_NAME}", './fabric-starter') {
-                //BUILD_NUMBER
-
-                gitSetUser(GIT_REPO_OWNER)
-                rewriteBranch(MASTER_BRANCH, "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                updateAndCommitBranch("origin/$MASTER_BRANCH", PREVIOUS_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}", filesToReplaceForFabricStarter)
+        wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabric-tools-extended images for ${FABRIC_VERSION}-${BUILD_BRANCH} and snapshot", './fabric-starter') {
+            buildDockerImage(
+                    FABRIC_TOOLS_EXTENDED_NAME,
+                    FABRIC_VERSION,
+                    MASTER_BRANCH,
+                    "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile . ${DBG_STDOUTPUT}"
+            )
+            tagDockerImage(FABRIC_TOOLS_EXTENDED_NAME, FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
+            // e.g. stable
+            if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
+                tagDockerImage(FABRIC_TOOLS_EXTENDED_NAME, FABRIC_VERSION, newFabricStarterTag) //e.g. snapshot
             }
+        }
 
-            wrappedStage('Fabric-Starter-merge-stable-to-snapshot', CCYAN, "Merge from ${BUILD_BRANCH} and commit ${newFabricStarterTag}", './fabric-starter') {
-                if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                    updateAndCommitBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag, filesToReplaceForFabricStarter)
-                } else {
-                    reportList.add("Fabric-Starter-Merge-stable-to-snapshot: Skip creating snapshot for ${FABRIC_VERSION}-${BUILD_BRANCH}")
-                }
+        //? ======================================== BUILDING FABRIC-STARTER-REST IMAGES =========================
+        wrappedStage('Farbric-Starter-Rest-checkout', CCYAN, 'Pull fabric-starter-rest and checkout to the master branch') {
+            checkoutFromGithubToSubfolder('fabric-starter-rest')
+        }
+
+        wrappedStage('Farbric-Starter-Rest-update-and-commit', CCYAN, 'Update and commit fabric-starter-rest branches', './fabric-starter-rest') {
+            gitSetUser(GIT_REPO_OWNER)
+            updateAndCommitBranch(MASTER_BRANCH, PREVIOUS_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}", filesToReplaceForFabricStarterRest)
+        }
+
+        wrappedStage('Farbric-Starter-Rest-copy-stable-to-snapshot', CYELLOW, 'Take updates from master (pretend as from stable) to snapshot, commit snapshot ', './fabric-starter-rest') {
+            if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
+                updateAndCommitBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag, filesToReplaceForFabricStarterRest)
+            } else {
+                reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH}")
             }
+        }
 
-            wrappedStage('Fabric-Tools-Extended-build-extended-images', CYELLOW, "Build fabric-tools-extended images for ${FABRIC_VERSION}-${BUILD_BRANCH} and snapshot", './fabric-starter') {
+        wrappedStage('Fabric-Starter-Rest-build-docker-images', CGREEN, "Build snapshot, stable fabric-starter-rest images", './fabric-starter-rest') {
+            if (SKIP_FS_REST_BUILD == 'false') {
                 buildDockerImage(
-                        FABRIC_TOOLS_EXTENDED_NAME,
+                        'fabric-starter-rest',
                         FABRIC_VERSION,
                         MASTER_BRANCH,
-                        "--no-cache --build-arg FABRIC_VERSION=${FABRIC_VERSION} -f fabric-tools-extended/Dockerfile . ${DBG_STDOUTPUT}"
+                        "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --build-arg FABRIC_VERSION=${FABRIC_VERSION} --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --no-cache -f Dockerfile . ${DBG_STDOUTPUT}"
                 )
-                tagDockerImage(FABRIC_TOOLS_EXTENDED_NAME, FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                // e.g. stable
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                    tagDockerImage(FABRIC_TOOLS_EXTENDED_NAME, FABRIC_VERSION, newFabricStarterTag) //e.g. snapshot
+                    tagDockerImage('fabric-starter-rest', FABRIC_VERSION, newFabricStarterTag)
                 }
+                tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
             }
-
-            //? ======================================== BUILDING FABRIC-STARTER-REST IMAGES =========================
-            wrappedStage('Farbric-Starter-Rest-checkout', CCYAN, 'Pull fabric-starter-rest and checkout to the master branch') {
-                checkoutFromGithubToSubfolder('fabric-starter-rest')
-            }
-
-            wrappedStage('Farbric-Starter-Rest-update-and-commit', CCYAN, 'Update and commit fabric-starter-rest branches', './fabric-starter-rest') {
-                gitSetUser(GIT_REPO_OWNER)
-                updateAndCommitBranch(MASTER_BRANCH, PREVIOUS_FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}", filesToReplaceForFabricStarterRest)
-            }
-
-            wrappedStage('Farbric-Starter-Rest-copy-stable-to-snapshot', CYELLOW, 'Take updates from master (pretend as from stable) to snapshot, commit snapshot ', './fabric-starter-rest') {
-                if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                    updateAndCommitBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", "${FABRIC_VERSION}-${BUILD_BRANCH}", newFabricStarterTag, filesToReplaceForFabricStarterRest)
-                } else {
-                    reportList.add("Farbric-starter-REST-copy-stable-to-snapshot: Skip creating snapshot for ${BUILD_BRANCH}")
-                }
-            }
-
-            wrappedStage('Fabric-Starter-Rest-build-docker-images', CGREEN, "Build snapshot, stable fabric-starter-rest images", './fabric-starter-rest') {
-                if (SKIP_FS_REST_BUILD == 'false') {
-                    buildDockerImage(
-                            'fabric-starter-rest',
-                            FABRIC_VERSION,
-                            MASTER_BRANCH,
-                            "--build-arg FABRIC_STARTER_REPOSITORY=${FABRIC_STARTER_REPOSITORY} --build-arg FABRIC_VERSION=${FABRIC_VERSION} --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --no-cache -f Dockerfile . ${DBG_STDOUTPUT}"
-                    )
-                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                        tagDockerImage('fabric-starter-rest', FABRIC_VERSION, newFabricStarterTag)
-                    }
-                    tagDockerImage('fabric-starter-rest', FABRIC_VERSION, "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                }
-            }
+        }
 
 //? ========================================== DOCKER PUSH==============================================
 
-            wrappedStage('Fabric-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} image to Dockerhub") {
-                if (SKIP_DOCKER_PUSH == 'false') {
-                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                        pushDockerImage('fabric-starter-rest', newFabricStarterTag)
-                        pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")
-                    }
-                    pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                }
-            }
-
-            wrappedStage('Fabric-Starter-push-docker-images', CCYAN, "Push fabric-starter ${newFabricStarterTag} image to Dockerhub") {
-                if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false')) {
-                    if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                        pushDockerImage('fabric-tools-extended', newFabricStarterTag)
-                        pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
-                    }
-                    pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-${BUILD_BRANCH}")
-                }
-            }
-
-            //? ==================================== GIT PUSH==========================================
-
-            wrappedStage('Fabric-Starter-Rest-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} branch to github", './fabric-starter-rest') {
+        wrappedStage('Fabric-Starter-Rest-push-snapshot-docker-images', CBLUE, "Push fabric-starter-rest ${newFabricStarterTag} image to Dockerhub") {
+            if (SKIP_DOCKER_PUSH == 'false') {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                    gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
-                    // gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
+                    pushDockerImage('fabric-starter-rest', newFabricStarterTag)
+                    pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}")
                 }
+                pushDockerImage('fabric-starter-rest', "${FABRIC_VERSION}-${BUILD_BRANCH}")
             }
+        }
 
-            wrappedStage('Fabric-Starter-Rest-git-push-stable', CGREEN, "push fabric-starter-rest ${FABRIC_VERSION}-${BUILD_BRANCH} to github", './fabric-starter-rest') {
-                gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter-rest')
-            }
-
-            wrappedStage('Fabric-Starter-git-push-snapshot', CMAGENTA, "push fabric-starter ${newFabricStarterTag} branch to github", './fabric-starter') {
+        wrappedStage('Fabric-Starter-push-docker-images', CCYAN, "Push fabric-starter ${newFabricStarterTag} image to Dockerhub") {
+            if ((SKIP_DOCKER_PUSH == 'false') || (SKIP_FS_REST_BUILD == 'false')) {
                 if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
-                    gitPushToBranch(newFabricStarterTag, 'fabric-starter')
-                    // gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
+                    pushDockerImage('fabric-tools-extended', newFabricStarterTag)
+                    pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}")
                 }
+                pushDockerImage('fabric-tools-extended', "${FABRIC_VERSION}-${BUILD_BRANCH}")
             }
+        }
 
-            wrappedStage('Fabric-Starter-git-push-stable', CBLUE, "push fabric-starter ${FABRIC_VERSION}-${BUILD_BRANCH} branch to github", './fabric-starter') {
-                gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter')
+        //? ==================================== GIT PUSH==========================================
+
+        wrappedStage('Fabric-Starter-Rest-git-push-snapshot', CBLUE, "push fabric-starter-rest ${newFabricStarterTag} branch to github", './fabric-starter-rest') {
+            if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
+                gitPushToBranch(newFabricStarterTag, 'fabric-starter-rest')
+                // gitPushToBranch(FABRIC_VERSION, 'fabric-starter-rest')
             }
+        }
 
-            //? ====================================== REPORT =====================================
-            wrappedStage('Print-report', CGREEN, 'print report') {
-                if (BE_VERBOSE) {
-                    def report
-                    reportList.eachWithIndex {
-                        if (it != null) {
-                            line = it.replaceFirst('^', "${CCYAN}")
-                            line = line.replaceFirst(': ', ":${CGREEN} ")
-                            line = line.replaceFirst('STAGE:', "${CRED}-- STAGE:${CBLUE}")
-                            line = line.replaceFirst('$', "${CNORMAL}")
-                            report += line + '\n'
-                        }
+        wrappedStage('Fabric-Starter-Rest-git-push-stable', CGREEN, "push fabric-starter-rest ${FABRIC_VERSION}-${BUILD_BRANCH} to github", './fabric-starter-rest') {
+            gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter-rest')
+        }
+
+        wrappedStage('Fabric-Starter-git-push-snapshot', CMAGENTA, "push fabric-starter ${newFabricStarterTag} branch to github", './fabric-starter') {
+            if (BUILD_BRANCH == "${STABLE_BRANCH_NAME}") {
+                gitPushToBranch(newFabricStarterTag, 'fabric-starter')
+                // gitPushToBranch(FABRIC_VERSION, 'fabric-starter')
+            }
+        }
+
+        wrappedStage('Fabric-Starter-git-push-stable', CBLUE, "push fabric-starter ${FABRIC_VERSION}-${BUILD_BRANCH} branch to github", './fabric-starter') {
+            gitPushToBranch("${FABRIC_VERSION}-${BUILD_BRANCH}", 'fabric-starter')
+        }
+
+        //? ====================================== REPORT =====================================
+        wrappedStage('Print-report', CGREEN, 'print report') {
+            if (BE_VERBOSE) {
+                def report
+                reportList.eachWithIndex {
+                    if (it != null) {
+                        line = it.replaceFirst('^', "${CCYAN}")
+                        line = line.replaceFirst(': ', ":${CGREEN} ")
+                        line = line.replaceFirst('STAGE:', "${CRED}-- STAGE:${CBLUE}")
+                        line = line.replaceFirst('$', "${CNORMAL}")
+                        report += line + '\n'
                     }
-                    echo report
                 }
+                echo report
             }
-        } // wrappedStage 'Fabric-Starter-snapshot'
+        }
+//        } // wrappedStage 'Fabric-Starter-snapshot'
     } //AnsiColor
 }//node
 
@@ -564,7 +564,18 @@ def wrappedStage(name, def color = CNORMAL, def description = null, def currentD
 
             echo color
             reportList.add("STAGE: ${STAGE_NAME}")
-            def result = closure.call()
+
+            try {
+                result = closure.call()
+            } catch (e) {
+                echo "${CRED}${CUNDERLINED}"
+                currentBuild.description = e.getMessage()
+                echo "----------------------------FAILURE--------------------------------------"
+                echo "ERROR: " + e.getMessage() + " in ${STAGE_NAME} stage."
+                currentBuild.result = 'FAILURE'
+                throw e
+            }
+
             echo CNORMAL
             return result
         }
